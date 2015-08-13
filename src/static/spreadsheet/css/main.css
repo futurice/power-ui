@@ -1,0 +1,214 @@
+@charset "utf-8";
+
+body {
+  /* Compensate for top navbar */
+  padding-top: 70px;
+  /* Leave some extra scrolling room at bottom*/
+  padding-bottom: 25vh;
+}
+
+/* Display dropdown menus by hovering */
+@media (min-width: 767px) {
+  .nav .dropdown:hover > .dropdown-menu {
+    display: block;
+  }
+}
+
+nav .navbar-brand.navbar-brand-logo {
+  padding-left: 30px;
+  padding-right: 30px;
+  padding-top: 15px;
+  padding-bottom: 0px;
+}
+
+nav .navbar-brand-logo img {
+  height: 17px;
+}
+
+nav.navbar-inverse .navbar-brand-logo img {
+  /* -webkit-filter: invert(100%); */
+}
+
+.navbar-inverse .form-group label {
+  color: #9d9d9d;
+  font-weight: normal;
+}
+
+nav .navbar-brand-logo img:hover {
+  opacity: 1;
+}
+
+nav#header.navbar-inverse {
+  background-color: #349D4A;
+  border-color: #349D4A;
+}
+nav#header.navbar-inverse .navbar-nav > li > a{
+  color: #FFFFFF;
+  font-family: "proxima-nova","Helvetica Neue",Arial,sans-serif;;
+}
+
+nav#header.navbar-inverse .navbar-nav > li > a:hover {
+  border-bottom: 4px solid #000000;
+  margin-bottom: -3px;
+}
+
+.nav .dropdown-menu-form {
+  margin-left: 20px;
+  margin-right: 20px;
+}
+
+@media (max-width: 767px) {
+  .navbar-inverse .navbar-nav .open .dropdown-menu-form {
+    color: #FFFFFF;
+  }
+  .navbar-inverse .navbar-form {
+    padding: 25px;
+  }
+}
+
+.navbar-fixed-top .navbar-collapse {
+  max-height: none;
+  overflow: hidden;
+}
+
+/* Align content centered fluid width */
+.center-content {
+  display: flex;
+  flex-direction: row;
+  justify-content: center;
+}
+
+  /* For flexbox firefox compatibility */
+.center-content * {
+  min-width: 0;
+}
+
+
+.content-wrapper {
+  margin: 10px;
+  display: flex;
+  flex-direction: column;
+}
+
+/* Make header edit link smaller */
+h1 .edit {
+  margin: 0 10px;
+  font-size: 50%;
+}
+h1 .edit a {
+  opacity: 0.3;
+}
+h1 .edit a:hover {
+  opacity: 1;
+  text-decoration: none;
+}
+
+
+/* Reports */
+
+.report {
+  margin: 30px 0;
+}
+
+.report th, .report td {
+  padding: 10px 5px;
+  vertical-align: top;
+}
+
+.report .name {
+  max-width: 10em;
+}
+
+.report .description {
+  max-width: 40em;
+  padding-left: 50px;
+  font-style: italic;
+  opacity: 0.8;
+}
+
+
+/* Text content */
+
+.content-wrapper > p {
+  max-width: 600px;
+}
+
+hr.narrow {
+  margin: 10px 0;
+}
+
+
+/* Tooltip styling */
+
+.tooltip-inner {
+  max-width: none;
+  white-space: pre-line;
+}
+
+
+#orderbook {
+  background-image: url('../img/ajax-loader.gif');
+  background-repeat: no-repeat;
+  background-position: center center;
+}
+
+.legend ul.line-legend  {
+  list-style: none;
+  margin-top: 40px;
+}
+
+.legend ul.line-legend li {
+  min-height: 25px;
+  margin: 0 0 20px 0;
+  font-weight: bold;
+  clear: both;
+}
+
+.legend ul.line-legend li div {
+  line-height: 25px;
+  padding: 0 32px;
+}
+.legend ul.line-legend li span {
+  width: 25px;
+  height: 25px;
+  margin-right: 5px;
+  float: left;
+}
+
+.legend ul.line-legend li small {
+  font-weight: normal;
+  font-size: 100%;
+}
+
+.abt-panel-group {
+  max-width: 600px;
+}
+
+.abt-panel-group .panel button {
+  width: 100%;
+  border: none;
+  text-align: left;
+  background-color: transparent;
+  padding: 12px;
+  font-weight: bold;
+}
+
+.abt-panel-group .panel button:focus {
+  outline: none;
+}
+
+.abt-panel-group .panel-heading {
+  padding: 0;
+}
+
+.changelog h1 {
+  font-size: 30px;
+}
+
+.changelog h2 {
+  font-size: 24px;
+}
+
+.changelog h3 {
+  font-size: 20px;
+}
