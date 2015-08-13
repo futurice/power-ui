@@ -1,0 +1,32 @@
+{
+  "name": "power-ui",
+  "private": true,
+  "version": "1.0.0",
+  "description": "power.futurice.com new UI",
+  "main": "index.js",
+  "scripts": {
+    "watch": "watchify -g envify -t babelify src/index.js --debug -v -o dist/index.js"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/futurice/power-ui.git"
+  },
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/futurice/power-ui/issues"
+  },
+  "homepage": "https://github.com/futurice/power-ui#readme",
+  "dependencies": {
+    "axios": "^0.5.4",
+    "babel": "^5.8.21",
+    "babelify": "^6.1.3",
+    "browserify": "^11.0.1",
+    "envify": "^3.4.0",
+    "react": "^0.13.3",
+    "uglify-js": "^2.4.24"
+  },
+  "devDependencies": {
+    "watchify": "^3.3.1"
+  }
+}
