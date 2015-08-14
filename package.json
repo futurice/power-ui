@@ -5,7 +5,8 @@
   "description": "power.futurice.com new UI",
   "main": "index.js",
   "scripts": {
-    "watch": "watchify -g envify -t babelify src/index.js --debug -v -o dist/index.js"
+    "watch": "watchify -g envify -t babelify src/index.js --debug -v -o dist/index.js",
+    "copy": "cp src/static/* -r dist"
   },
   "repository": {
     "type": "git",
@@ -28,6 +29,9 @@
     "uglify-js": "^2.4.24"
   },
   "devDependencies": {
+    "babel-eslint": "^4.0.5",
+    "eslint": "^1.1.0",
+    "eslint-plugin-react": "^3.2.2",
     "watchify": "^3.3.1"
   }
 }
