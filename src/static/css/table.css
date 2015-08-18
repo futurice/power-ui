@@ -1,0 +1,275 @@
+@charset "utf-8";
+
+/* Fit more in table*/
+table.table {
+  font-size: 85%;
+}
+
+/* Emphasize specific data points in tables */
+table tbody .on-bench {
+  color: #209D22;
+  font-weight: bold;
+}
+
+table tbody .overrun {
+  color: #9D2020;
+  font-weight: bold;
+}
+
+td.date {
+  white-space: nowrap;
+}
+
+.table .cell-edit a {
+  display: block;
+  width: 100%;
+  height: 100%;
+  color: #333;
+}
+
+.table .cell-edit .nudge-me {
+  float: right;
+  position: relative;
+}
+
+.table .cell-edit .glyphicon {
+  position: absolute;
+  opacity: 0;
+}
+
+.table .cell-edit a:hover .glyphicon {
+  opacity: 0.5;
+}
+
+.table .allocation-cell {
+  min-width: 170px;
+}
+
+.table .allocations {
+  width: 150px;
+}
+.table .allocation {
+  display: block;
+  float: left;
+  overflow: hidden;
+  padding: 0 5px;
+  height: 17px;
+  line-height: 17px;
+  background-color: red;
+}
+
+.table .allocation:hover {
+  height: auto;
+  overflow: visible
+}
+
+.allocation .seniority {
+  opacity: 0.5;
+}
+.allocation .seniority:before {
+  content: '(';
+}
+.allocation .seniority:after {
+  content: ')';
+}
+
+.allocations .N\/A    {background-color: #E4E4E4;}
+.allocations .back    {background-color: #B1EADA;}
+.allocations .front   {background-color: #CEA9F0;}
+.allocations .iOS     {background-color: #B2B2B2;}
+.allocations .android {background-color: #BAEAA9;}
+.allocations .windows {background-color: #AFDFF2;}
+.allocations .UX      {background-color: #F4C093;}
+.allocations .PM      {background-color: #F4ADB9;}
+.allocations .QA      {background-color: #E3F4A5;}
+.allocations .consulting {background-color: #EA8C8C;}
+
+.allocations .Junior    {font-style: italic;}
+.allocations .Normal    {font-weight: normal;}
+.allocations .Architect {text-transform: capitalize;}
+.allocations .Senior    {font-weight: bold;}
+
+.table .warning {
+  margin-left: 5px;
+  color: #f33;
+  font-size: 130%;
+  font-weight: bold;
+  line-height: 12px;
+}
+
+table.table tfoot td {
+  font-weight: bold;
+  border-top: 3px double #d0d0d0;
+}
+
+.table tfoot .count:before,
+.table tfoot .mean:before,
+.table tfoot .sum:before,
+.manual:after {
+  opacity: 0.5;
+}
+
+.table tfoot .count:before,
+.table tfoot .mean:before,
+.table tfoot .sum:before {
+  padding-right: 5px;
+}
+
+.table tfoot .count:before {
+  content: '#';
+}
+
+.table tfoot .sum:before {
+  content: '∑';
+}
+
+.table tfoot .mean:before {
+  content: 'a';
+  text-decoration: overline;
+}
+
+.table tfoot .currency:after {
+  content: '€';
+}
+
+.manual:after {
+  content: 'M';
+  vertical-align: super;
+  padding-left: 0.5em;
+  font-size: 70%;
+}
+
+/* Datatables stuff */
+.table thead {
+  background-color: white;
+}
+
+
+table.dataTable {
+  width: 100%;
+  margin: 0 auto;
+  clear: both;
+  border-collapse: separate;
+  border-spacing: 0;
+}
+
+table.dataTable,
+table.dataTable th,
+table.dataTable td {
+  -webkit-box-sizing: content-box;
+  -moz-box-sizing: content-box;
+  box-sizing: content-box;
+}
+
+
+/* Sort icons */
+table.table.dataTable th,
+table.table.dataTable td {
+  padding-right: 18px;
+}
+table.dataTable thead .sorting_asc,
+table.dataTable thead .sorting_desc,
+table.dataTable thead .sorting {
+  cursor: pointer;
+  *cursor: hand;
+}
+table.dataTable thead .sorting_asc {
+  background: url("../../vendor/datatables/images/sort_asc_disabled.png") no-repeat center right;
+  border-color: black;
+}
+table.dataTable thead .sorting_desc {
+  background: url("../../vendor/datatables/images/sort_desc_disabled.png") no-repeat center right;
+  border-color: black;
+}
+
+/* Filtering */
+.dataTables_filter {
+  float: right;
+  text-align: right;
+}
+
+.dataTables_filter input {
+  margin-left: 0.5em;
+  font-weight: normal;
+  border-radius: 5px;
+  border: 1px solid #d0d0d0;
+  padding: 3px;
+}
+
+.dataTables_filter input:focus {
+  outline-width: 0;
+  border: 1px solid #808080;
+}
+
+.inline-table {
+  font-size: 90%;
+  margin: 10px 0;
+  max-width: 25em;
+}
+
+.inline-table td {
+  padding: 3px 10px 3px 0;
+}
+
+.table .uninitialized {
+  display: none;
+}
+
+.table .skills {
+  width: 15%;
+}
+
+.table .month-header {
+  bottom: 12px;
+  text-align: center;
+}
+
+.table .now-header {
+  bottom: 0;
+  margin-left: -12px;
+}
+
+.table .now-header, .table .month-header {
+  position: absolute;
+}
+.table .timeline {
+    width: 50%;
+    min-width: 300px;
+    position: relative;
+    padding: 0 !important;
+}
+
+.table .timeline .month-line {
+    position: absolute;
+    border-left: solid 2px #A5A5A5;
+    height: 100%;
+    z-index: 99;
+}
+
+.table .timeline .now-line {
+    position: absolute;
+    border-left: solid 2px #CD2727;
+    height: 100%;
+    z-index: 99;
+}
+
+.timeline ul.events {
+    list-style-type: none;
+    margin: 6px 0;
+    position: relative;
+}
+
+.timeline ul.events li {
+    height: 26px;
+    color: #373737;
+    font-size: 1.2em;
+    padding: 3px 5px;
+    position: absolute;
+    text-align: left;
+    border: solid 1px #EEE;
+    overflow: hidden;
+}
+
+.timeline ul.events li.absence {
+  background-color: #FF6161;
+}
