@@ -1,6 +1,6 @@
 import polyfill from 'babel/polyfill';
 import React from 'react';
-import Router, {Route, Link, RouteHandler} from 'react-router';
+import Router, {Route, RouteHandler} from 'react-router';
 import * as stores from './app/Stores';
 
 
