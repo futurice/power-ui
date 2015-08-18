@@ -5,7 +5,8 @@
   "description": "power.futurice.com new UI",
   "main": "index.js",
   "scripts": {
-    "watch": "watchify -g envify -t babelify src/index.js --debug -v -o dist/index.js"
+    "watch": "watchify -g envify -t babelify src/index.js --debug -v -o dist/index.js",
+    "copy": "cp src/static/* -r dist"
   },
   "repository": {
     "type": "git",
