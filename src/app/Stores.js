@@ -1,17 +1,12 @@
 import axios from 'axios';
 
-const URL_ROOT = '/api/v1';
-
-export function getPeople(filters) {
-    return axios.get(`${URL_ROOT}/people`);
+export function getNextPage(url, cb) {
+    axios.get(url)
+        .then(function (res) {
+            cb(res);
+            if (res.data.next) {
+                console.log(res.data.next);
+                getNextPage(res.data.next, cb);
+            }
+        })
 }
-
-export function getTribes(filters) {
-    return axios.get(`${URL_ROOT}/tribes`);
-}
-
-export function getProjects(filters) {
-    return axios.get(`${URL_ROOT}/projects`);
-}
-
-
