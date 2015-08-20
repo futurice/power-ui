@@ -6,8 +6,8 @@ import OtherFilters from './OtherFilters';
 export default class Filters extends React.Component {
     render() {
         return (
-            <div>
-                <h2>TribeFilter</h2>
+            <div className="filters">
+                <h2>Filters</h2>
                 <TribeFilter tribes={ this.props.tribes }/>
                 <OtherFilters />
             </div>

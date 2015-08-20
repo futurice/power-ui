@@ -10,12 +10,11 @@ export default class TribeFilter extends React.Component {
             );
         }
         return (
-            <div>
-                <ul>
+            <div className="tribefilter">
+                <h3>Tribefilter</h3>
                 {this.props.tribes.map((t) => {
-                    return <li key={t.id}>{t.name}</li>;
+                    return <button key={t.id}>{t.name}</button>;
                 })}
-                </ul>
             </div>
         );
     }

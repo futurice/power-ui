@@ -16,8 +16,8 @@ export default class OtherFilters extends React.Component {
 
     render() {
         return (
-            <div>
-                <h1>Filter tools</h1>
+            <div className="filtertools">
+                <h4>Filter tools</h4>
                 <TextFilter />
                 <AvailabilityFilter />
                 <TimeRangeFilter />

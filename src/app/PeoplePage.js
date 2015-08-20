@@ -7,8 +7,8 @@ export default class PeoplePage extends React.Component {
     render() {
         return (
             <div>
-                <h1>Pageheader here</h1>
-                <Filters tribes={ this.props.tribes } />
+                <h1>People</h1>
+                <Filters  tribes={ this.props.tribes } />
                 <PeopleTable people={ this.props.people }/>
             </div>
         );
