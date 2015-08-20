@@ -9,8 +9,8 @@ export default class TextFilter extends React.Component {
     render() {
         return (
             <div className="textfilter">
-                <span> Find a person or specific skills </span>
-                <input type="text" id="myInputTextField" onKeyUp={this.onSearch} />
+                <p> Find a person or specific skills </p>
+                <input type="text" id="textFilterInputField" placeholder="Add filter" onKeyUp={this.onSearch} />
             </div>
         );
     }

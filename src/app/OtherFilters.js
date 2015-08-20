@@ -6,10 +6,6 @@ import TimeRangeFilter from './TimeRangeFilter';
 
 
 export default class OtherFilters extends React.Component {
-    constructor() {
-        super();
-        this.state = {};
-    }
 
     componentDidMount() {
     }

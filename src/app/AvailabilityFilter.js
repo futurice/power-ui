@@ -2,17 +2,16 @@ import React from 'react';
 
 
 export default class AvailabilityFilter extends React.Component {
-    constructor() {
-        super();
-        this.state = {};
+    onFilterByAvailability(event) {
+        $('.table-data-table').DataTable().columns(2).search( event.target.value ).draw();
     }
-
-    componentDidMount() {
-    }
-
     render() {
         return (
-            <h2> AvailabilityFilter </h2>
+            <div className="availabilityfilter">
+                <p> Available for</p>
+                <input type="num" maxLength="2" id="availabilityFilterInputField" onKeyUp={this.onFilterByAvailability} />
+                <span>MD</span>
+            </div>
         );
     }
 }

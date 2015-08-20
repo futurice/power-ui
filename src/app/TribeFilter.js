@@ -3,6 +3,9 @@ import Spinner from './Spinner';
 
 
 export default class TribeFilter extends React.Component {
+    onFilterByTribe(event) {
+        $('.table-data-table').DataTable().columns(1).search( event.target.value ).draw();
+    }
     render() {
         if(!this.props.tribes) {
             return (
@@ -11,9 +14,9 @@ export default class TribeFilter extends React.Component {
         }
         return (
             <div className="tribefilter">
-                <h3>Tribefilter</h3>
+                <button onClick={this.onFilterByTribe}>Show all</button>
                 {this.props.tribes.map((t) => {
-                    return <button key={t.id}>{t.name}</button>;
+                    return <button key={t.id} onClick={this.onFilterByTribe} value={t.name}>{t.name}</button>;
                 })}
             </div>
         );
