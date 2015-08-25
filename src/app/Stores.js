@@ -1,5 +1,7 @@
 import axios from 'axios';
 
+var people = [];
+
 export function getNextPage(url, cb) {
     axios.get(url)
         .then(function (res) {

@@ -222,3 +222,64 @@ hr.narrow {
   background-repeat: no-repeat;
   background-position: center center;
 }
+
+.hidden {
+  display: none;
+}
+
+.filters {
+  padding: 0 50px;
+  font-weight: bold;
+}
+
+.filters input {
+  font-weight: bold;
+}
+
+.filters .tribefilter {
+  margin: 30px 0;
+}
+
+.filters button {
+  border-radius: 8px;
+  padding: 6px 10px;
+  background: transparent;
+  border: solid 1px #D8D8D8;
+}
+
+.filters button:focus {
+  outline: none;
+}
+
+.filters button:not(:last-of-type) {
+  margin-right: 8px;
+}
+.filters button.active {
+  background: #000;
+  color: #D8D8D8;
+}
+
+.filters .filtertools > div {
+  display: inline-block;
+  padding: 15px 0;
+  margin: 10px 0;
+}
+
+.filters .filtertools > div:not(:last-of-type) {
+  margin-right: 25px;
+  padding-right: 25px;
+  border-right: solid 1px #D8D8D8;
+}
+
+
+.filters .filtertools .availabilityfilter input {
+  width: 35px;
+  text-align: center;
+  margin-right: 10px;
+  background: #000;
+  color: #D8D8D8;
+}
+
+.bottom-border-line {
+  border-bottom: solid 1px #D8D8D8;
+}

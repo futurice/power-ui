@@ -17,8 +17,6 @@ class App extends React.Component {
         super(props);
         this.state = {
             tribes: null,
-            people: null,
-            projects: null
         };
     }
     renderTribes(res) {
@@ -34,39 +32,12 @@ class App extends React.Component {
             this.setState({tribes: res.data.results});
     }
 
-    renderPeople(res) {
-        if (this.state.people) {
-            var newState = React.addons.update(this.state, {
-                people : {
-                    $push : res.data.results
-                }
-            });
-            this.setState(newState);
-        }
-        else
-            this.setState({people: res.data.results});
-    }
-
-    renderProjects(res) {
-        if (this.state.projects) {
-            var newState = React.addons.update(this.state, {
-                projects : {
-                    $push : res.data.results
-                }
-            });
-            this.setState(newState);
-        }
-        else
-            this.setState({projects: res.data.results});
-    }
-
     componentDidMount() {
         stores.getNextPage(`${URL_ROOT}/tribes`, this.renderTribes.bind(this));
-        stores.getNextPage(`${URL_ROOT}/people`, this.renderPeople.bind(this));
-        stores.getNextPage(`${URL_ROOT}/projects`, this.renderProjects.bind(this));
     }
+
     render() {
-        return <RouteHandler tribes={this.state.tribes} people={this.state.people} projects={this.state.projects} />;
+        return <RouteHandler tribes={this.state.tribes} />;
     }
 }
 

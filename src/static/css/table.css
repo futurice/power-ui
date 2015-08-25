@@ -194,6 +194,7 @@ table.dataTable thead .sorting_desc {
   border-radius: 5px;
   border: 1px solid #d0d0d0;
   padding: 3px;
+/*  display: none;*/
 }
 
 .dataTables_filter input:focus {
@@ -272,4 +273,12 @@ table.dataTable thead .sorting_desc {
 
 .timeline ul.events li.absence {
   background-color: #FF6161;
+}
+
+.filter-input-field {
+    margin-left: 0.5em;
+    font-weight: normal;
+    border-radius: 5px;
+    border: 1px solid #d0d0d0;
+    padding: 3px;
 }

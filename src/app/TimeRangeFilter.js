@@ -12,7 +12,9 @@ export default class TimeRangeFilter extends React.Component {
 
     render() {
         return (
-            <h2> TimeRangeFilter </h2>
+            <div className="timerangefilter">
+                <h2> TimeRangeFilter </h2>
+            </div>
         );
     }
 }
