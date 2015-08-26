@@ -7,8 +7,8 @@ import DataTable from './DataTable';
 import * as stores from './Stores';
 const URL_ROOT = '/api/v1';
 
-const HELSINKI = ['Vesa', 'Avalon', 'South Side']
-const GERMANY = ['Berlin', 'Lausanne']
+const HELSINKI = ['Vesa', 'Avalon', 'South Side'];
+const GERMANY = ['Berlin', 'Lausanne'];
 
 
 export default class PeoplePage extends React.Component {
