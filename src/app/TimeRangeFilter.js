@@ -1,20 +1,19 @@
 import React from 'react';
 
-
 export default class TimeRangeFilter extends React.Component {
-    constructor() {
-        super();
-        this.state = {};
-    }
+  constructor() {
+    super();
+    this.state = {};
+  }
 
-    componentDidMount() {
-    }
+  componentDidMount() {
+  }
 
-    render() {
-        return (
-            <div className="timerangefilter">
-                <h2> TimeRangeFilter </h2>
-            </div>
-        );
-    }
+  render() {
+    return (
+      <div className="timerangefilter">
+        <h2> TimeRangeFilter </h2>
+      </div>
+    );
+  }
 }
