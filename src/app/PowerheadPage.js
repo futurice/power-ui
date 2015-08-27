@@ -2,7 +2,8 @@ import React from 'react';
 import TribeFilter from './TribeFilter';
 import PowerheadChart from './PowerheadChart';
 import * as stores from './Stores';
-const URL_ROOT = '/api/v1';
+import NavBar from './NavBar';
+const URL_ROOT = 'http://localhost:8000/api/v1';
 
 const HELSINKI = ['Vesa', 'Avalon', 'South Side'];
 const GERMANY = ['Berlin', 'Lausanne'];
@@ -59,11 +60,16 @@ export default class PowerheadPage extends React.Component {
     render() {
         return (
             <div>
-                <h1>Powerhead</h1>
-                <div className="filters">
-                    <TribeFilter tribes={ this.props.tribes } selectedTribe={ this.state.filters.tribe } onChange={this.filterByTribe.bind(this)} />
+                <NavBar />
+                <div className="center-content">
+                    <div className="content-wrapper">
+                        <h1>Powerhead</h1>
+                        <div className="filters">
+                            <TribeFilter tribes={ this.props.tribes } selectedTribe={ this.state.filters.tribe } onChange={this.filterByTribe.bind(this)} />
+                        </div>
+                        <PowerheadChart powerheads={ this.state.filtered } />
+                    </div>
                 </div>
-                <PowerheadChart powerheads={ this.state.filtered } />
             </div>
         );
     }

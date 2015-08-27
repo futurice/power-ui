@@ -9,7 +9,7 @@ import PeoplePage from './app/PeoplePage';
 import ProjectsPage from './app/ProjectsPage';
 import PowerheadPage from './app/PowerheadPage';
 
-const URL_ROOT = '/api/v1';
+const URL_ROOT = 'http://localhost:8000/api/v1';
 
 
 class App extends React.Component {
@@ -50,5 +50,5 @@ var routes = (
 );
 
 Router.run(routes, function (Handler) {
-    React.render(<Handler/>, document.querySelector('.content-wrapper'));
+    React.render(<Handler/>, document.querySelector('.app-container'));
 });

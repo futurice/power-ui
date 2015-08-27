@@ -3,9 +3,10 @@ import TribeFilter from './TribeFilter';
 import TextFilter from './TextFilter';
 import AvailabilityFilter from './AvailabilityFilter';
 import TimeRangeFilter from './TimeRangeFilter';
+import NavBar from './NavBar';
 import DataTable from './DataTable';
 import * as stores from './Stores';
-const URL_ROOT = '/api/v1';
+const URL_ROOT = 'http://localhost:8000/api/v1';
 
 const HELSINKI = ['Vesa', 'Avalon', 'South Side'];
 const GERMANY = ['Berlin', 'Lausanne'];
@@ -100,21 +101,25 @@ export default class PeoplePage extends React.Component {
     render() {
         return (
             <div>
-                <h1>People</h1>
-                <div className="filters">
-                    <TribeFilter tribes={ this.props.tribes } selectedTribe={ this.state.filters.tribe } onChange={this.filterByTribe.bind(this)} />
-                    <div className="filtertools bottom-border-line">
-                        <h3 className="bottom-border-line">Filter tools</h3>
-                        <div className="textfilter">
-                            <p> Find a person or specific skills </p>
-                            <TextFilter searchString={ this.state.filters.search } onChange={this.filterByString.bind(this)} />
+                <NavBar />
+                <div className="center-content">
+                    <div className="content-wrapper">
+                        <h1>People</h1>
+                        <div className="filters">
+                            <TribeFilter tribes={ this.props.tribes } selectedTribe={ this.state.filters.tribe } onChange={this.filterByTribe.bind(this)} />
+                            <div className="filtertools bottom-border-line">
+                                <h3 className="bottom-border-line">Filter tools</h3>
+                                <div className="textfilter">
+                                    <p> Find a person or specific skills </p>
+                                    <TextFilter searchString={ this.state.filters.search } onChange={this.filterByString.bind(this)} />
+                                </div>
+                                <AvailabilityFilter availabilityFilterValue={this.state.filters.availability} onChange={this.filterByAvailability.bind(this)} />
+                                <TimeRangeFilter />
+                            </div>
                         </div>
-                        <AvailabilityFilter availabilityFilterValue={this.state.filters.availability} onChange={this.filterByAvailability.bind(this)} />
-                        <TimeRangeFilter />
+                        <DataTable people={ this.state.filtered }/>
                     </div>
                 </div>
-
-                <DataTable people={ this.state.filtered }/>
             </div>
         );
     }

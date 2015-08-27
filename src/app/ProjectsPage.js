@@ -2,7 +2,7 @@ import React from 'react';
 import TribeFilter from './TribeFilter';
 import TextFilter from './TextFilter';
 import DataTable from './DataTable';
-
+import NavBar from './NavBar';
 
 export default class ProjectsPage extends React.Component {
     constructor(props) {
@@ -29,11 +29,16 @@ export default class ProjectsPage extends React.Component {
     render() {
         return (
             <div>
-                <h1>Projects</h1>
-                <div className="filters">
-                    <TribeFilter tribes={ this.props.tribes } selectedTribe={ this.state.filters.tribe } onChange={this.filterByTribe.bind(this)} />
+                <NavBar />
+                <div className="center-content">
+                    <div className="content-wrapper">
+                        <h1>Projects</h1>
+                        <div className="filters">
+                            <TribeFilter tribes={ this.props.tribes } selectedTribe={ this.state.filters.tribe } onChange={this.filterByTribe.bind(this)} />
+                        </div>
+                        <p> WIP!</p>
+                    </div>
                 </div>
-                <p> WIP!</p>
             </div>
         );
     }
