@@ -23,6 +23,9 @@
   },
   "homepage": "https://github.com/futurice/power-ui#readme",
   "dependencies": {
+    "@cycle/core": "3.1.x",
+    "@cycle/dom": "5.0.x",
+    "@cycle/http": "3.1.x",
     "axios": "^0.5.4",
     "babel": "^5.8.21",
     "babelify": "^6.1.3",

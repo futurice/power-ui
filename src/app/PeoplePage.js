@@ -32,7 +32,7 @@ export default class PeoplePage extends React.Component {
   }
 
   renderPeople(res) {
-    let newState = React.addons.update(this.state, {
+    const newState = React.addons.update(this.state, {
       people: {
         $push: res.data.results,
       },
