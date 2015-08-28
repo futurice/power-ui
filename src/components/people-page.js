@@ -4,7 +4,7 @@ import {Rx} from '@cycle/core';
 import {hJSX} from '@cycle/dom';
 import renderNavBar from './nav-bar';
 import renderDataTable from './data-table';
-import tribeFilter from './tribe-filter';
+import locationFilter from './location-filter';
 import {URL_ROOT} from '../utils';
 hJSX();
 
@@ -54,7 +54,7 @@ function model(update$) {
       filtered: [],
       tribes: [],
       filters: {
-        tribe: null,
+        location: 'all',
         search: null,
         availability: null,
       },
@@ -70,18 +70,15 @@ function model(update$) {
   return state$;
 }
 
-function makeFilterFn$(selectedTribe$) {
-  return selectedTribe$.map(tribe =>
-    function filterStateByTribe(oldState) {
-      // TODO this should come from the backend!
-      const HELSINKI = ['Vesa', 'Avalon', 'South Side'];
-      const GERMANY = ['Berlin', 'Lausanne'];
-      const newPeople = oldState.people.filter(person => (
-        tribe === null
-        || person.tribe.name === tribe
-        || (tribe === 'Helsinki' && HELSINKI.indexOf(person.tribe.name) !== -1)
-        || (tribe === 'Germany' && GERMANY.indexOf(person.tribe.name) !== -1)
-      ));
+function makeFilterFn$(selectedLocation$) {
+  return selectedLocation$.map(location =>
+    function filterStateByLocation(oldState) {
+      const newPeople = oldState.people.filter(person =>
+        location === 'all'
+        || location === person.tribe.name
+        || location === person.tribe.country
+        || location === person.tribe.site.name
+      );
       return {
         ...oldState,
         people: newPeople,
@@ -102,14 +99,14 @@ function peoplePage(sources) {
 
   const tribeFilterProps$ = state$.map(state => {
     return {
-      selectedTribe: state.filters.tribe,
+      selectedLocation: state.filters.location,
       tribes: state.tribes,
     };
   });
-  const tribeFilterSinks = tribeFilter({DOM: sources.DOM, props$: tribeFilterProps$});
+  const tribeFilterSinks = locationFilter({DOM: sources.DOM, props$: tribeFilterProps$});
   const tribeFilterVTree$ = tribeFilterSinks.DOM.replay(null, 1);
   tribeFilterVTree$.connect();
-  const filterFn$ = makeFilterFn$(tribeFilterSinks.selectedTribe$);
+  const filterFn$ = makeFilterFn$(tribeFilterSinks.selectedLocation$);
   const filteredState$ = Rx.Observable.combineLatest(state$, filterFn$,
     (state, filterFn) => filterFn(state)
   );
