@@ -88,6 +88,7 @@ function makeFilterFn$(selectedLocation$) {
   .startWith(x => x);
 }
 
+// Handle all HTTP networking logic of this page
 function peoplePageHTTP(sources, urlRoot) {
   const request$ = Rx.Observable.just(`${urlRoot}/people/`);
   const response$ = sources.HTTP
@@ -102,6 +103,7 @@ function peoplePageHTTP(sources, urlRoot) {
 }
 
 function locationFilterWrapper(state$, sourceDOM) {
+  // Some preprocessing step to make the props for the location filter
   const locationFilterProps$ = state$.map(state => {
     return {
       selectedLocation: state.filters.location,
@@ -109,11 +111,13 @@ function locationFilterWrapper(state$, sourceDOM) {
     };
   });
 
+  // Call the location filter program
   const locationFilterSinks = locationFilter({
     DOM: sourceDOM,
     props$: locationFilterProps$,
   });
 
+  // Some postprocessing step to handle the location filter's virtual DOM
   const vtree$ = locationFilterSinks.DOM.publishValue(null);
   vtree$.connect();
 
