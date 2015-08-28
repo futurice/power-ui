@@ -88,32 +88,55 @@ function makeFilterFn$(selectedLocation$) {
   .startWith(x => x);
 }
 
-function peoplePage(sources) {
-  const peopleArray$ = sources.HTTP
-    .filter(res$ => res$.request === `${URL_ROOT}/people/`)
+function peoplePageHTTP(sources, urlRoot) {
+  const request$ = Rx.Observable.just(`${urlRoot}/people/`);
+  const response$ = sources.HTTP
+    .filter(res$ => res$.request === `${urlRoot}/people/`)
     .mergeAll()
     .map(responseObj => responseObj.body.results);
+  const sink = {
+    request$,
+    response$,
+  };
+  return sink;
+}
 
-  const update$ = makeUpdate$(peopleArray$, sources.props$);
-  const state$ = model(update$);
-
-  const tribeFilterProps$ = state$.map(state => {
+function locationFilterWrapper(state$, sourceDOM) {
+  const locationFilterProps$ = state$.map(state => {
     return {
       selectedLocation: state.filters.location,
       tribes: state.tribes,
     };
   });
-  const tribeFilterSinks = locationFilter({DOM: sources.DOM, props$: tribeFilterProps$});
-  const tribeFilterVTree$ = tribeFilterSinks.DOM.replay(null, 1);
-  tribeFilterVTree$.connect();
-  const filterFn$ = makeFilterFn$(tribeFilterSinks.selectedLocation$);
+
+  const locationFilterSinks = locationFilter({
+    DOM: sourceDOM,
+    props$: locationFilterProps$,
+  });
+
+  const vtree$ = locationFilterSinks.DOM.publishValue(null);
+  vtree$.connect();
+
+  return {
+    vtree$,
+    selected$: locationFilterSinks.selectedLocation$,
+  };
+}
+
+function peoplePage(sources) {
+  const peoplePageHTTPSink = peoplePageHTTP(sources, URL_ROOT);
+  const update$ = makeUpdate$(peoplePageHTTPSink.response$, sources.props$);
+  const state$ = model(update$);
+  const locationFilterSinks = locationFilterWrapper(state$, sources.DOM);
+  const filterFn$ = makeFilterFn$(locationFilterSinks.selected$);
   const filteredState$ = Rx.Observable.combineLatest(state$, filterFn$,
     (state, filterFn) => filterFn(state)
   );
+  const vtree$ = view(filteredState$, locationFilterSinks.vtree$);
 
   const sinks = {
-    DOM: view(filteredState$, tribeFilterVTree$),
-    HTTP: Rx.Observable.just(`${URL_ROOT}/people/`),
+    DOM: vtree$,
+    HTTP: peoplePageHTTPSink.request$,
   };
   return sinks;
 }
