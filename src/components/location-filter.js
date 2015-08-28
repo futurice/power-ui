@@ -1,6 +1,6 @@
 /** @jsx hJSX */
-import 'babel/polyfill';
 import {hJSX} from '@cycle/dom';
+import {smartStateFold} from '../utils';
 hJSX();
 
 function renderFilterButton(selected, label, value = label) {
@@ -41,30 +41,9 @@ function makeUpdate$(selectedLocation$) {
 }
 
 function model(props$, update$) {
-  return props$.combineLatest(update$, (props, update) => {
-    return update(props);
-  });
-  // TODO why isn't this below working?
-  // const state$ = props$
-  //   .do(props => {
-  //     console.log('tribe-filter props into state:');
-  //     console.log(props);
-  //   })
-  //   .merge(update$
-  //       .do(update => {
-  //         console.log('tribe-filter update into state:');
-  //         console.log(update);
-  //       })
-  //   )
-  //   .scan((prev, curr) => {
-  //     debugger;
-  //     if (typeof curr === 'function') {
-  //       return curr(prev);
-  //     } else {
-  //       return curr;
-  //     }
-  //   });
-  // return state$;
+  return props$.flatMapLatest(props =>
+    update$.startWith(props).scan(smartStateFold)
+  );
 }
 
 function locationFilter(sources) {

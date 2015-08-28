@@ -5,7 +5,7 @@ import {hJSX} from '@cycle/dom';
 import renderNavBar from './nav-bar';
 import renderDataTable from './data-table';
 import locationFilter from './location-filter';
-import {URL_ROOT} from '../utils';
+import {URL_ROOT, smartStateFold} from '../utils';
 hJSX();
 
 function view(state$, tribeFilterVTree$ = null) {
@@ -59,13 +59,7 @@ function model(update$) {
         availability: null,
       },
     })
-    .scan((prev, curr) => {
-      if (typeof curr === 'function') {
-        return curr(prev);
-      } else {
-        return curr;
-      }
-    })
+    .scan(smartStateFold)
     .shareReplay(1);
   return state$;
 }
