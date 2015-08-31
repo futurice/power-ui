@@ -8,7 +8,7 @@
     "watch:js": "watchify -g envify -t babelify src/index.js --debug -v -o dist/index.js",
     "watch:static": "cpx \"src/static/**/*\" dist --watch",
     "lint": "eslint src/app/*; exit 0",
-    "watch:lint": "esw -w src/app/*",
+    "watch:lint": "esw -w src/components/*",
     "watch:lintindex": "esw -w src/index.js",
     "watch": "npm run watch:js & npm run watch:static & npm run watch:lint & npm run watch:lintindex &"
   },
@@ -31,6 +31,7 @@
     "babelify": "^6.1.3",
     "browserify": "^11.0.1",
     "envify": "^3.4.0",
+    "lodash": "^3.10.1",
     "react": "^0.13.3",
     "react-router": "^0.13.3",
     "uglify-js": "^2.4.24"

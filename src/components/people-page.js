@@ -5,10 +5,12 @@ import {hJSX} from '@cycle/dom';
 import renderNavBar from './nav-bar';
 import renderDataTable from './data-table';
 import locationFilter from './location-filter';
+import textFilter from './text-filter';
 import {URL_ROOT, smartStateFold} from '../utils';
+import _ from 'lodash';
 hJSX();
 
-function view(state$, tribeFilterVTree$ = null) {
+function view(state$, tribeFilterVTree$ = null, textFilterVTree$ = null) {
   return state$.map(state => {
     return (
       <div>
@@ -21,7 +23,8 @@ function view(state$, tribeFilterVTree$ = null) {
               <div className="filtertools bottom-border-line">
                 <h3 className="bottom-border-line">Filter tools</h3>
                 <div className="textfilter">
-                  <p> Find a person or specific skills </p>
+                  <p>Find a person or specific skills</p>
+                  {textFilterVTree$}
                 </div>
               </div>
             </div>
@@ -64,8 +67,8 @@ function model(update$) {
   return state$;
 }
 
-function makeFilterFn$(selectedLocation$) {
-  return selectedLocation$.map(location =>
+function makeFilterFn$(selectedLocation$, searchValue$) {
+  const locationFilterFn$ = selectedLocation$.map(location =>
     function filterStateByLocation(oldState) {
       const newPeople = oldState.people.filter(person =>
         location === 'all'
@@ -73,13 +76,28 @@ function makeFilterFn$(selectedLocation$) {
         || location === person.tribe.country
         || location === person.tribe.site.name
       );
-      return {
-        ...oldState,
-        people: newPeople,
-      };
+      return {...oldState, people: newPeople};
     }
-  )
-  .startWith(x => x);
+  ).startWith(_.identity); // identity means "allow anything"
+
+  const searchFilterFn$ = searchValue$.map(searchValue =>
+    function filterStateBySearch(oldState) {
+      const newPeople = oldState.people.filter(person => {
+        const lowerCaseSearch = searchValue.toLowerCase();
+        return (
+          lowerCaseSearch === null
+          || lowerCaseSearch.length === 0
+          || person.name.toLowerCase().indexOf(lowerCaseSearch) !== -1
+          || person.skills.toLowerCase().indexOf(lowerCaseSearch) !== -1
+        );
+      });
+      return {...oldState, people: newPeople};
+    }
+  ).startWith(_.identity);
+
+  // AND-combine filter functions and compose them (`_.flow`) calling them one
+  // after the other.
+  return Rx.Observable.combineLatest(locationFilterFn$, searchFilterFn$, _.flow);
 }
 
 // Handle all HTTP networking logic of this page
@@ -116,9 +134,18 @@ function locationFilterWrapper(state$, sourceDOM) {
   vtree$.connect();
 
   return {
-    vtree$,
+    DOM: vtree$,
     selected$: locationFilterSinks.selectedLocation$,
   };
+}
+
+function textFilterWrapper(state$, sourceDOM) {
+  // Some preprocessing step to make the props from state$
+  const textFilterProps$ = state$.take(1).map(state => {
+    return {searchString: state.filters.search};
+  });
+  const sinks = textFilter({DOM: sourceDOM, props$: textFilterProps$});
+  return sinks;
 }
 
 function peoplePage(sources) {
@@ -126,11 +153,12 @@ function peoplePage(sources) {
   const update$ = makeUpdate$(peoplePageHTTPSink.response$, sources.props$);
   const state$ = model(update$);
   const locationFilterSinks = locationFilterWrapper(state$, sources.DOM);
-  const filterFn$ = makeFilterFn$(locationFilterSinks.selected$);
+  const textFilterSinks = textFilterWrapper(state$, sources.DOM);
+  const filterFn$ = makeFilterFn$(locationFilterSinks.selected$, textFilterSinks.value$);
   const filteredState$ = Rx.Observable.combineLatest(state$, filterFn$,
     (state, filterFn) => filterFn(state)
   );
-  const vtree$ = view(filteredState$, locationFilterSinks.vtree$);
+  const vtree$ = view(filteredState$, locationFilterSinks.DOM, textFilterSinks.DOM);
 
   const sinks = {
     DOM: vtree$,
