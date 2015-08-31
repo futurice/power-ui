@@ -12,7 +12,9 @@ const textFilterStyle = {
 };
 
 function TextFilter(sources) {
-  const value$ = sources.DOM.get('.TextFilter', 'input')
+  const value$ = sources.DOM
+    .select('.TextFilter')
+    .events('input')
     .map(ev => ev.target.value);
   const vtree$ = sources.props$.map(props =>
     <input

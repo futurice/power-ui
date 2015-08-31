@@ -63,7 +63,9 @@ function model(props$, update$) {
 }
 
 function LocationFilter(sources) {
-  const selectedLocation$ = sources.DOM.get('.LocationFilter button', 'click')
+  const selectedLocation$ = sources.DOM
+    .select('.LocationFilter button')
+    .events('click')
     .map(clickEv => clickEv.target.value)
     .startWith('all')
     .share();
