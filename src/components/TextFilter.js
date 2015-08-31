@@ -1,6 +1,6 @@
 /** @jsx hJSX */
-import {Rx} from '@cycle/core';
 import {hJSX} from '@cycle/dom';
+import {ControlledInputHook} from '../hooks';
 hJSX();
 
 const textFilterStyle = {
@@ -11,16 +11,16 @@ const textFilterStyle = {
   'padding': '3px',
 };
 
-function textFilter(sources) {
-  const value$ = sources.DOM.get('.filter-input-field', 'input')
+function TextFilter(sources) {
+  const value$ = sources.DOM.get('.TextFilter', 'input')
     .map(ev => ev.target.value);
   const vtree$ = sources.props$.map(props =>
     <input
       type="text"
-      className="filter-input-field"
+      className="TextFilter"
       style={textFilterStyle}
       placeholder="Add filter"
-      value={props.searchString}
+      data-hook={new ControlledInputHook(props.searchString)}
       />
   );
 
@@ -31,4 +31,4 @@ function textFilter(sources) {
   return sinks;
 }
 
-export default textFilter;
+export default TextFilter;

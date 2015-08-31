@@ -4,8 +4,8 @@ import {Rx} from '@cycle/core';
 import {hJSX} from '@cycle/dom';
 import renderNavBar from './nav-bar';
 import renderDataTable from './data-table';
-import locationFilter from './location-filter';
-import textFilter from './text-filter';
+import LocationFilter from './LocationFilter';
+import TextFilter from './TextFilter';
 import {URL_ROOT, smartStateFold} from '../utils';
 import _ from 'lodash';
 hJSX();
@@ -22,7 +22,7 @@ function view(state$, tribeFilterVTree$ = null, textFilterVTree$ = null) {
               {tribeFilterVTree$}
               <div className="filtertools bottom-border-line">
                 <h3 className="bottom-border-line">Filter tools</h3>
-                <div className="textfilter">
+                <div className="text-filter-container">
                   <p>Find a person or specific skills</p>
                   {textFilterVTree$}
                 </div>
@@ -124,41 +124,41 @@ function locationFilterWrapper(state$, sourceDOM) {
   });
 
   // Call the location filter program
-  const locationFilterSinks = locationFilter({
+  const locationFilter = LocationFilter({
     DOM: sourceDOM,
     props$: locationFilterProps$,
   });
 
   // Some postprocessing step to handle the location filter's virtual DOM
-  const vtree$ = locationFilterSinks.DOM.publishValue(null);
+  const vtree$ = locationFilter.DOM.publishValue(null);
   vtree$.connect();
 
   return {
     DOM: vtree$,
-    selected$: locationFilterSinks.selectedLocation$,
+    selected$: locationFilter.selectedLocation$,
   };
 }
 
 function textFilterWrapper(state$, sourceDOM) {
   // Some preprocessing step to make the props from state$
-  const textFilterProps$ = state$.take(1).map(state => {
-    return {searchString: state.filters.search};
-  });
-  const sinks = textFilter({DOM: sourceDOM, props$: textFilterProps$});
+  const textFilterProps$ = state$
+    .map(state => ({searchString: state.filters.search}))
+    .distinctUntilChanged(state => state.searchString);
+  const sinks = TextFilter({DOM: sourceDOM, props$: textFilterProps$});
   return sinks;
 }
 
-function peoplePage(sources) {
+function PeoplePage(sources) {
   const peoplePageHTTPSink = peoplePageHTTP(sources, URL_ROOT);
   const update$ = makeUpdate$(peoplePageHTTPSink.response$, sources.props$);
   const state$ = model(update$);
-  const locationFilterSinks = locationFilterWrapper(state$, sources.DOM);
-  const textFilterSinks = textFilterWrapper(state$, sources.DOM);
-  const filterFn$ = makeFilterFn$(locationFilterSinks.selected$, textFilterSinks.value$);
+  const locationFilter = locationFilterWrapper(state$, sources.DOM);
+  const textFilter = textFilterWrapper(state$, sources.DOM);
+  const filterFn$ = makeFilterFn$(locationFilter.selected$, textFilter.value$);
   const filteredState$ = Rx.Observable.combineLatest(state$, filterFn$,
     (state, filterFn) => filterFn(state)
   );
-  const vtree$ = view(filteredState$, locationFilterSinks.DOM, textFilterSinks.DOM);
+  const vtree$ = view(filteredState$, locationFilter.DOM, textFilter.DOM);
 
   const sinks = {
     DOM: vtree$,
@@ -167,4 +167,4 @@ function peoplePage(sources) {
   return sinks;
 }
 
-export default peoplePage;
+export default PeoplePage;

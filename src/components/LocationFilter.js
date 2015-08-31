@@ -37,7 +37,7 @@ function renderFilterButtonsForTribes(selectedLocation, tribes) {
 function view(state$) {
   return state$.map(state => {
     return (
-      <div className="locationFilter">
+      <div className="LocationFilter">
         {renderFilterButton(state.selectedLocation, 'Show all', 'all')}
         {renderFilterButton(state.selectedLocation, 'Helsinki')}
         {renderFilterButton(state.selectedLocation, 'Germany', 'DE')}
@@ -62,8 +62,8 @@ function model(props$, update$) {
   );
 }
 
-function locationFilter(sources) {
-  const selectedLocation$ = sources.DOM.get('.locationFilter button', 'click')
+function LocationFilter(sources) {
+  const selectedLocation$ = sources.DOM.get('.LocationFilter button', 'click')
     .map(clickEv => clickEv.target.value)
     .startWith('all')
     .share();
@@ -78,4 +78,4 @@ function locationFilter(sources) {
   return sinks;
 }
 
-export default locationFilter;
+export default LocationFilter;

@@ -3,28 +3,36 @@ import 'babel/polyfill';
 import {run, Rx} from '@cycle/core';
 import {makeDOMDriver, hJSX} from '@cycle/dom';
 import {makeHTTPDriver} from '@cycle/http';
-import peoplePage from './components/people-page';
+import PeoplePage from './components/PeoplePage';
 import {URL_ROOT} from './utils';
 
 hJSX();
 
-function main(sources) {
-  const tribesState$ = sources.HTTP
+function mainHTTPResponse(HTTPSource) {
+  const tribesState$ = HTTPSource
     .filter(res$ => res$.request === `${URL_ROOT}/tribes/`)
     .mergeAll()
     .map(res => res.body.results)
     .startWith([]);
+  return tribesState$;
+}
 
+function mainHTTPRequest(peoplePageHTTPRequest$) {
   const initialTribeRequest$ = Rx.Observable.just(`${URL_ROOT}/tribes/`);
-  const peoplePageSinks = peoplePage({...sources, props$: tribesState$});
-
   const request$ = Rx.Observable.merge(
     initialTribeRequest$,
-    peoplePageSinks.HTTP
+    peoplePageHTTPRequest$
   );
+  return request$;
+}
+
+function main(sources) {
+  const tribesState$ = mainHTTPResponse(sources.HTTP);
+  const peoplePage = PeoplePage({...sources, props$: tribesState$});
+  const request$ = mainHTTPRequest(peoplePage.HTTP);
 
   const sinks = {
-    DOM: Rx.Observable.just(peoplePageSinks.DOM),
+    DOM: peoplePage.DOM,
     HTTP: request$,
   };
   return sinks;
