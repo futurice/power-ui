@@ -1,14 +1,30 @@
 /** @jsx hJSX */
+import 'babel/polyfill';
 import {hJSX} from '@cycle/dom';
 import {smartStateFold} from '../utils';
 hJSX();
 
+const locationFilterButtonStyle = {
+  'border-radius': '8px',
+  'padding': '6px 10px',
+  'background': 'transparent',
+  'margin-right': '8px',
+  'border': 'solid 1px #D8D8D8',
+  'outline': 'none',
+};
+
+const locationFilterButtonActiveStyle = {
+  'background': '#000000',
+  'color': '#D8D8D8',
+};
+
 function renderFilterButton(selected, label, value = label) {
+  const style = {
+    ...locationFilterButtonStyle,
+    ...(selected === value ? locationFilterButtonActiveStyle : {}),
+  };
   return (
-    <button
-      className={selected === value ? 'active' : ''}
-      value={value}
-      >{label}</button>
+    <button value={value} style={style}>{label}</button>
   );
 }
 
