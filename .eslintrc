@@ -100,7 +100,7 @@
         "wrap-iife": [2, "outside"],
         "valid-typeof": 2,
         "max-statements": [1, 30],
-        "max-params": [1, 3],
+        "max-params": [1, 6],
         "no-var": 2,
         "no-unexpected-multiline": 2,
         "dot-location": [2, "property"],

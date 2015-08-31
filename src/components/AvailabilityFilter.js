@@ -2,22 +2,31 @@
 import {hJSX} from '@cycle/dom';
 import {ControlledInputHook} from '../hooks';
 import {inputFieldStyle} from '../styles/common';
+import _ from 'lodash';
 hJSX();
 
-function TextFilter(sources) {
+const availabilityFilterInputStyle = {
+  'width': '35px',
+  'text-align': 'center',
+  'margin-right': '10px',
+};
+
+function AvailabilityFilter(sources) {
   const value$ = sources.DOM
-    .select('.TextFilter .filter-input-field')
+    .select('.AvailabilityFilter .filter-input-field')
     .events('input')
     .map(ev => ev.target.value);
   const vtree$ = sources.props$.map(props =>
-    <div className="TextFilter">
+    <div className="AvailabilityFilter">
+      <p>Available for</p>
       <input
-        type="text"
+        type="num"
+        maxLength="2"
         className="filter-input-field"
-        style={inputFieldStyle}
-        placeholder="Add filter"
+        style={_.merge({}, inputFieldStyle, availabilityFilterInputStyle)}
         data-hook={new ControlledInputHook(props.value)}
         />
+      <span>MD</span>
     </div>
   );
 
@@ -28,4 +37,4 @@ function TextFilter(sources) {
   return sinks;
 }
 
-export default TextFilter;
+export default AvailabilityFilter;
