@@ -1,52 +1,44 @@
+/** @jsx hJSX */
 import 'babel/polyfill';
-import React from 'react/addons';
-import Router, {Route, RouteHandler} from 'react-router';
-import * as stores from './app/Stores';
+import {run, Rx} from '@cycle/core';
+import {makeDOMDriver, hJSX} from '@cycle/dom';
+import {makeHTTPDriver} from '@cycle/http';
+import PeoplePage from './components/PeoplePage';
+import {URL_ROOT} from './utils';
 
-// Views
-import PeoplePage from './app/PeoplePage';
-import ProjectsPage from './app/ProjectsPage';
-import PowerheadPage from './app/PowerheadPage';
+hJSX();
 
-const URL_ROOT = 'http://localhost:8000/api/v1';
-
-class App extends React.Component {
-  constructor(props) {
-    super(props);
-    this.state = {
-      tribes: null,
-    };
-  }
-  renderTribes(res) {
-    if (this.state.tribes) {
-      var newState = React.addons.update(this.state, {
-        tribes : {
-          $push : res.data.results,
-        },
-      });
-      this.setState(newState);
-    }
-    else
-      this.setState({tribes: res.data.results});
-  }
-
-  componentDidMount() {
-    stores.getNextPage(`${URL_ROOT}/tribes`, this.renderTribes.bind(this));
-  }
-
-  render() {
-    return <RouteHandler tribes={this.state.tribes} />;
-  }
+function mainHTTPResponse(HTTPSource) {
+  const tribesState$ = HTTPSource
+    .filter(res$ => res$.request === `${URL_ROOT}/tribes/`)
+    .mergeAll()
+    .map(res => res.body.results)
+    .startWith([]);
+  return tribesState$;
 }
 
-var routes = (
-  <Route name="app" path="/" handler={App}>
-  <Route name="people" handler={PeoplePage} />
-  <Route name="projects" handler={ProjectsPage} />
-  <Route name="powerhead" handler={PowerheadPage} />
-  </Route>
+function mainHTTPRequest(peoplePageHTTPRequest$) {
+  const initialTribeRequest$ = Rx.Observable.just(`${URL_ROOT}/tribes/`);
+  const request$ = Rx.Observable.merge(
+    initialTribeRequest$,
+    peoplePageHTTPRequest$
   );
+  return request$;
+}
 
-Router.run(routes, function (Handler) {
-  React.render(<Handler/>, document.querySelector('.app-container'));
+function main(sources) {
+  const tribesState$ = mainHTTPResponse(sources.HTTP);
+  const peoplePage = PeoplePage({...sources, props$: tribesState$});
+  const request$ = mainHTTPRequest(peoplePage.HTTP);
+
+  const sinks = {
+    DOM: peoplePage.DOM,
+    HTTP: request$,
+  };
+  return sinks;
+}
+
+run(main, {
+  DOM: makeDOMDriver('.app-container'),
+  HTTP: makeHTTPDriver({autoSubscribe: true}),
 });
