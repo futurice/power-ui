@@ -5,6 +5,7 @@ body {
   padding-top: 50px;
   /* Leave some extra scrolling room at bottom*/
   padding-bottom: 25vh;
+  font-family: "SharpSansNo1-Bold", "Raleway", sans-serif;
 }
 
 /* Display dropdown menus by hovering */
