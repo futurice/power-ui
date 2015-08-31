@@ -3,8 +3,8 @@ import 'babel/polyfill';
 import {run, Rx} from '@cycle/core';
 import {makeDOMDriver, hJSX} from '@cycle/dom';
 import {makeHTTPDriver} from '@cycle/http';
-import PeoplePage from './components/pages/PeoplePage';
-import {URL_ROOT} from './utils';
+import PeoplePage from 'power-ui/components/pages/PeoplePage';
+import {URL_ROOT} from 'power-ui/utils';
 hJSX();
 
 function mainHTTPResponse(HTTPSource) {

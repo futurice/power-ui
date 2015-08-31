@@ -1,8 +1,8 @@
 /** @jsx hJSX */
 import {hJSX} from '@cycle/dom';
-import {ControlledInputHook} from '../../hooks';
-import {inputFieldStyle} from '../../styles/common';
-import spacing from '../../styles/spacing';
+import {ControlledInputHook} from 'power-ui/hooks';
+import {inputFieldStyle} from 'power-ui/styles/common';
+import spacing from 'power-ui/styles/spacing';
 import _ from 'lodash';
 hJSX();
 

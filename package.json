@@ -3,14 +3,14 @@
   "private": true,
   "version": "1.0.0",
   "description": "power.futurice.com new UI",
-  "main": "index.js",
+  "main": "src/index.js",
   "scripts": {
+    "lint": "eslint src/**/*.js; exit 0",
+    "watch:lint": "esw -w src/**/*.js",
+    "prewatch:js": "cd node_modules && ln -nsf ../src power-ui",
     "watch:js": "watchify -g envify -t babelify src/index.js --debug -v -o dist/index.js",
     "watch:static": "cpx \"src/static/**/*\" dist --watch",
-    "lint": "eslint src/app/*; exit 0",
-    "watch:lint": "esw -w src/components/*",
-    "watch:lintindex": "esw -w src/index.js",
-    "watch": "npm run watch:js & npm run watch:static & npm run watch:lint & npm run watch:lintindex &"
+    "watch": "npm run watch:js & npm run watch:static & npm run watch:lint &"
   },
   "repository": {
     "type": "git",

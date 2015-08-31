@@ -1,5 +1,5 @@
-import spacing from './spacing';
-import palette from './palette';
+import spacing from 'power-ui/styles/spacing';
+import palette from 'power-ui/styles/palette';
 
 export default {
   inputFieldStyle: {

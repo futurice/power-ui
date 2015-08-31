@@ -2,15 +2,15 @@
 import 'babel/polyfill';
 import {Rx} from '@cycle/core';
 import {hJSX} from '@cycle/dom';
-import renderNavBar from '../widgets/nav-bar';
-import renderDataTable from '../widgets/data-table';
-import LocationFilter from '../widgets/LocationFilter';
-import TextFilter from '../widgets/TextFilter';
-import AvailabilityFilter from '../widgets/AvailabilityFilter';
-import {URL_ROOT, smartStateFold} from '../../utils';
-import {contentWrapperStyle, borderBottomLineStyle} from '../../styles/common';
-import spacing from '../../styles/spacing';
-import palette from '../../styles/palette';
+import renderNavBar from 'power-ui/components/widgets/nav-bar';
+import renderDataTable from 'power-ui/components/widgets/data-table';
+import LocationFilter from 'power-ui/components/widgets/LocationFilter';
+import TextFilter from 'power-ui/components/widgets/TextFilter';
+import AvailabilityFilter from 'power-ui/components/widgets/AvailabilityFilter';
+import {URL_ROOT, smartStateFold} from 'power-ui/utils';
+import {contentWrapperStyle, borderBottomLineStyle} from 'power-ui/styles/common';
+import spacing from 'power-ui/styles/spacing';
+import palette from 'power-ui/styles/palette';
 import _ from 'lodash';
 hJSX();
 
