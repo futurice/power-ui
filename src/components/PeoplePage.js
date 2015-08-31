@@ -11,34 +11,6 @@ import {URL_ROOT, smartStateFold} from '../utils';
 import _ from 'lodash';
 hJSX();
 
-function view(state$, locationFilterVTree$ = null, textFilterVTree$ = null,
-              availabilityFilterVTree$ = null) {
-  return state$.map(state => {
-    return (
-      <div>
-        {renderNavBar()}
-        <div className="center-content">
-          <div className="content-wrapper">
-            <h1>People</h1>
-            <div className="filters">
-              {locationFilterVTree$}
-              <div className="filtertools bottom-border-line">
-                <h3 className="bottom-border-line">Filter tools</h3>
-                <div className="text-filter-container">
-                  <p>Find a person or specific skills</p>
-                  {textFilterVTree$}
-                </div>
-                {availabilityFilterVTree$}
-              </div>
-            </div>
-            {renderDataTable(state.people)}
-          </div>
-        </div>
-      </div>
-    );
-  });
-}
-
 function makeUpdate$(peopleArray$, props$) {
   const updatePeopleArray$ = peopleArray$
     .map(peopleArray => function updateStateWithPeopleArray(oldState) {
@@ -119,8 +91,36 @@ function makeFilterFn$(selectedLocation$, searchValue$, availabilityValue$) {
   );
 }
 
+function view(state$, locationFilterVTree$ = null, textFilterVTree$ = null,
+              availabilityFilterVTree$ = null) {
+  return state$.map(state => {
+    return (
+      <div>
+        {renderNavBar()}
+        <div className="center-content">
+          <div className="content-wrapper">
+            <h1>People</h1>
+            <div className="filters">
+              {locationFilterVTree$}
+              <div className="filtertools bottom-border-line">
+                <h3 className="bottom-border-line">Filter tools</h3>
+                <div className="text-filter-container">
+                  <p>Find a person or specific skills</p>
+                  {textFilterVTree$}
+                </div>
+                {availabilityFilterVTree$}
+              </div>
+            </div>
+            {renderDataTable(state.people)}
+          </div>
+        </div>
+      </div>
+    );
+  });
+}
+
 // Handle all HTTP networking logic of this page
-function peoplePageHTTP(sources, urlRoot) {
+function PeoplePageHTTP(sources, urlRoot) {
   const request$ = Rx.Observable.just(`${urlRoot}/people/`);
   const response$ = sources.HTTP
     .filter(res$ => res$.request === `${urlRoot}/people/`)
@@ -177,8 +177,8 @@ function availabilityFilterWrapper(state$, sourceDOM) {
 }
 
 function PeoplePage(sources) {
-  const peoplePageHTTPSink = peoplePageHTTP(sources, URL_ROOT);
-  const update$ = makeUpdate$(peoplePageHTTPSink.response$, sources.props$);
+  const peoplePageHTTP = PeoplePageHTTP(sources, URL_ROOT);
+  const update$ = makeUpdate$(peoplePageHTTP.response$, sources.props$);
   const state$ = model(update$);
   const locationFilter = locationFilterWrapper(state$, sources.DOM);
   const textFilter = textFilterWrapper(state$, sources.DOM);
@@ -200,7 +200,7 @@ function PeoplePage(sources) {
 
   const sinks = {
     DOM: vtree$,
-    HTTP: peoplePageHTTPSink.request$,
+    HTTP: peoplePageHTTP.request$,
   };
   return sinks;
 }
