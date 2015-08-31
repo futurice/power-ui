@@ -2,13 +2,19 @@
 import {hJSX} from '@cycle/dom';
 import {ControlledInputHook} from '../hooks';
 import {inputFieldStyle} from '../styles/common';
+import spacing from '../styles/spacing';
 import _ from 'lodash';
 hJSX();
+
+const availabilityFilterStyle = {
+  'display': 'inline-block',
+};
 
 const availabilityFilterInputStyle = {
   'width': '35px',
   'text-align': 'center',
-  'margin-right': '10px',
+  'margin-right': spacing.small,
+  'padding': spacing.tiny,
 };
 
 function AvailabilityFilter(sources) {
@@ -17,7 +23,7 @@ function AvailabilityFilter(sources) {
     .events('input')
     .map(ev => ev.target.value);
   const vtree$ = sources.props$.map(props =>
-    <div className="AvailabilityFilter">
+    <div className="AvailabilityFilter" style={availabilityFilterStyle}>
       <p>Available for</p>
       <input
         type="num"

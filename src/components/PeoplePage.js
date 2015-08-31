@@ -8,6 +8,9 @@ import LocationFilter from './LocationFilter';
 import TextFilter from './TextFilter';
 import AvailabilityFilter from './AvailabilityFilter';
 import {URL_ROOT, smartStateFold} from '../utils';
+import {contentWrapperStyle, borderBottomLineStyle} from '../styles/common';
+import spacing from '../styles/spacing';
+import palette from '../styles/palette';
 import _ from 'lodash';
 hJSX();
 
@@ -91,34 +94,6 @@ function makeFilterFn$(selectedLocation$, searchValue$, availabilityValue$) {
   );
 }
 
-function view(state$, locationFilterVTree$ = null, textFilterVTree$ = null,
-              availabilityFilterVTree$ = null) {
-  return state$.map(state => {
-    return (
-      <div>
-        {renderNavBar()}
-        <div className="center-content">
-          <div className="content-wrapper">
-            <h1>People</h1>
-            <div className="filters">
-              {locationFilterVTree$}
-              <div className="filtertools bottom-border-line">
-                <h3 className="bottom-border-line">Filter tools</h3>
-                <div className="text-filter-container">
-                  <p>Find a person or specific skills</p>
-                  {textFilterVTree$}
-                </div>
-                {availabilityFilterVTree$}
-              </div>
-            </div>
-            {renderDataTable(state.people)}
-          </div>
-        </div>
-      </div>
-    );
-  });
-}
-
 // Handle all HTTP networking logic of this page
 function PeoplePageHTTP(sources, urlRoot) {
   const PEOPLE_URL = `${urlRoot}/people/`;
@@ -182,6 +157,56 @@ function availabilityFilterWrapper(state$, sourceDOM) {
     .distinctUntilChanged(state => state.value);
   const sinks = AvailabilityFilter({DOM: sourceDOM, props$});
   return sinks;
+}
+
+const filtersContainerStyle = {
+  'font-weight': 'bold',
+};
+
+function renderVerticalFilterSeparator() {
+  const style = {
+    'display': 'inline-block',
+    'width': '1px',
+    'background-color': palette.grayLight,
+    'margin': `0 ${spacing.normal}`,
+  };
+  return (
+    <div style={style}/>
+  );
+}
+
+const filtersListStyle = {
+  'display': 'flex',
+  'flex-direction': 'row',
+  'flex-wrap': 'wrap',
+  'align-items': 'stretch',
+  'padding': `${spacing.small} 0`,
+};
+
+function view(state$, locationFilterVTree$ = null, textFilterVTree$ = null,
+              availabilityFilterVTree$ = null) {
+  return state$.map(state => {
+    return (
+      <div>
+        {renderNavBar()}
+        <div style={contentWrapperStyle}>
+          <h1>People</h1>
+          <div style={filtersContainerStyle}>
+            {locationFilterVTree$}
+            <div style={borderBottomLineStyle}>
+              <h3 style={borderBottomLineStyle}>Filter tools</h3>
+              <div style={filtersListStyle}>
+                {textFilterVTree$}
+                {renderVerticalFilterSeparator()}
+                {availabilityFilterVTree$}
+              </div>
+            </div>
+          </div>
+        </div>
+        {renderDataTable(state.people)}
+      </div>
+    );
+  });
 }
 
 function PeoplePage(sources) {
