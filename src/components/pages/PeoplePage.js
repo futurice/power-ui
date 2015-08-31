@@ -2,15 +2,15 @@
 import 'babel/polyfill';
 import {Rx} from '@cycle/core';
 import {hJSX} from '@cycle/dom';
-import renderNavBar from './nav-bar';
-import renderDataTable from './data-table';
-import LocationFilter from './LocationFilter';
-import TextFilter from './TextFilter';
-import AvailabilityFilter from './AvailabilityFilter';
-import {URL_ROOT, smartStateFold} from '../utils';
-import {contentWrapperStyle, borderBottomLineStyle} from '../styles/common';
-import spacing from '../styles/spacing';
-import palette from '../styles/palette';
+import renderNavBar from '../widgets/nav-bar';
+import renderDataTable from '../widgets/data-table';
+import LocationFilter from '../widgets/LocationFilter';
+import TextFilter from '../widgets/TextFilter';
+import AvailabilityFilter from '../widgets/AvailabilityFilter';
+import {URL_ROOT, smartStateFold} from '../../utils';
+import {contentWrapperStyle, borderBottomLineStyle} from '../../styles/common';
+import spacing from '../../styles/spacing';
+import palette from '../../styles/palette';
 import _ from 'lodash';
 hJSX();
 

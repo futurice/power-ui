@@ -1,7 +1,7 @@
 /** @jsx hJSX */
 import {hJSX} from '@cycle/dom';
-import {ControlledInputHook} from '../hooks';
-import {inputFieldStyle} from '../styles/common';
+import {ControlledInputHook} from '../../hooks';
+import {inputFieldStyle} from '../../styles/common';
 hJSX();
 
 const textFilterStyle = {

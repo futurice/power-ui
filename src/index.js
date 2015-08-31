@@ -3,9 +3,8 @@ import 'babel/polyfill';
 import {run, Rx} from '@cycle/core';
 import {makeDOMDriver, hJSX} from '@cycle/dom';
 import {makeHTTPDriver} from '@cycle/http';
-import PeoplePage from './components/PeoplePage';
+import PeoplePage from './components/pages/PeoplePage';
 import {URL_ROOT} from './utils';
-
 hJSX();
 
 function mainHTTPResponse(HTTPSource) {
