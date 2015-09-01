@@ -10,7 +10,7 @@ function TextFilter(sources) {
     .events('input')
     .map(ev => ev.target.value);
   const vtree$ = sources.props$.map(props =>
-    <div className="TextFilter" style={styles.textFilter}>
+    <div className={`TextFilter ${styles.textFilter}`}>
       <p>Find a person or specific skills</p>
       <input type="text" placeholder="Add filter"
         data-hook={new ControlledInputHook(props.value)}
