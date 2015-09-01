@@ -1,5 +1,4 @@
 /** @jsx hJSX */
-import 'babel/polyfill';
 import {Rx} from '@cycle/core';
 import {hJSX} from '@cycle/dom';
 import renderNavBar from 'power-ui/components/widgets/nav-bar';

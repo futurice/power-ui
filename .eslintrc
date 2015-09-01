@@ -131,8 +131,5 @@
         "jsx": true,
         "experimentalObjectRestSpread": true
     },
-    "parser": "babel-eslint",
-    "plugins": [
-        "react"
-    ]
+    "parser": "babel-eslint"
 }

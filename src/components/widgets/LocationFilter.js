@@ -1,5 +1,4 @@
 /** @jsx hJSX */
-import 'babel/polyfill';
 import {hJSX} from '@cycle/dom';
 import {smartStateFold} from 'power-ui/utils';
 hJSX();

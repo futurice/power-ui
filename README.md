@@ -12,14 +12,19 @@ npm install
 
 ## Running in development mode
 
+Clone the backend repository (http://github.com/futurice/power) and follow its instructions to run it locally in your computer. It is expected to run at `http://localhost:8000/api/v1/`.
+
 To continuously compile and lint:
 ```
-npm watch
+npm run watch
 ```
 
-Also run a simple server to serve the files in dist:
+Then open your browser at `localhost:8080`.
+
+## Building for production
+
 ```
-python -m SimpleHTTPServer 4000
+npm run build
 ```
 
 ## Code Conventions

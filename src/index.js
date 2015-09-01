@@ -1,5 +1,4 @@
 /** @jsx hJSX */
-import 'babel/polyfill';
 import {run, Rx} from '@cycle/core';
 import {makeDOMDriver, hJSX} from '@cycle/dom';
 import {makeHTTPDriver} from '@cycle/http';

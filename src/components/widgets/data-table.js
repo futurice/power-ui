@@ -1,8 +1,8 @@
 /** @jsx hJSX */
-import 'babel/polyfill';
 import {hJSX} from '@cycle/dom';
 import spacing from 'power-ui/styles/spacing';
 import palette from 'power-ui/styles/palette';
+import styles from './data-table.scss';
 hJSX();
 
 const fullWidthStyle = {
@@ -101,7 +101,7 @@ function tableFooters() {
 
 function renderDataTable(people) {
   return (
-    <div style={fullWidthStyle}>
+    <div className={styles.dataTable}>
       <table style={fullWidthStyle}>
         <thead>
           {tableHeaders()}
