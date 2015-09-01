@@ -33,6 +33,11 @@
   @extend .lastColumn;
 }
 
+.dataTable table tr td {
+  border-bottom: 1px solid $colorGrayLight;
+  padding: $spaceSmall 0;
+}
+
 .dataTable table tr:nth-child(even) td {
   background: $colorAlmostWhite;
 }
