@@ -6,17 +6,17 @@ hJSX();
 
 function interpret(DOM) {
   return {
-    selectedLocation$: DOM.select('.LocationFilter button').events('click')
+    selectLocation$: DOM.select('.LocationFilter button').events('click')
       .map(clickEv => clickEv.target.value)
       .startWith('all')
       .share(),
   };
 }
 
-function makeUpdate$(selectedLocation$) {
-  return selectedLocation$
-    .map(selectedLocation => function updateSelectedLocation(oldState) {
-      return {...oldState, selectedLocation};
+function makeUpdate$(selectLocation$) {
+  return selectLocation$
+    .map(location => function updateLocation(oldState) {
+      return {...oldState, location};
     });
 }
 
@@ -26,8 +26,8 @@ function model(props$, update$) {
   );
 }
 
-function renderFilterButton(selected, label, value = label) {
-  const className = selected === value
+function renderFilterButton(selectedLocation, label, value = label) {
+  const className = selectedLocation === value
     ? buttonStyles.active
     : buttonStyles.normal;
   return (
@@ -45,10 +45,10 @@ function view(state$) {
   return state$.map(state => {
     return (
       <div className="LocationFilter">
-        {renderFilterButton(state.selectedLocation, 'Show all', 'all')}
-        {renderFilterButton(state.selectedLocation, 'Helsinki')}
-        {renderFilterButton(state.selectedLocation, 'Germany', 'DE')}
-        {renderFilterButtonsForTribes(state.selectedLocation, state.tribes)}
+        {renderFilterButton(state.location, 'Show all', 'all')}
+        {renderFilterButton(state.location, 'Helsinki')}
+        {renderFilterButton(state.location, 'Germany', 'DE')}
+        {renderFilterButtonsForTribes(state.location, state.tribes)}
       </div>
     );
   }).startWith(
@@ -58,13 +58,13 @@ function view(state$) {
 
 function LocationFilter(sources) {
   const actions = interpret(sources.DOM);
-  const update$ = makeUpdate$(actions.selectedLocation$);
+  const update$ = makeUpdate$(actions.selectLocation$);
   const state$ = model(sources.props$, update$);
   const vtree$ = view(state$);
 
   const sinks = {
     DOM: vtree$,
-    selectedLocation$: actions.selectedLocation$,
+    value$: actions.selectLocation$,
   };
   return sinks;
 }
