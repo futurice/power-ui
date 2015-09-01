@@ -5,7 +5,7 @@ import PeoplePageHTTP from './http.js';
 import {model, filterState} from './model.js';
 import view from './view.js';
 
-function locationFilterWrapper(state$, DOM) {
+function LocationFilterWrapper(state$, DOM) {
   // Some preprocessing step to make the props for the location filter
   const props$ = state$
     .map(state => ({location: state.filters.location, tribes: state.tribes}));
@@ -17,7 +17,7 @@ function locationFilterWrapper(state$, DOM) {
   return {DOM: vtree$, value$: locationFilter.value$};
 }
 
-function textFilterWrapper(state$, DOM) {
+function TextFilterWrapper(state$, DOM) {
   // Some preprocessing step to make the props from state$
   const props$ = state$
     .map(state => ({value: state.filters.search}))
@@ -25,7 +25,7 @@ function textFilterWrapper(state$, DOM) {
   return TextFilter({DOM, props$});
 }
 
-function availabilityFilterWrapper(state$, sourceDOM) {
+function AvailabilityFilterWrapper(state$, sourceDOM) {
   // Some preprocessing step to make the props from state$
   const props$ = state$
     .map(state => ({value: state.filters.availability}))
@@ -37,9 +37,9 @@ function availabilityFilterWrapper(state$, sourceDOM) {
 function PeoplePage(sources) {
   const peoplePageHTTP = PeoplePageHTTP(sources);
   const state$ = model(peoplePageHTTP.response$, sources.props$);
-  const locationFilter = locationFilterWrapper(state$, sources.DOM);
-  const textFilter = textFilterWrapper(state$, sources.DOM);
-  const availabilityFilter = availabilityFilterWrapper(state$, sources.DOM);
+  const locationFilter = LocationFilterWrapper(state$, sources.DOM);
+  const textFilter = TextFilterWrapper(state$, sources.DOM);
+  const availabilityFilter = AvailabilityFilterWrapper(state$, sources.DOM);
   const filteredState$ = filterState(
     state$,
     locationFilter.value$, textFilter.value$, availabilityFilter.value$
