@@ -1,0 +1,22 @@
+@import "~styles/palette.scss";
+@import "~styles/spacing.scss";
+@import "~styles/common.scss";
+
+.filtersContainer {
+  font-weight: bold;
+}
+
+.verticalSeparator {
+  display: inline-block;
+  width: 1px;
+  background-color: $colorGrayLight;
+  margin: 0 $spaceNormal;
+}
+
+.filtersList {
+  display: flex;
+  flex-direction: row;
+  flex-wrap: wrap;
+  align-items: stretch;
+  padding: $spaceSmall 0;
+}

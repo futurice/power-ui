@@ -1,0 +1,21 @@
+@import "./palette.scss";
+@import "./spacing.scss";
+
+.inputFieldStyle {
+  margin-left: $spaceSmaller;
+  font-weight: normal;
+  border-radius: 5px;
+  border: 1px solid #d0d0d0;
+  padding: $spaceTiny $spaceSmall;
+}
+
+.contentWrapper {
+  margin: $spaceNormal $spaceBig;
+  display: flex;
+  flex-direction: column;
+}
+
+.borderBottomLine {
+  border-bottom: solid 1px $colorGrayLight;
+  padding-bottom: $spaceSmall;
+}

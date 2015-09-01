@@ -1,0 +1,9 @@
+@import "~styles/common.scss";
+
+.textFilter {
+  display: inline-block;
+}
+
+.textFilter input {
+  @extend .inputFieldStyle;
+}

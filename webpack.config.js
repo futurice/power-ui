@@ -46,7 +46,7 @@ module.exports = {
   ],
 
   resolve: {
-    modulesDirectories: ['node_modules', 'components']
+    modulesDirectories: ['node_modules', 'src']
   },
 
   plugins: [

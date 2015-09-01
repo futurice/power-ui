@@ -1,25 +1,7 @@
 /** @jsx hJSX */
 import {hJSX} from '@cycle/dom';
-import spacing from 'power-ui/styles/spacing';
-import palette from 'power-ui/styles/palette';
-import styles from './data-table.scss';
+import styles from './styles.scss';
 hJSX();
-
-const fullWidthStyle = {
-  'width': '100%',
-};
-
-const tableHeaderRowStyle = {
-  'border-bottom': `2px solid ${palette.black}`,
-};
-
-const firstColumnStyle = {
-  'padding-left': spacing.big,
-};
-
-const lastColumnStyle = {
-  'padding-right': spacing.big,
-};
 
 function floatFormatter(cell, n) {
   const num = parseFloat(cell);
@@ -39,14 +21,14 @@ function percentageFormatter(cell) {
 
 function tableHeaders() {
   return (
-    <tr style={tableHeaderRowStyle}>
-      <th style={firstColumnStyle}>Name</th>
+    <tr>
+      <th>Name</th>
       <th>Tribe</th>
       <th>man_days_available (hide me)</th>
       <th>Skills</th>
       <th>Project</th>
       <th>Unused UTZ in [month]</th>
-      <th style={lastColumnStyle}>[ Timeline here ] </th>
+      <th>[ Timeline here ] </th>
     </tr>
   );
 }
@@ -56,13 +38,13 @@ function tableRows(people) {
     return people.map((p) => {
       return (
        <tr key={p.id}>
-         <td style={firstColumnStyle}>{p.name}</td>
+         <td>{p.name}</td>
          <td>{p.tribe.name}</td>
          <td>{floatFormatter(p.man_days_available, 2)}</td>
          <td>{p.skills}</td>
          <td>{p.current_projects}</td>
          <td>{percentageFormatter(p.unused_utz_in_month)}</td>
-         <td style={lastColumnStyle}>
+         <td>
            {p.allocations.map((a) => {
              return (
                <span key={a.id}>
@@ -102,7 +84,7 @@ function tableFooters() {
 function renderDataTable(people) {
   return (
     <div className={styles.dataTable}>
-      <table style={fullWidthStyle}>
+      <table>
         <thead>
           {tableHeaders()}
         </thead>
