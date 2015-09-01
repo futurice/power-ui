@@ -4,14 +4,16 @@
 .normal {
   border-radius: 8px;
   padding: $spaceSmaller $spaceSmall;
-  background: transparent;
   margin-right: $spaceSmall;
-  border: solid 1px $colorGrayLight;
   outline: none;
+  background: transparent;
+  color: $colorBlack;
+  border: solid 1px $colorGrayLight;
 }
 
 .active {
   @extend .normal;
   background: $colorBlack;
   color: $colorWhite;
+  border: solid 1px $colorBlack;
 }
