@@ -1,0 +1,17 @@
+@import "~styles/spacing.scss";
+@import "~styles/common.scss";
+
+.normal {
+  border-radius: 8px;
+  padding: $spaceSmaller $spaceSmall;
+  background: transparent;
+  margin-right: $spaceSmall;
+  border: solid 1px $colorGrayLight;
+  outline: none;
+}
+
+.active {
+  @extend .normal;
+  background: $colorBlack;
+  color: $colorWhite;
+}

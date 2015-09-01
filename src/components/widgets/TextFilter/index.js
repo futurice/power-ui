@@ -1,26 +1,18 @@
 /** @jsx hJSX */
 import {hJSX} from '@cycle/dom';
 import {ControlledInputHook} from 'power-ui/hooks';
-import {inputFieldStyle} from 'power-ui/styles/common';
+import styles from './styles.scss';
 hJSX();
-
-const textFilterStyle = {
-  'display': 'inline-block',
-};
 
 function TextFilter(sources) {
   const value$ = sources.DOM
-    .select('.TextFilter .filter-input-field')
+    .select('.TextFilter input')
     .events('input')
     .map(ev => ev.target.value);
   const vtree$ = sources.props$.map(props =>
-    <div className="TextFilter" style={textFilterStyle}>
+    <div className="TextFilter" style={styles.textFilter}>
       <p>Find a person or specific skills</p>
-      <input
-        type="text"
-        className="filter-input-field"
-        style={inputFieldStyle}
-        placeholder="Add filter"
+      <input type="text" placeholder="Add filter"
         data-hook={new ControlledInputHook(props.value)}
         />
     </div>

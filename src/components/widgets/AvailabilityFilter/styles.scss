@@ -1,0 +1,14 @@
+@import "~styles/spacing.scss";
+@import "~styles/common.scss";
+
+.availabilityFilter {
+  display: inline-block;
+}
+
+.availabilityFilter input {
+  @extend .inputFieldStyle;
+  width: 35px;
+  text-align: center;
+  margin-right: $spaceSmall;
+  padding: $spaceTiny;
+}

@@ -1,9 +1,8 @@
 /** @jsx hJSX */
-import 'babel/polyfill';
 import {run, Rx} from '@cycle/core';
 import {makeDOMDriver, hJSX} from '@cycle/dom';
 import {makeHTTPDriver} from '@cycle/http';
-import PeoplePage from 'power-ui/components/pages/PeoplePage';
+import PeoplePage from 'power-ui/components/pages/PeoplePage/index';
 import {URL_ROOT} from 'power-ui/utils';
 hJSX();
 

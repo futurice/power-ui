@@ -1,16 +1,13 @@
 /** @jsx hJSX */
-import 'babel/polyfill';
 import {Rx} from '@cycle/core';
 import {hJSX} from '@cycle/dom';
 import renderNavBar from 'power-ui/components/widgets/nav-bar';
-import renderDataTable from 'power-ui/components/widgets/data-table';
-import LocationFilter from 'power-ui/components/widgets/LocationFilter';
-import TextFilter from 'power-ui/components/widgets/TextFilter';
-import AvailabilityFilter from 'power-ui/components/widgets/AvailabilityFilter';
+import renderDataTable from 'power-ui/components/widgets/DataTable/index';
+import LocationFilter from 'power-ui/components/widgets/LocationFilter/index';
+import TextFilter from 'power-ui/components/widgets/TextFilter/index';
+import AvailabilityFilter from 'power-ui/components/widgets/AvailabilityFilter/index';
 import {URL_ROOT, smartStateFold} from 'power-ui/utils';
-import {contentWrapperStyle, borderBottomLineStyle} from 'power-ui/styles/common';
-import spacing from 'power-ui/styles/spacing';
-import palette from 'power-ui/styles/palette';
+import styles from './styles.scss';
 import _ from 'lodash';
 hJSX();
 
@@ -159,45 +156,21 @@ function availabilityFilterWrapper(state$, sourceDOM) {
   return sinks;
 }
 
-const filtersContainerStyle = {
-  'font-weight': 'bold',
-};
-
-function renderVerticalFilterSeparator() {
-  const style = {
-    'display': 'inline-block',
-    'width': '1px',
-    'background-color': palette.grayLight,
-    'margin': `0 ${spacing.normal}`,
-  };
-  return (
-    <div style={style}/>
-  );
-}
-
-const filtersListStyle = {
-  'display': 'flex',
-  'flex-direction': 'row',
-  'flex-wrap': 'wrap',
-  'align-items': 'stretch',
-  'padding': `${spacing.small} 0`,
-};
-
 function view(state$, locationFilterVTree$ = null, textFilterVTree$ = null,
               availabilityFilterVTree$ = null) {
   return state$.map(state => {
     return (
       <div>
         {renderNavBar()}
-        <div style={contentWrapperStyle}>
+        <div className={styles.contentWrapper}>
           <h1>People</h1>
-          <div style={filtersContainerStyle}>
+          <div className={styles.filtersContainer}>
             {locationFilterVTree$}
-            <div style={borderBottomLineStyle}>
-              <h3 style={borderBottomLineStyle}>Filter tools</h3>
-              <div style={filtersListStyle}>
+            <div className={styles.borderBottomLine}>
+              <h3 className={styles.borderBottomLine}>Filter tools</h3>
+              <div className={styles.filtersList}>
                 {textFilterVTree$}
-                {renderVerticalFilterSeparator()}
+                <div className={styles.verticalSeparator}/>
                 {availabilityFilterVTree$}
               </div>
             </div>

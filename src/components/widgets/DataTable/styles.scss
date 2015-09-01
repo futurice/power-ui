@@ -1,0 +1,42 @@
+@import "~styles/palette.scss";
+@import "~styles/spacing.scss";
+
+.dataTable table {
+  width: 100%;
+}
+
+.dataTable table thead tr {
+  border-bottom: 2px solid $colorBlack;
+}
+
+.firstColumn {
+  padding-left: $spaceBig;
+}
+
+.lastColumn {
+  padding-right: $spaceBig;
+}
+
+.dataTable table thead tr th:nth-child(1) {
+  @extend .firstColumn;
+}
+
+.dataTable table thead tr th:nth-last-child(1) {
+  @extend .lastColumn;
+}
+
+.dataTable table tr td:nth-child(1) {
+  @extend .firstColumn;
+}
+
+.dataTable table tr td:nth-last-child(1) {
+  @extend .lastColumn;
+}
+
+.dataTable table tr:nth-child(even) td {
+  background: $colorAlmostWhite;
+}
+
+.dataTable table tr:nth-child(odd) td {
+  background: $colorWhite;
+}
