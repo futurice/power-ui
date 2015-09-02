@@ -5,37 +5,66 @@
   width: 100%;
 }
 
+// Generic styles for the table
+.cell {
+  border-bottom: 1px solid $colorGrayLight;
+  padding: $spaceSmall $spaceSmaller;
+}
+
+.paddingColumn {
+  width: $spaceBig;
+}
+
+// Header styles
+.dataTable table thead tr th:nth-child(1) {
+  @extend .paddingColumn;
+}
+
+.dataTable table thead tr th:nth-last-child(1) {
+  @extend .paddingColumn;
+}
+
 .dataTable table thead tr {
   border-bottom: 2px solid $colorBlack;
 }
 
-.firstColumn {
-  padding-left: $spaceBig;
+.dataTable table thead tr th {
+  @extend .cell;
+  vertical-align: bottom;
 }
 
-.lastColumn {
-  padding-right: $spaceBig;
+.selectableColumnHeader {
+  position: relative;
+  cursor: pointer;
+  &:before {
+    content: '';
+    display: block;
+    position: absolute;
+    width: 100%;
+    height: $spaceSmaller;
+    bottom: 0;
+    background: transparent;
+  }
+  &:hover {
+    &:before {
+      background: $colorBlack;
+    }
+  }
 }
 
-.dataTable table thead tr th:nth-child(1) {
-  @extend .firstColumn;
-}
-
-.dataTable table thead tr th:nth-last-child(1) {
-  @extend .lastColumn;
+// Common cell styles
+.dataTable table tr td {
+  @extend .cell;
 }
 
 .dataTable table tr td:nth-child(1) {
-  @extend .firstColumn;
+  @extend .cell;
+  @extend .paddingColumn;
 }
 
 .dataTable table tr td:nth-last-child(1) {
-  @extend .lastColumn;
-}
-
-.dataTable table tr td {
-  border-bottom: 1px solid $colorGrayLight;
-  padding: $spaceSmall 0;
+  @extend .cell;
+  @extend .paddingColumn;
 }
 
 .dataTable table tr:nth-child(even) td {

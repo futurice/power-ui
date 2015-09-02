@@ -1,5 +1,6 @@
 import {Rx} from '@cycle/core';
 import _ from 'lodash';
+import moment from 'moment';
 import {smartStateFold} from 'power-ui/utils';
 
 function makeUpdateFn$(peopleArray$, props$) {
@@ -20,6 +21,10 @@ const initialState = {
   people: [],
   filtered: [],
   tribes: [],
+  timeFrame: {
+    start: moment().startOf('month'),
+    end: moment().add(2, 'months').startOf('month'),
+  },
   filters: {
     location: 'all',
     search: null,

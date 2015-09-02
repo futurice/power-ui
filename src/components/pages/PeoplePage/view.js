@@ -1,13 +1,12 @@
 /** @jsx hJSX */
 import {hJSX} from '@cycle/dom';
 import renderNavBar from 'power-ui/components/widgets/nav-bar';
-import renderDataTable from 'power-ui/components/widgets/DataTable/index';
 import styles from './styles.scss';
 hJSX();
 
 function view(state$, locationFilterVTree$ = null, textFilterVTree$ = null,
-              availabilityFilterVTree$ = null) {
-  return state$.map(state => {
+              availabilityFilterVTree$ = null, dataTableVTree$ = null) {
+  return state$.map(() => {
     return (
       <div>
         {renderNavBar()}
@@ -25,7 +24,7 @@ function view(state$, locationFilterVTree$ = null, textFilterVTree$ = null,
             </div>
           </div>
         </div>
-        {renderDataTable(state.people)}
+        {dataTableVTree$}
       </div>
     );
   });
