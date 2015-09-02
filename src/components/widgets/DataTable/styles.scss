@@ -52,6 +52,30 @@
   }
 }
 
+.selectableColumnHeaderActive {
+  @extend .selectableColumnHeader;
+  &:before {
+    background: $colorBlack;
+  }
+}
+
+.arrowIcon {
+  position: absolute;
+  right: $spaceSmaller;
+  background: $colorWhite;
+  box-shadow: $colorWhite 0 0 2px 1px;
+}
+
+.arrowIconAscending {
+  @extend .arrowIcon;
+  transform: rotateZ(90deg);
+}
+
+.arrowIconDescending {
+  @extend .arrowIcon;
+  transform: rotateZ(-90deg);
+}
+
 // Common cell styles
 .dataTable table tr td {
   @extend .cell;
@@ -67,10 +91,18 @@
   @extend .paddingColumn;
 }
 
+@mixin sortable-cell-background($color) {
+  $cellInSortedColumnDarkenAmount: 2%;
+  background: $color;
+  &.cellInSortedColumn {
+    background: darken($color, $cellInSortedColumnDarkenAmount);
+  }
+}
+
 .dataTable table tr:nth-child(even) td {
-  background: $colorAlmostWhite;
+  @include sortable-cell-background($colorAlmostWhite);
 }
 
 .dataTable table tr:nth-child(odd) td {
-  background: $colorWhite;
+  @include sortable-cell-background($colorWhite);
 }

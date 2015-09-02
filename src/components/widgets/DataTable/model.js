@@ -5,9 +5,9 @@ const DEFAULT_SORT_CRITERIA = '+name';
 function makeSortKeyFn(sortProperty) {
   return function sortKeyFn(person) {
     switch (sortProperty) {
-    case 'name': return person.name;
-    case 'tribe': return person.tribe.name;
-    case 'skills': return person.skills;
+    case 'name': return person.name.toLowerCase();
+    case 'tribe': return person.tribe.name.toLowerCase();
+    case 'skills': return person.skills.toLowerCase();
     case 'project': return person.current_projects.join(' ').toLowerCase();
     case 'unused-utz': return person.unused_utz_in_month;
     default: return person.name;
@@ -48,6 +48,7 @@ function model(props$, actions) {
     return {
       people: sort(props.people, sortCriteria),
       timeFrame: props.timeFrame,
+      sortCriteria,
     };
   });
 }
