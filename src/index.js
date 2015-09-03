@@ -2,11 +2,12 @@ import {run, Rx} from '@cycle/core';
 import {makeDOMDriver} from '@cycle/dom';
 import {makeHTTPDriver} from '@cycle/http';
 import PeoplePage from 'power-ui/components/pages/PeoplePage/index';
-import {URL_ROOT, isTruthy} from 'power-ui/utils';
+import {API_PATH} from 'power-ui/conf';
+import {urlToRequestObjectWithHeaders, isTruthy} from 'power-ui/utils';
 
 function mainHTTPResponse(HTTPSource) {
   const tribesState$ = HTTPSource
-    .filter(response$ => response$.request === `${URL_ROOT}/tribes/`)
+    .filter(response$ => response$.request.url === `${API_PATH}/tribes/`)
     .mergeAll()
     .filter(response => isTruthy(response.body))
     .map(response => response.body.results)
@@ -15,7 +16,8 @@ function mainHTTPResponse(HTTPSource) {
 }
 
 function mainHTTPRequest(peoplePageHTTPRequest$) {
-  const initialTribeRequest$ = Rx.Observable.just(`${URL_ROOT}/tribes/`);
+  const initialTribeRequest$ = Rx.Observable.just(`${API_PATH}/tribes/`)
+    .map(urlToRequestObjectWithHeaders);
   const request$ = Rx.Observable.merge(
     initialTribeRequest$,
     peoplePageHTTPRequest$
