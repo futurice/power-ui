@@ -3,7 +3,6 @@ import {Rx} from '@cycle/core';
 import {hJSX} from '@cycle/dom';
 import renderNavBar from 'power-ui/components/widgets/nav-bar';
 import styles from './styles.scss';
-hJSX();
 
 function view(locationFilterVTree$, textFilterVTree$,
               availabilityFilterVTree$, dataTableVTree$) {

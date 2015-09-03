@@ -2,7 +2,6 @@
 import {hJSX} from '@cycle/dom';
 import {ControlledInputHook} from 'power-ui/hooks';
 import styles from './styles.scss';
-hJSX();
 
 function TextFilter(sources) {
   const value$ = sources.DOM

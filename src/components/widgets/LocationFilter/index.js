@@ -1,7 +1,6 @@
 /** @jsx hJSX */
 import {hJSX} from '@cycle/dom';
 import buttonStyles from './locationFilterButton.scss';
-hJSX();
 
 function intent(DOM) {
   return {

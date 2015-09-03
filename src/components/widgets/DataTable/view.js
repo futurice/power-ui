@@ -1,7 +1,6 @@
 /** @jsx hJSX */
 import {hJSX} from '@cycle/dom';
 import styles from './styles.scss';
-hJSX();
 
 function floatFormatter(cell, n) {
   const num = parseFloat(cell);

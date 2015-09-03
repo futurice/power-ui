@@ -68,7 +68,11 @@
         "no-undef-init": 2,
         "no-undef": 2,
         "no-undefined": 2,
-        "no-unused-vars": [2, {"vars": "all", "args": "after-used"}],
+        "no-unused-vars": [2, {
+          "vars": "all",
+          "args": "after-used",
+          "varsIgnorePattern": "hJSX"
+        }],
         "no-use-before-define": 2,
         "yoda": [2, "never"],
         "consistent-return": 2,
@@ -127,7 +131,8 @@
         "modules": true
     },
     "globals": {
-        "__DEV__": true
+        "__DEV__": true,
+        "hJSX": true
     },
     "extends": "eslint:recommended",
     "ecmaFeatures": {
