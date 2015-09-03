@@ -91,6 +91,7 @@ function renderNavBar() {
         </div>
 
         {void renderUnfinishedParts()}
+        <span style={{fontSize: '10px', color: 'white'}}>Alpha</span>
       </div>
     </nav>
   );
