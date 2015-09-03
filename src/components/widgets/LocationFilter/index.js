@@ -1,29 +1,25 @@
 /** @jsx hJSX */
 import {hJSX} from '@cycle/dom';
-import {smartStateFold} from 'power-ui/utils';
 import buttonStyles from './locationFilterButton.scss';
 hJSX();
 
 function interpret(DOM) {
   return {
     selectLocation$: DOM.select('.LocationFilter button').events('click')
-      .map(clickEv => clickEv.target.value)
-      .startWith('all')
-      .share(),
+      .map(clickEv => clickEv.target.value),
   };
 }
 
 function makeUpdate$(selectLocation$) {
   return selectLocation$
+    .startWith('all')
     .map(location => function updateLocation(oldState) {
       return {...oldState, location};
     });
 }
 
 function model(props$, update$) {
-  return props$.flatMapLatest(props =>
-    update$.startWith(props).scan(smartStateFold)
-  );
+  return props$.combineLatest(update$, (props, updateFn) => updateFn(props));
 }
 
 function renderFilterButton(selectedLocation, label, value = label) {
