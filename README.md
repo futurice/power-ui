@@ -21,7 +21,13 @@ npm run watch
 
 Then open your browser at `localhost:8080`.
 
-## Building for production
+## Deployment
+
+- Access `comedius` server via SSH.
+- cd to `/opt/power-ui`
+- `git pull origin master` (might need to do it as sudo)
+- `npm install`
+- `npm run build`
 
 ```
 npm run build
