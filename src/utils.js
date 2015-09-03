@@ -24,6 +24,7 @@ export default {
     return {
       url: url,
       method: 'GET',
+      accept: 'json',
       headers: {
         'Content-Type': 'application/json',
       },
