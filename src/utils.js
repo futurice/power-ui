@@ -1,6 +1,6 @@
-// TODO replace this with a URL from environment variables
-// once we start rendering this app server-side with Node.js.
-const URL_ROOT = 'http://localhost:8000/api/v1';
+const URL_ROOT = __DEV__
+  ? 'http://localhost:8000/api/v1'
+  : 'https://power.futurice.com/api/v1';
 
 /**
  * smartStateFold is supposed to be given as the argument a

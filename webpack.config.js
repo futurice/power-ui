@@ -2,6 +2,10 @@ var webpack = require('webpack');
 var ExtractTextPlugin = require('extract-text-webpack-plugin');
 var path = require('path');
 
+var envFlagPlugin = new webpack.DefinePlugin({
+  __DEV__: JSON.stringify(JSON.parse(process.env.BUILD_DEV || 'true')),
+});
+
 module.exports = {
   entry: './src/index.js',
 
@@ -50,6 +54,7 @@ module.exports = {
   },
 
   plugins: [
+    envFlagPlugin,
     new ExtractTextPlugin('main.css', {allChunks: true})
   ]
 };
