@@ -1,6 +1,74 @@
 /** @jsx hJSX */
 import {hJSX} from '@cycle/dom';
 
+function renderUnfinishedParts() {
+  return (
+    <div id="navbar" className="collapse navbar-collapse">
+      <ul className="nav navbar-nav">
+        <li>
+          <a href="#/people" role="button" aria-expanded="false">
+            People
+          </a>
+        </li>
+
+        <li>
+          <a href="#/projects" role="button" aria-expanded="false">
+            Projects
+          </a>
+        </li>
+
+        <li>
+          <a href="#/powerhead" role="button" aria-expanded="false">
+            Powerhead
+          </a>
+        </li>
+      </ul>
+
+      <ul className="nav navbar-nav navbar-right">
+        <li>
+          <a href="#">
+            <span className="glyphicon glyphicon-pencil"></span>
+            <span className="visible-xs-inline">Edit data</span>
+          </a>
+        </li>
+        <li className="dropdown">
+          <a
+            href="#"
+            className="dropdown-toggle"
+            data-toggle="dropdown"
+            role="button"
+            aria-expanded="false"
+            >
+            <span className="glyphicon glyphicon-cog"></span>
+            <span className="visible-xs-inline">Settings</span>
+          </a>
+
+          <ul className="dropdown-menu" role="menu">
+            <li>
+              <form className="dropdown-menu-form">
+                Default tribe:
+                  <div className="radio">
+                    <label>
+                      <input type="radio" name="tribe" value=""
+                        data-store-cookie="365" />
+                      None
+                    </label>
+                  </div>
+              </form>
+            </li>
+          </ul>
+        </li>
+        <li>
+          <a href="#">
+            <span className="glyphicon glyphicon-question-sign"></span>
+            <span className="visible-xs-inline">About</span>
+          </a>
+        </li>
+      </ul>
+    </div>
+  );
+}
+
 function renderNavBar() {
   return (
     <nav id="header" className="navbar navbar-inverse navbar-fixed-top">
@@ -22,69 +90,7 @@ function renderNavBar() {
           </a>
         </div>
 
-        <div id="navbar" className="collapse navbar-collapse">
-          <ul className="nav navbar-nav">
-            <li>
-              <a href="#/people" role="button" aria-expanded="false">
-                People
-              </a>
-            </li>
-
-            <li>
-              <a href="#/projects" role="button" aria-expanded="false">
-                Projects
-              </a>
-            </li>
-
-            <li>
-              <a href="#/powerhead" role="button" aria-expanded="false">
-                Powerhead
-              </a>
-            </li>
-          </ul>
-
-          <ul className="nav navbar-nav navbar-right">
-            <li>
-              <a href="#">
-                <span className="glyphicon glyphicon-pencil"></span>
-                <span className="visible-xs-inline">Edit data</span>
-              </a>
-            </li>
-            <li className="dropdown">
-              <a
-                href="#"
-                className="dropdown-toggle"
-                data-toggle="dropdown"
-                role="button"
-                aria-expanded="false"
-                >
-                <span className="glyphicon glyphicon-cog"></span>
-                <span className="visible-xs-inline">Settings</span>
-              </a>
-
-              <ul className="dropdown-menu" role="menu">
-                <li>
-                  <form className="dropdown-menu-form">
-                    Default tribe:
-                      <div className="radio">
-                        <label>
-                          <input type="radio" name="tribe" value=""
-                            data-store-cookie="365" />
-                          None
-                        </label>
-                      </div>
-                  </form>
-                </li>
-              </ul>
-            </li>
-            <li>
-              <a href="#">
-                <span className="glyphicon glyphicon-question-sign"></span>
-                <span className="visible-xs-inline">About</span>
-              </a>
-            </li>
-          </ul>
-        </div>
+        {void renderUnfinishedParts()}
       </div>
     </nav>
   );
