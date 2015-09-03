@@ -6,7 +6,7 @@
   "main": "src/index.js",
   "scripts": {
     "lint": "eslint src/**/*.js; exit 0",
-    "watch:lint": "esw -w src/**/*.js",
+    "watch:lint": "esw -w src",
     "watch:static": "cpx \"src/static/**/*\" dist --watch",
     "make-power-ui-symlink": "cd node_modules && ln -nsf ../src power-ui",
     "prewatch": "npm run make-power-ui-symlink",
