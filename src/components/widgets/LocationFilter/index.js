@@ -3,7 +3,7 @@ import {hJSX} from '@cycle/dom';
 import buttonStyles from './locationFilterButton.scss';
 hJSX();
 
-function interpret(DOM) {
+function intent(DOM) {
   return {
     selectLocation$: DOM.select('.LocationFilter button').events('click')
       .map(clickEv => clickEv.target.value),
@@ -53,7 +53,7 @@ function view(state$) {
 }
 
 function LocationFilter(sources) {
-  const actions = interpret(sources.DOM);
+  const actions = intent(sources.DOM);
   const update$ = makeUpdate$(actions.selectLocation$);
   const state$ = model(sources.props$, update$);
   const vtree$ = view(state$);

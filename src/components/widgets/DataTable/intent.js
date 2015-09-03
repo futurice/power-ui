@@ -1,6 +1,6 @@
 import {Rx} from '@cycle/core';
 
-function interpret(DOM) {
+function intent(DOM) {
   return {
     toggleSortCriteria$: Rx.Observable.merge(
       DOM.select('.column-sort-name').events('click').map(() => 'name'),
@@ -12,4 +12,4 @@ function interpret(DOM) {
   };
 }
 
-export default interpret;
+export default intent;
