@@ -23,4 +23,6 @@ function smartStateFold(prev, curr) {
   }
 }
 
-export default {URL_ROOT, smartStateFold};
+const isTruthy = x => !!x;
+
+export default {URL_ROOT, smartStateFold, isTruthy};

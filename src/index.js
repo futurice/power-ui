@@ -2,13 +2,14 @@ import {run, Rx} from '@cycle/core';
 import {makeDOMDriver} from '@cycle/dom';
 import {makeHTTPDriver} from '@cycle/http';
 import PeoplePage from 'power-ui/components/pages/PeoplePage/index';
-import {URL_ROOT} from 'power-ui/utils';
+import {URL_ROOT, isTruthy} from 'power-ui/utils';
 
 function mainHTTPResponse(HTTPSource) {
   const tribesState$ = HTTPSource
-    .filter(res$ => res$.request === `${URL_ROOT}/tribes/`)
+    .filter(response$ => response$.request === `${URL_ROOT}/tribes/`)
     .mergeAll()
-    .map(res => res.body.results)
+    .filter(response => isTruthy(response.body))
+    .map(response => response.body.results)
     .startWith([]);
   return tribesState$;
 }
