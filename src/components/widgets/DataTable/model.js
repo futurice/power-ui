@@ -47,6 +47,7 @@ function model(props$, actions) {
   return props$.combineLatest(sortCriteria$, (props, sortCriteria) => {
     return {
       people: sort(props.people, sortCriteria),
+      progress: props.progress,
       timeFrame: props.timeFrame,
       sortCriteria,
     };

@@ -43,11 +43,19 @@ function renderTableHeaderColumn(column, label, criteria) {
   );
 }
 
-function tableHeaders(timeFrame, sortCriteria) {
+function renderProgressBar(progress) {
+  if (progress < 1) {
+    return <div className={styles.progressBar} />;
+  } else {
+    return null;
+  }
+}
+
+function tableHeaders(timeFrame, progress, sortCriteria) {
   const unusedUtzLabel = `Unused UTZ in ${timeFrame.start.format('MMMM')}`;
   return (
     <tr>
-      <th></th>
+      <th style={{position: 'relative'}}>{renderProgressBar(progress)}</th>
       {renderTableHeaderColumn('name', 'Name', sortCriteria)}
       {renderTableHeaderColumn('tribe', 'Tribe', sortCriteria)}
       {renderTableHeaderColumn('skills', 'Skills', sortCriteria)}
@@ -97,12 +105,12 @@ function tableRows(people, timeFrame, sortCriteria) {
   });
 }
 
-function renderDataTable(people, timeFrame, sortCriteria) {
+function renderDataTable(people, progress, timeFrame, sortCriteria) {
   return (
     <div className={styles.dataTable}>
       <table>
         <thead>
-          {tableHeaders(timeFrame, sortCriteria)}
+          {tableHeaders(timeFrame, progress, sortCriteria)}
         </thead>
         {tableRows(people, timeFrame, sortCriteria)}
       </table>
@@ -121,11 +129,11 @@ const placeholderData = _.fill(Array(5), {
 });
 
 function view(props$) {
-  return props$.map(({people, timeFrame, sortCriteria}) => {
+  return props$.map(({people, progress, timeFrame, sortCriteria}) => {
     if (people.length === 0) {
-      return renderDataTable(placeholderData, timeFrame, sortCriteria);
+      return renderDataTable(placeholderData, progress, timeFrame, sortCriteria);
     } else {
-      return renderDataTable(people, timeFrame, sortCriteria);
+      return renderDataTable(people, progress, timeFrame, sortCriteria);
     }
   });
 }

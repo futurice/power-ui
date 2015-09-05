@@ -21,7 +21,13 @@ function PeoplePageHTTP(sources) {
 
   const response$ = atomicResponse$
     .map(response => response.body.results)
-    .scan((acc, curr) => acc.concat(curr));
+    .scan((acc, curr) => acc.concat(curr))
+    .withLatestFrom(atomicResponse$, (people, response) => {
+      return {
+        people,
+        progress: people.length / response.body.count,
+      };
+    });
 
   return {request$, response$}; // sink
 }

@@ -3,10 +3,10 @@ import _ from 'lodash';
 import moment from 'moment';
 import {smartStateFold} from 'power-ui/utils';
 
-function makeUpdateFn$(peopleArray$, props$) {
-  const updatePeopleArray$ = peopleArray$
-    .map(peopleArray => function updateStateWithPeopleArray(oldState) {
-      return {...oldState, people: peopleArray};
+function makeUpdateFn$(peopleData$, props$) {
+  const updatePeopleArray$ = peopleData$
+    .map(({people, progress}) => function updateStateWithPeopleArray(oldState) {
+      return {...oldState, people: people, progress: progress};
     });
 
   const updateTribes$ = props$
@@ -19,6 +19,7 @@ function makeUpdateFn$(peopleArray$, props$) {
 
 const initialState = {
   people: [],
+  progress: 0,
   filtered: [],
   tribes: [],
   timeFrame: {
@@ -32,8 +33,8 @@ const initialState = {
   },
 };
 
-function model(peopleArray$, props$) {
-  const update$ = makeUpdateFn$(peopleArray$, props$);
+function model(peopleData$, props$) {
+  const update$ = makeUpdateFn$(peopleData$, props$);
   const state$ = update$
     .startWith(initialState)
     .scan(smartStateFold)

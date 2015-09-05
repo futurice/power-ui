@@ -28,7 +28,11 @@ function AvailabilityFilterWrapper(state$, DOM) {
 
 function DataTableWrapper(state$, DOM) {
   const props$ = state$
-    .map(state => ({people: state.people, timeFrame: state.timeFrame}));
+    .map(state => ({
+      people: state.people,
+      timeFrame: state.timeFrame,
+      progress: state.progress,
+    }));
   return DataTable({DOM, props$});
 }
 
