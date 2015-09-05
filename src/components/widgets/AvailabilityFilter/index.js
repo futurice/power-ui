@@ -15,14 +15,15 @@ function AvailabilityFilter(sources) {
     .events('change')
     .map(ev => ev.target.value)
     .filter(val => isNaN(parseInt(val)) || val.length === 0)
-    .map(() => ({value: '0'}));
+    .map(() => '0');
 
   const state$ = sources.props$
-    .distinctUntilChanged(state => state.value)
+    .map(({value}) => value)
+    .distinctUntilChanged()
     .merge(valueToReplaceInvalidInput$);
 
-  const vtree$ = state$.map(props => {
-    const value = props.value || '0';
+  const vtree$ = state$.map(givenValue => {
+    const value = givenValue || '0';
     return (
       <div className={`AvailabilityFilter ${styles.availabilityFilter}`}>
         <p>Available for</p>
