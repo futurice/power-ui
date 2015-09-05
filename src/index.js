@@ -39,6 +39,6 @@ function main(sources) {
 }
 
 run(main, {
-  DOM: makeDOMDriver('.app-container'),
+  DOM: makeDOMDriver('#power-ui-app-container'),
   HTTP: makeHTTPDriver({autoSubscribe: true}),
 });
