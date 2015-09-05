@@ -2,7 +2,7 @@
 @import "~styles/common.scss";
 
 .normal {
-  border-radius: 8px;
+  border-radius: $borderRadiusNormal;
   padding: $spaceSmaller $spaceSmall;
   margin-right: $spaceSmall;
   outline: none;

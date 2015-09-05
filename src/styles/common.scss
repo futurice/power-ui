@@ -1,10 +1,12 @@
 @import "./palette.scss";
 @import "./spacing.scss";
 
+$borderRadiusNormal: 8px;
+
 .inputFieldStyle {
   margin-left: $spaceSmaller;
   font-weight: normal;
-  border-radius: 5px;
+  border-radius: $borderRadiusNormal;
   border: 1px solid #d0d0d0;
   padding: $spaceTiny $spaceSmall;
 }

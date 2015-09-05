@@ -4,23 +4,39 @@ import {ControlledInputHook} from 'power-ui/hooks';
 import styles from './styles.scss';
 
 function AvailabilityFilter(sources) {
-  const value$ = sources.DOM
+  const newValue$ = sources.DOM
     .select('.AvailabilityFilter input')
     .events('input')
-    .map(ev => ev.target.value);
-  const vtree$ = sources.props$.map(props =>
-    <div className={`AvailabilityFilter ${styles.availabilityFilter}`}>
-      <p>Available for</p>
-      <input type="num" maxLength="2"
-        data-hook={new ControlledInputHook(props.value)}
-        />
-      <span>MD</span>
-    </div>
-  );
+    .map(ev => parseInt(ev.target.value || '0'))
+    .filter(val => !isNaN(parseInt(val)));
+
+  const valueToReplaceInvalidInput$ = sources.DOM
+    .select('.AvailabilityFilter input')
+    .events('change')
+    .map(ev => ev.target.value)
+    .filter(val => isNaN(parseInt(val)) || val.length === 0)
+    .map(() => ({value: '0'}));
+
+  const state$ = sources.props$
+    .distinctUntilChanged(state => state.value)
+    .merge(valueToReplaceInvalidInput$);
+
+  const vtree$ = state$.map(props => {
+    const value = props.value || '0';
+    return (
+      <div className={`AvailabilityFilter ${styles.availabilityFilter}`}>
+        <p>Available for</p>
+        <input type="num" maxLength="2"
+          data-hook={new ControlledInputHook(value)}
+          />
+        <span>MD</span>
+      </div>
+    );
+  });
 
   const sinks = {
     DOM: vtree$,
-    value$,
+    value$: newValue$,
   };
   return sinks;
 }

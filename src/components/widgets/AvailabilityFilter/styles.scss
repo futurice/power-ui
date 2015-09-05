@@ -1,3 +1,4 @@
+@import "~styles/palette.scss";
 @import "~styles/spacing.scss";
 @import "~styles/common.scss";
 
@@ -11,4 +12,9 @@
   text-align: center;
   margin-right: $spaceSmall;
   padding: $spaceTiny;
+  &:not(:focus) {
+    background: $colorBlack;
+    border-color: $colorBlack;
+    color: $colorWhite;
+  }
 }
