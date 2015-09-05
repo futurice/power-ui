@@ -23,7 +23,7 @@ const initialState = {
   tribes: [],
   timeFrame: {
     start: moment().startOf('month'),
-    end: moment().add(2, 'months').startOf('month'),
+    end: moment().clone().add(2, 'months').endOf('month'),
   },
   filters: {
     location: 'all',
