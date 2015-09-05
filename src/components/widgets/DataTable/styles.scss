@@ -8,6 +8,8 @@ $zLayerBase: 0;
 $zLayer1: 1;
 $zLayer2: 2;
 $zLayer3: 3;
+$zLayer4: 4;
+$zLayer5: 5;
 $borderWidthThin: 2px;
 
 .dataTable table {
@@ -22,6 +24,30 @@ $borderWidthThin: 2px;
 
 .paddingColumn {
   width: $spaceLarge;
+}
+
+.nobodyOverlay {
+  position: relative;
+  &:before {
+    content: '';
+    position: absolute;
+    display: block;
+    top: 0;
+    left: 0;
+    bottom: 0;
+    right: 0;
+    background: rgba(255, 255, 255, 0.85);
+    z-index: $zLayer4;
+  }
+}
+
+.nobodyOverlayContent {
+  position: absolute;
+  z-index: $zLayer5;
+  top: $spaceLarger;
+  left: 50vw;
+  text-align: center;
+  transform: translateX(-50%);
 }
 
 // Header styles

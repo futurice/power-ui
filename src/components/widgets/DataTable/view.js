@@ -76,10 +76,10 @@ function tdClassName(column, criteria) {
 
 function percentageFormatter(cell) {
   const num = parseFloat(cell);
-  if (num) {
+  if (!isNaN(num)) {
     return (num.toFixed(2) * 100).toFixed(0) + '%';
   }
-  return '0%';
+  return '\u200B'; // zero-width space
 }
 
 function tableRows(people, timeFrame, sortCriteria) {
@@ -118,7 +118,7 @@ function renderDataTable(people, progress, timeFrame, sortCriteria) {
   );
 }
 
-const placeholderData = _.fill(Array(5), {
+const placeholderData = _.fill(Array(10), {
   name: '',
   current_projects: [],
   allocations: [],
@@ -128,10 +128,24 @@ const placeholderData = _.fill(Array(5), {
   },
 });
 
+function renderNobody(people, progress, timeFrame, sortCriteria) {
+  return (
+    <section className={styles.nobodyOverlay}>
+      {renderDataTable(placeholderData, progress, timeFrame, sortCriteria)}
+      <div className={styles.nobodyOverlayContent}>
+        <h1>Nobody</h1>
+        <h4>Perhaps we should hire more people?</h4>
+      </div>
+    </section>
+  );
+}
+
 function view(props$) {
   return props$.map(({people, progress, timeFrame, sortCriteria}) => {
-    if (people.length === 0) {
+    if (progress < 1 && people.length === 0) {
       return renderDataTable(placeholderData, progress, timeFrame, sortCriteria);
+    } else if (people.length === 0) {
+      return renderNobody(placeholderData, progress, timeFrame, sortCriteria);
     } else {
       return renderDataTable(people, progress, timeFrame, sortCriteria);
     }
