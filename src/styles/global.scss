@@ -1,0 +1,17 @@
+@import "~styles/typography.scss";
+
+:global {
+  body {
+    padding-top: 50px; // Compensate for top navbar
+    padding-bottom: 25vh; // Leave some extra scrolling room at bottom
+    font-family: "SharpSansNo1-Bold", "Raleway", sans-serif;
+    font-size: $fontSizeBase;
+  }
+
+  // Display dropdown menus by hovering
+  @media (min-width: 767px) {
+    .nav .dropdown:hover > .dropdown-menu {
+      display: block;
+    }
+  }
+}

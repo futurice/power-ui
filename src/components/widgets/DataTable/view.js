@@ -1,22 +1,8 @@
 /** @jsx hJSX */
 import {hJSX} from '@cycle/dom';
+import _ from 'lodash';
 import styles from './styles.scss';
-
-function floatFormatter(cell, n) {
-  const num = parseFloat(cell);
-  if (num) {
-    return num.toFixed(n);
-  }
-  return 0;
-}
-
-function percentageFormatter(cell) {
-  const num = parseFloat(cell);
-  if (num) {
-    return (num.toFixed(2) * 100).toFixed(0) + '%';
-  }
-  return '0%';
-}
+import {renderTimelineHeader, renderTimelineCases} from './view-timeline';
 
 function columnFromCriteria(criteria) {
   return criteria.replace(/^(\-|\+)/, '');
@@ -58,7 +44,7 @@ function renderTableHeaderColumn(column, label, criteria) {
 }
 
 function tableHeaders(timeFrame, sortCriteria) {
-  const startMonth = timeFrame.start.format('MMMM');
+  const unusedUtzLabel = `Unused UTZ in ${timeFrame.start.format('MMMM')}`;
   return (
     <tr>
       <th></th>
@@ -66,10 +52,8 @@ function tableHeaders(timeFrame, sortCriteria) {
       {renderTableHeaderColumn('tribe', 'Tribe', sortCriteria)}
       {renderTableHeaderColumn('skills', 'Skills', sortCriteria)}
       {renderTableHeaderColumn('project', 'Project', sortCriteria)}
-      {renderTableHeaderColumn(
-        'unused-utz', `Unused UTZ in ${startMonth}`, sortCriteria
-      )}
-      <th>[ Timeline here ]</th>
+      {renderTableHeaderColumn('unused-utz', unusedUtzLabel, sortCriteria)}
+      {renderTimelineHeader(timeFrame)}
       <th></th>
     </tr>
   );
@@ -83,61 +67,69 @@ function tdClassName(column, criteria) {
   }
 }
 
-function tableRows(people, sortCriteria) {
-  if (people) {
-    return people.map((p) =>
-      <tr key={p.id}>
+function percentageFormatter(cell) {
+  const num = parseFloat(cell);
+  if (num) {
+    return (num.toFixed(2) * 100).toFixed(0) + '%';
+  }
+  return '0%';
+}
+
+function tableRows(people, timeFrame, sortCriteria) {
+  return people.map(person => {
+    const name = person.name;
+    const tribe = person.tribe.name;
+    const skills = person.skills;
+    const projects = person.current_projects.join(', ');
+    const unusedUtz = percentageFormatter(person.unused_utz_in_month);
+    const timeline = renderTimelineCases(person, timeFrame);
+    return (
+      <tr key={person.id}>
         <td></td>
-        <span style={{display: 'none'}}>{JSON.stringify(p)}</span>
-        <td className={tdClassName('name', sortCriteria)}>
-          {p.name}
-        </td>
-        <td className={tdClassName('tribe', sortCriteria)}>
-          {p.tribe.name}
-        </td>
-        <td className={tdClassName('skills', sortCriteria)}>
-          {p.skills}
-        </td>
-        <td className={tdClassName('project', sortCriteria)}>
-          {p.current_projects.join(', ')}
-        </td>
-        <td className={tdClassName('unused-utz', sortCriteria)}>
-          {percentageFormatter(p.unused_utz_in_month)}
-        </td>
-        <td>
-          {p.allocations.map((a) => {
-            return (
-              <span key={a.id}>
-                {floatFormatter(a.total_allocation, 2)}
-                {a.start_date} - {a.end_date}
-              </span>
-            );
-          })}
-          {p.absences.map((b) => {
-            return (
-              <span key={b.id}>
-                {b.start_date} - {b.end_date}
-              </span>
-            );
-          })}
-        </td>
+        <span style={{display: 'none'}}>{JSON.stringify(person)}</span>
+        <td className={tdClassName('name', sortCriteria)}>{name}</td>
+        <td className={tdClassName('tribe', sortCriteria)}>{tribe}</td>
+        <td className={tdClassName('skills', sortCriteria)}>{skills}</td>
+        <td className={tdClassName('project', sortCriteria)}>{projects}</td>
+        <td className={tdClassName('unused-utz', sortCriteria)}>{unusedUtz}</td>
+        <td className={styles.timelineColumn}>{timeline}</td>
         <td></td>
       </tr>
     );
-  }
+  });
 }
 
-function view(props$) {
-  return props$.map(({people, timeFrame, sortCriteria}) =>
+function renderDataTable(people, timeFrame, sortCriteria) {
+  return (
     <div className={styles.dataTable}>
       <table>
         <thead>
           {tableHeaders(timeFrame, sortCriteria)}
         </thead>
-        {tableRows(people, sortCriteria)}
+        {tableRows(people, timeFrame, sortCriteria)}
       </table>
     </div>
   );
+}
+
+const placeholderData = _.fill(Array(5), {
+  name: '',
+  current_projects: [],
+  allocations: [],
+  absences: [],
+  tribe: {
+    name: '',
+  },
+});
+
+function view(props$) {
+  return props$.map(({people, timeFrame, sortCriteria}) => {
+    if (people.length === 0) {
+      return renderDataTable(placeholderData, timeFrame, sortCriteria);
+    } else {
+      return renderDataTable(people, timeFrame, sortCriteria);
+    }
+  });
 }
 
 export default view;

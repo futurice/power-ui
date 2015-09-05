@@ -4,6 +4,7 @@ import {makeHTTPDriver} from '@cycle/http';
 import PeoplePage from 'power-ui/components/pages/PeoplePage/index';
 import {API_PATH} from 'power-ui/conf';
 import {urlToRequestObjectWithHeaders, isTruthy} from 'power-ui/utils';
+import 'power-ui/styles/global.scss';
 
 function mainHTTPResponse(HTTPSource) {
   const tribesState$ = HTTPSource

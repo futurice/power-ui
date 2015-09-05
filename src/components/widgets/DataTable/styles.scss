@@ -1,18 +1,26 @@
 @import "~styles/palette.scss";
+@import "~styles/typography.scss";
 @import "~styles/spacing.scss";
+
+// Generic styles for the table
+$zLayerBase: 0;
+$zLayer1: 1;
+$zLayer2: 2;
+$zLayer3: 3;
+$borderWidthThin: 2px;
 
 .dataTable table {
   width: 100%;
+  overflow: hidden;
 }
 
-// Generic styles for the table
 .cell {
   border-bottom: 1px solid $colorGrayLight;
-  padding: $spaceSmall $spaceSmaller;
+  padding: $spaceNormal $spaceSmaller;
 }
 
 .paddingColumn {
-  width: $spaceBig;
+  width: $spaceLarge;
 }
 
 // Header styles
@@ -25,7 +33,7 @@
 }
 
 .dataTable table thead tr {
-  border-bottom: 2px solid $colorBlack;
+  border-bottom: $borderWidthThin solid $colorBlack;
 }
 
 .dataTable table thead tr th {
@@ -43,6 +51,7 @@
     width: 100%;
     height: $spaceSmaller;
     bottom: 0;
+    left: 0;
     background: transparent;
   }
   &:hover {
@@ -76,6 +85,11 @@
   transform: rotateZ(-90deg);
 }
 
+.timelineMonthLabel {
+  display: inline-block;
+  text-align: center;
+}
+
 // Common cell styles
 .dataTable table tr td {
   @extend .cell;
@@ -105,4 +119,78 @@
 
 .dataTable table tr:nth-child(odd) td {
   @include sortable-cell-background($colorWhite);
+}
+
+// Timeline styles
+.timelineColumnHeader {
+  width: 40vw;
+  position: relative;
+}
+
+.timelineColumn {
+  width: 40vw;
+  padding: 0 !important;
+  position: relative;
+}
+
+.genericSeparator {
+  position: absolute;
+  width: $borderWidthThin;
+  height: 10000vh;
+  top: calc(100% + #{$borderWidthThin});
+  z-index: $zLayer1;
+}
+
+.monthSeparator {
+  @extend .genericSeparator;
+  background: $colorGrayLight;
+}
+
+.nowSeparator {
+  @extend .genericSeparator;
+  background: $colorRed;
+  z-index: $zLayer3;
+}
+
+.nowLabel {
+  position: absolute;
+  bottom: 0;
+  transform: translateX(-50%);
+  color: $colorRed;
+  font-size: $fontSizeSmall;
+}
+
+.casesList {
+  position: relative;
+  list-style-type: none;
+  margin: $spaceSmaller 0 $spaceSmaller $borderWidthThin;
+  padding-left: 0;
+}
+
+.caseItem {
+  position: absolute;
+  overflow: hidden;
+}
+
+.caseItemBackground {
+  position: absolute;
+  width: 100%;
+  height: 100%;
+  z-index: $zLayer1;
+}
+
+.caseItemBackgroundAllocation {
+  @extend .caseItemBackground;
+  background: $colorGreen;
+}
+
+.caseItemBackgroundAbsence {
+  @extend .caseItemBackground;
+  background: $colorRed;
+}
+
+.caseItemLabel {
+  position: absolute;
+  margin: $spaceTiny;
+  z-index: $zLayer2;
 }

@@ -1,20 +1,5 @@
 @charset "utf-8";
 
-body {
-  /* Compensate for top navbar */
-  padding-top: 50px;
-  /* Leave some extra scrolling room at bottom*/
-  padding-bottom: 25vh;
-  font-family: "SharpSansNo1-Bold", "Raleway", sans-serif;
-}
-
-/* Display dropdown menus by hovering */
-@media (min-width: 767px) {
-  .nav .dropdown:hover > .dropdown-menu {
-    display: block;
-  }
-}
-
 nav .navbar-brand.navbar-brand-logo {
   padding-left: 30px;
   padding-right: 30px;
