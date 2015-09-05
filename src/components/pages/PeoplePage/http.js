@@ -15,7 +15,8 @@ function PeoplePageHTTP(sources) {
   const request$ = atomicResponse$
     .filter(response => response.body.next)
     .map(response => response.body.next.replace('limit=5', 'limit=40'))
-    .startWith(PEOPLE_URL + '?limit=5')
+    // TODO get real time range from sources somehow
+    .startWith(PEOPLE_URL + '?limit=5&range_start=2015-09-01&range_end=2015-11-30')
     .map(urlToRequestObjectWithHeaders);
 
   const response$ = atomicResponse$
