@@ -54,7 +54,6 @@ function tableHeaders(timeFrame, sortCriteria) {
       {renderTableHeaderColumn('project', 'Project', sortCriteria)}
       {renderTableHeaderColumn('unused-utz', unusedUtzLabel, sortCriteria)}
       {renderTimelineHeader(timeFrame)}
-      <th></th>
     </tr>
   );
 }
@@ -93,7 +92,6 @@ function tableRows(people, timeFrame, sortCriteria) {
         <td className={tdClassName('project', sortCriteria)}>{projects}</td>
         <td className={tdClassName('unused-utz', sortCriteria)}>{unusedUtz}</td>
         <td className={styles.timelineColumn}>{timeline}</td>
-        <td></td>
       </tr>
     );
   });

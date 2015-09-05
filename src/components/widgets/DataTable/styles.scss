@@ -28,10 +28,6 @@ $borderWidthThin: 2px;
   @extend .paddingColumn;
 }
 
-.dataTable table thead tr th:nth-last-child(1) {
-  @extend .paddingColumn;
-}
-
 .dataTable table thead tr {
   border-bottom: $borderWidthThin solid $colorBlack;
 }

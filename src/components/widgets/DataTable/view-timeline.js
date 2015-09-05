@@ -7,7 +7,7 @@ const caseHeight = 25;
 const caseHeightAndMargin = caseHeight + 3;
 
 function renderMonthSeparators(indexArray) {
-  return indexArray.concat([indexArray.length]).map(i => {
+  return indexArray.map(i => {
     const style = {left: `${(i / indexArray.length) * 100}%`};
     return <div style={style} className={styles.monthSeparator}></div>;
   });
