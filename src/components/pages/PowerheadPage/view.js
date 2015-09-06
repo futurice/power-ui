@@ -1,7 +1,8 @@
 /** @jsx hJSX */
 import {hJSX} from '@cycle/dom';
 import {Rx} from '@cycle/core';
-import {timeRangeIndexArray, formatAsFinanceNumber} from 'power-ui/utils';
+import _ from 'lodash';
+import {formatAsFinanceNumber} from 'power-ui/utils';
 import styles from './styles.scss';
 
 const EURO_SYMBOL = '\u20AC';
@@ -26,10 +27,10 @@ function renderPeopleStatsList(report, monthIndex) {
   const extFteVal = Math.round(report.ext_fte[monthIndex]);
   return (
     <ul className={styles.peopleStats}>
-      {renderPeopleStatsItem('Bench', benchVal, 'FTE')}
-      {renderPeopleStatsItem('Booked', bookedVal, 'FTE')}
-      {renderPeopleStatsItem('Total ints.', totalIntsVal, 'FTE')}
       {renderPeopleStatsItem('Total exts.', extFteVal, 'FTE', true)}
+      {renderPeopleStatsItem('Total ints.', totalIntsVal, 'FTE')}
+      {renderPeopleStatsItem('Booked', bookedVal, 'FTE')}
+      {renderPeopleStatsItem('Bench', benchVal, 'FTE')}
     </ul>
   );
 }
@@ -53,52 +54,68 @@ function renderFinanceStatsList(report, monthIndex) {
   const overrunsVal = formatAsFinanceNumber(report.overrun[monthIndex]);
   return (
     <ul className={styles.financeStats}>
-      {renderFinanceStatsItem('Value creation', valueCreationVal, EURO_SYMBOL)}
+      {renderFinanceStatsItem('Overruns', overrunsVal, EURO_SYMBOL, true)}
       {renderFinanceStatsItem('Orderbook', orderbookVal, EURO_SYMBOL)}
-      {renderFinanceStatsItem('Overruns', overrunsVal, EURO_SYMBOL)}
+      {renderFinanceStatsItem('Value creation', valueCreationVal, EURO_SYMBOL)}
     </ul>
   );
 }
 
-function renderMonthReport(report, timeRange, monthIndex) {
-  const style = {width: `${100 / timeRangeIndexArray(timeRange).length}%`};
+function renderMonthGraph(report, monthIndex) {
+  const monthTitle = _.keys(report.months[monthIndex])[0];
+  const businessDays = `(${report.business_days[monthIndex]} days)`;
   return (
-    <div className={styles.monthGraph} style={style}>
+    <div className={styles.monthGraph}>
+      <div className={styles.monthGraphShapes}></div>
+      <div className={styles.monthGraphLabel}>
+        <span className={styles.monthGraphLabelTitle}>{monthTitle}</span>
+        <span className={styles.monthGraphLabelSubtitle}>{businessDays}</span>
+      </div>
+    </div>
+  );
+}
+
+function renderMonthReport(report, monthIndex) {
+  const style = {width: `${100 / report.months.length}%`};
+  return (
+    <div className={styles.monthReport} style={style}>
       {renderPeopleStatsList(report, monthIndex)}
+      {renderMonthGraph(report, monthIndex)}
       {renderFinanceStatsList(report, monthIndex)}
     </div>
   );
 }
 
-function renderGraphRow(report, timeRange) {
-  const monthReports = timeRangeIndexArray(timeRange)
-    .map(i => renderMonthReport(report, timeRange, i));
+function renderMonthReportsRow(report) {
+  const monthReports = report.months.map((irrelevant, i) =>
+    renderMonthReport(report, i)
+  );
   return (
-    <div className={styles.tribeReportGraphRow}>
+    <div className={styles.tribeMonthReportsRow}>
       {monthReports}
     </div>
   );
 }
 
-function renderReports(reports, timeRange) {
+function renderReports(reports) {
   return (
     <div className={styles.contentWrapper}>
       {reports.map(report =>
         <div className={styles.tribeReport}>
           <h2>{report.name}</h2>
           <h3>Staffing &amp; value creation</h3>
-          {renderGraphRow(report, timeRange)}
-          {JSON.stringify(report)}
+          {renderMonthReportsRow(report)}
+          {void JSON.stringify(report)}
         </div>
       )}
     </div>
   );
 }
 
-function view(state$, timeRange$, locationFilterVTree$) {
+function view(state$, locationFilterVTree$) {
   return Rx.Observable.combineLatest(
-    state$, timeRange$, locationFilterVTree$,
-    (state, timeRange, locationFilterVTree) =>
+    state$, locationFilterVTree$,
+    (state, locationFilterVTree) =>
     <div>
       <div className={styles.contentWrapper}>
         <h1>Powerhead</h1>
@@ -106,7 +123,7 @@ function view(state$, timeRange$, locationFilterVTree$) {
           {locationFilterVTree}
         </div>
       </div>
-      {renderReports(state.reports, timeRange)}
+      {renderReports(state.reports)}
     </div>
   );
 }

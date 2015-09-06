@@ -7,15 +7,18 @@
 }
 
 .tribeReport {
-  min-height: 70vh;
+  min-height: 300px;
+  margin-bottom: $spaceLarger;
 }
 
-.tribeReportGraphRow {
-  display: block;
+.tribeMonthReportsRow {
+  display: flex;
+  padding-bottom: $spaceLarger;
 }
 
-.monthGraph {
-  display: inline-block;
+.monthReport {
+  display: flex;
+  text-align: center;
 }
 
 // People statistics list
@@ -26,7 +29,8 @@ $peopleStatsUnitBottom: 4px;
   position: relative;
   list-style-type: none;
   padding: 0;
-  display: inline-block;
+  display: flex;
+  flex-direction: column-reverse;
 }
 
 .peopleStatsItem {
@@ -64,7 +68,8 @@ $peopleStatsUnitBottom: 4px;
   position: relative;
   list-style-type: none;
   padding: 0;
-  display: inline-block;
+  display: flex;
+  flex-direction: column-reverse;
 }
 
 .financeStatsItem {
@@ -93,5 +98,40 @@ $peopleStatsUnitBottom: 4px;
   display: inline-block;
   font-size: $fontSizeSmall;
   margin-left: $spaceTiny;
+}
+
+// Month graph
+.monthGraph {
+  display: flex;
+  flex-direction: column-reverse;
+  margin: 0 $spaceNormal;
+  width: 125px; // TEMPORARY UNTIL THE GRAPH SHAPES DETERMINE THE WIDTH
+  position: relative;
+}
+
+.monthGraphShapes {
+  background: pink;
+}
+
+.monthGraphLabel {
+  border-top: 2px solid $colorBlack;
+  text-align: center;
+  transform: translateY(100%);
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  padding-top: $spaceSmaller;
+}
+
+.monthGraphLabelTitle {
+  font-size: $fontSizeBig;
+  display: inline-block;
+  margin-right: $spaceTiny;
+}
+
+.monthGraphLabelSubtitle {
+  font-size: $fontSizeSmall;
+  display: inline-block;
 }
 
