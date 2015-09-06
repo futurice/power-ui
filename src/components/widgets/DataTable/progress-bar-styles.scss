@@ -10,7 +10,7 @@
 .progressBar {
   @include animation('move-the-object 1.2s infinite');
   position: absolute;
-  background: $colorGrayLight;
+  background: $colorGrayLighter;
   left: 0;
   right: 0;
   bottom: -2px;

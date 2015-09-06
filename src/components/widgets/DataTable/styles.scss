@@ -18,7 +18,7 @@ $borderWidthThin: 2px;
 }
 
 .cell {
-  border-bottom: 1px solid $colorGrayLight;
+  border-bottom: 1px solid $colorGrayLighter;
   padding: $spaceNormal $spaceSmaller;
 }
 
@@ -166,7 +166,7 @@ $borderWidthThin: 2px;
 
 .monthSeparator {
   @extend .genericSeparator;
-  background: $colorGrayLight;
+  background: $colorGrayLighter;
 }
 
 .nowSeparator {
