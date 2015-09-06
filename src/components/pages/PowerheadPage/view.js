@@ -111,6 +111,14 @@ function renderReports(reports) {
   );
 }
 
+function renderLoadingIndicator() {
+  return (
+    <div className={styles.contentWrapper}>
+      <h3>Loading...</h3>
+    </div>
+  );
+}
+
 function view(state$, locationFilterVTree$) {
   return Rx.Observable.combineLatest(
     state$, locationFilterVTree$,
@@ -122,7 +130,10 @@ function view(state$, locationFilterVTree$) {
           {locationFilterVTree}
         </div>
       </div>
-      {renderReports(state.reports)}
+      {state.reports.length === 0
+        ? renderLoadingIndicator()
+        : renderReports(state.reports)
+      }
     </div>
   );
 }
