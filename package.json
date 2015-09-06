@@ -11,8 +11,8 @@
     "make-power-ui-symlink": "cd node_modules && ln -nsf ../src power-ui",
     "prewatch": "npm run make-power-ui-symlink",
     "prebuild": "npm run make-power-ui-symlink",
-    "build:static": "cp -r src/static dist",
-    "build:js": "BUILD_DEV=false webpack",
+    "build:static": "rm -rf dist && mkdir -p dist && cp -r src/static/* dist",
+    "build:js": "BUILD_DEV=false webpack -p",
     "build": "npm run build:static && npm run build:js",
     "watch": "npm run watch:static & npm run watch:lint & webpack-dev-server"
   },
