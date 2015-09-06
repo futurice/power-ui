@@ -39,6 +39,22 @@ export default {
     return null;
   },
 
+  formatAsFinanceNumber(num) {
+    // Suppose num is 1035024.29
+    return String(Math.ceil(num))
+      // '1035024'
+      .split('')
+      // ['1', '0', '3', '5', '0', '2', '4']
+      .reverse()
+      // ['4', '2', '0', '5', '3', '0', '1']
+      .map((digit, i) => i % 3 === 2 ? ` ${digit}` : digit)
+      // ['4', '2', ' 0', '5', '3', ' 0', '1']
+      .reverse()
+      // ['1', ' 0', '3', '5', ' 0', '2', '4']
+      .join('');
+      // '1 035 024'
+  },
+
   timeRangeIndexArray(timeRange) {
     const months = timeRange.end.diff(timeRange.start, 'months') + 1;
     const array = [];

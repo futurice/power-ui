@@ -26,6 +26,7 @@ $peopleStatsUnitBottom: 4px;
   position: relative;
   list-style-type: none;
   padding: 0;
+  display: inline-block;
 }
 
 .peopleStatsItem {
@@ -57,3 +58,40 @@ $peopleStatsUnitBottom: 4px;
   right: 0;
   font-size: $fontSizeSmall;
 }
+
+// Finance statistics list
+.financeStats {
+  position: relative;
+  list-style-type: none;
+  padding: 0;
+  display: inline-block;
+}
+
+.financeStatsItem {
+  text-align: left;
+  margin-top: $spaceNormal;
+  position: relative;
+}
+
+.financeStatsItemSpecial {
+  @extend .financeStatsItem;
+  color: $colorRed;
+}
+
+.financeStatsLabel {
+  display: block;
+  font-family: $fontFamilyRegular;
+  font-size: $fontSizeSmall;
+}
+
+.financeStatsValue {
+  display: inline-block;
+  font-size: $fontSizeBig;
+}
+
+.financeStatsUnit {
+  display: inline-block;
+  font-size: $fontSizeSmall;
+  margin-left: $spaceTiny;
+}
+
