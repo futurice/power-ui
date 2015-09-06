@@ -18,6 +18,10 @@
   display: inline-block;
 }
 
+// People statistics list
+$peopleStatsRightGutterWidth: 20px;
+$peopleStatsUnitBottom: 4px;
+
 .peopleStats {
   position: relative;
   list-style-type: none;
@@ -25,9 +29,8 @@
 }
 
 .peopleStatsItem {
-  // border: 1px solid pink;
   text-align: right;
-  padding-right: 20px;
+  padding-right: $peopleStatsRightGutterWidth;
   margin-top: $spaceNormal;
   position: relative;
 }
@@ -38,22 +41,19 @@
 }
 
 .peopleStatsLabel {
-  // background: red;
   display: block;
   font-family: $fontFamilyRegular;
   font-size: $fontSizeSmall;
 }
 
 .peopleStatsValue {
-  // background: lightblue;
   display: block;
   font-size: $fontSizeBig;
 }
 
 .peopleStatsUnit {
-  // background: green;
   position: absolute;
-  bottom: 4px; // fine tuning
+  bottom: $peopleStatsUnitBottom;
   right: 0;
   font-size: $fontSizeSmall;
 }
