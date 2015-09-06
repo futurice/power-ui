@@ -1,7 +1,6 @@
 /** @jsx hJSX */
 import {Rx} from '@cycle/core';
 import {hJSX} from '@cycle/dom';
-import renderNavBar from 'power-ui/components/widgets/nav-bar';
 import styles from './styles.scss';
 
 function view(locationFilterVTree$, textFilterVTree$,
@@ -10,7 +9,6 @@ function view(locationFilterVTree$, textFilterVTree$,
     locationFilterVTree$, textFilterVTree$, availabilityFilterVTree$, dataTableVTree$,
     (locationFilterVTree, textFilterVTree, availabilityFilterVTree, dataTableVTree) =>
       <div>
-        {renderNavBar()}
         <div className={styles.contentWrapper}>
           <h1>People</h1>
           <div className={styles.filtersContainer}>

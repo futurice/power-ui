@@ -1,0 +1,75 @@
+@import "~styles/palette.scss";
+@import "~styles/spacing.scss";
+@import "~styles/typography.scss";
+
+.navBar {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: $spaceNavBarHeight;
+  padding: 0 $spaceLarge;
+  background-color: $colorGreen;
+  color: $colorWhite;
+  z-index: 1000;
+}
+
+.navBar * {
+  display: inline-block;
+}
+
+.brandLogo {
+  img {
+    height: ($spaceNavBarHeight / 3);
+  }
+  padding-right: $spaceNormal;
+  padding-top: 15px;
+  padding-bottom: 0px;
+}
+
+.versionTag {
+  font-size: $fontSizeSmall;
+  position: relative;
+  left: -14px;
+  top: -14px;
+}
+
+.linkList {
+  margin: 0;
+  padding: 0;
+  height: 100%;
+  position: absolute;
+}
+
+.linkList li {
+  height: 100%;
+  &:hover {
+    background-color: lighten($colorGreen, 2%);
+  }
+}
+
+a.linkNormal {
+  height: 100%;
+  color: $colorWhite;
+  font-size: $fontSizeNormal;
+  padding: 0 $spaceNormal;
+  line-height: $spaceNavBarHeight;
+  span {
+    vertical-align: middle;
+  }
+}
+
+a.linkSelected {
+  @extend .linkNormal;
+  position: relative;
+  &:before {
+    content: '';
+    display: block;
+    position: absolute;
+    height: $spaceSmaller;
+    background-color: $colorBlack;
+    left: 0;
+    right: 0;
+    bottom: (- $spaceSmaller)
+  }
+}

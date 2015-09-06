@@ -1,6 +1,6 @@
 @charset "utf-8";
 
-nav .navbar-brand.navbar-brand-logo {
+/*nav .navbar-brand.navbar-brand-logo {
   padding-left: 30px;
   padding-right: 30px;
   padding-top: 15px;
@@ -11,9 +11,6 @@ nav .navbar-brand-logo img {
   height: 17px;
 }
 
-nav.navbar-inverse .navbar-brand-logo img {
-  /* -webkit-filter: invert(100%); */
-}
 
 .navbar-inverse .form-group label {
   color: #9d9d9d;
@@ -56,29 +53,6 @@ nav#header.navbar-inverse .navbar-nav > li > a:hover {
   max-height: none;
   overflow: hidden;
 }
-
-/* Align content centered fluid width */
-/*
-.center-content {
-  display: flex;
-  flex-direction: row;
-  justify-content: center;
-}
-*/
-
-/* For flexbox firefox compatibility */
-/*
-.center-content * {
-  min-width: 0;
-}
-*/
-
-/*
-.content-wrapper {
-  margin: 10px;
-  display: flex;
-  flex-direction: column;
-}
 */
 
 /* Make header edit link smaller */
@@ -93,7 +67,6 @@ h1 .edit a:hover {
   opacity: 1;
   text-decoration: none;
 }
-
 
 /* Reports */
 
@@ -120,11 +93,6 @@ h1 .edit a:hover {
 
 /* Text content */
 
-/*
-.content-wrapper > p {
-  max-width: 600px;
-}
-*/
 hr.narrow {
   margin: 10px 0;
 }
@@ -218,64 +186,3 @@ hr.narrow {
 .hidden {
   display: none;
 }
-
-/*
-.filters {
-  padding: 0 50px;
-  font-weight: bold;
-}
-
-.filters input {
-  font-weight: bold;
-}
-
-.filters .tribefilter {
-  margin: 30px 0;
-}
-
-.filters button {
-  border-radius: 8px;
-  padding: 6px 10px;
-  background: transparent;
-  border: solid 1px #D8D8D8;
-}
-
-.filters button:focus {
-  outline: none;
-}
-
-.filters button:not(:last-of-type) {
-  margin-right: 8px;
-}
-.filters button.active {
-  background: #000;
-  color: #D8D8D8;
-}
-
-.filters .filtertools > div {
-  display: inline-block;
-  padding: 15px 0;
-  margin: 10px 0;
-}
-
-.filters .filtertools > div:not(:last-of-type) {
-  margin-right: 25px;
-  padding-right: 25px;
-  border-right: solid 1px #D8D8D8;
-}
-
-
-.filters .filtertools .availabilityfilter input {
-  width: 35px;
-  text-align: center;
-  margin-right: 10px;
-  background: #000;
-  color: #D8D8D8;
-}
-*/
-
-/*
-.bottom-border-line {
-  border-bottom: solid 1px #D8D8D8;
-}
-*/
