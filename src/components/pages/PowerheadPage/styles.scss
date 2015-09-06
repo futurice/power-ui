@@ -116,7 +116,40 @@ $peopleStatsUnitBottom: 4px;
 }
 
 .monthGraphShapes {
-  background: pink;
+
+}
+
+$peopleBoxSize: 8px;
+
+.monthGraphPeopleBoxList {
+  margin: 0 $spaceSmall;
+  padding: 0;
+  display: flex;
+  width: (2.5 * $peopleBoxSize);
+  flex-direction: row;
+  list-style-type: none;
+  flex-wrap: wrap-reverse;
+}
+
+.monthGraphPeopleBox {
+  width: $peopleBoxSize;
+  height: $peopleBoxSize;
+  margin: 1px;
+}
+
+.monthGraphPeopleBoxExternal {
+  @extend .monthGraphPeopleBox;
+  background-color: $colorPurple;
+}
+
+.monthGraphPeopleBoxBooked {
+  @extend .monthGraphPeopleBox;
+  background-color: $colorGreen;
+}
+
+.monthGraphPeopleBoxBench {
+  @extend .monthGraphPeopleBox;
+  background-color: $colorGray;
 }
 
 .monthGraphLabel {

@@ -61,12 +61,40 @@ function renderFinanceStatsList(report, monthIndex) {
   );
 }
 
+function renderMonthGraphPeople(report, monthIndex) {
+  const totalIntsVal = Math.round(report.fte[monthIndex]);
+  const benchVal = Math.round(report.bench[monthIndex]);
+  const extFteVal = Math.round(report.ext_fte[monthIndex]);
+  const bookedVal = totalIntsVal - benchVal;
+  const totalPeople = totalIntsVal + extFteVal;
+  const boxes = _.fill(Array(totalPeople), 0).map((x, i) => {
+    if (i < extFteVal) {
+      return <li className={styles.monthGraphPeopleBoxExternal}></li>;
+    } else if (i < extFteVal + bookedVal) {
+      return <li className={styles.monthGraphPeopleBoxBooked}></li>;
+    } else {
+      return <li className={styles.monthGraphPeopleBoxBench}></li>;
+    }
+  });
+  return (
+    <ul className={styles.monthGraphPeopleBoxList}>
+      {boxes}
+    </ul>
+  );
+}
+
+function renderMonthGraphShapes(report, monthIndex) {
+  return renderMonthGraphPeople(report, monthIndex);
+}
+
 function renderMonthGraph(report, monthIndex) {
   const monthTitle = _.keys(report.months[monthIndex])[0];
   const businessDays = `(${report.business_days[monthIndex]} days)`;
   return (
     <div className={styles.monthGraph}>
-      <div className={styles.monthGraphShapes}></div>
+      <div className={styles.monthGraphShapes}>
+        {renderMonthGraphShapes(report, monthIndex)}
+      </div>
       <div className={styles.monthGraphLabel}>
         <span className={styles.monthGraphLabelTitle}>{monthTitle}</span>
         <span className={styles.monthGraphLabelSubtitle}>{businessDays}</span>
