@@ -76,9 +76,8 @@ function renderMonthGraph(report, monthIndex) {
 }
 
 function renderMonthReport(report, monthIndex) {
-  const style = {width: `${100 / report.months.length}%`};
   return (
-    <div className={styles.monthReport} style={style}>
+    <div className={styles.monthReport}>
       {renderPeopleStatsList(report, monthIndex)}
       {renderMonthGraph(report, monthIndex)}
       {renderFinanceStatsList(report, monthIndex)}
