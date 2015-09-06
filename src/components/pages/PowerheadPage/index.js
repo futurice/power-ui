@@ -1,6 +1,6 @@
 import LocationFilter from 'power-ui/components/widgets/LocationFilter/index';
 import PowerheadPageHTTP from './http.js';
-import {model} from './model';
+import {model, modelTimeRange} from './model';
 import view from './view';
 
 function LocationFilterWrapper(state$, DOM) {
@@ -10,10 +10,11 @@ function LocationFilterWrapper(state$, DOM) {
 }
 
 function PeoplePage(sources) {
-  const powerheadPageHTTP = PowerheadPageHTTP(sources);
+  const timeRange$ = modelTimeRange();
+  const powerheadPageHTTP = PowerheadPageHTTP({HTTP: sources.HTTP, timeRange$});
   const state$ = model(powerheadPageHTTP.response$, sources.props$);
   const locationFilter = LocationFilterWrapper(state$, sources.DOM);
-  const vtree$ = view(state$, locationFilter.DOM);
+  const vtree$ = view(state$, timeRange$, locationFilter.DOM);
 
   const sinks = {
     DOM: vtree$,

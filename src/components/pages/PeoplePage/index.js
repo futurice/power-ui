@@ -30,7 +30,7 @@ function DataTableWrapper(state$, DOM) {
   const props$ = state$
     .map(state => ({
       people: state.people,
-      timeFrame: state.timeFrame,
+      timeRange: state.timeRange,
       progress: state.progress,
     }));
   return DataTable({DOM, props$});

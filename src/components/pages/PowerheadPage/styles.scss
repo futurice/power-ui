@@ -1,5 +1,59 @@
 @import "~styles/common.scss";
+@import "~styles/typography.scss";
+@import "~styles/palette.scss";
 
 .filtersContainer {
   font-weight: bold;
+}
+
+.tribeReport {
+  min-height: 70vh;
+}
+
+.tribeReportGraphRow {
+  display: block;
+}
+
+.monthGraph {
+  display: inline-block;
+}
+
+.peopleStats {
+  position: relative;
+  list-style-type: none;
+  padding: 0;
+}
+
+.peopleStatsItem {
+  // border: 1px solid pink;
+  text-align: right;
+  padding-right: 20px;
+  margin-top: $spaceNormal;
+  position: relative;
+}
+
+.peopleStatsItemSpecial {
+  @extend .peopleStatsItem;
+  color: $colorPurple;
+}
+
+.peopleStatsLabel {
+  // background: red;
+  display: block;
+  font-family: $fontFamilyRegular;
+  font-size: $fontSizeSmall;
+}
+
+.peopleStatsValue {
+  // background: lightblue;
+  display: block;
+  font-size: $fontSizeBig;
+}
+
+.peopleStatsUnit {
+  // background: green;
+  position: absolute;
+  bottom: 4px; // fine tuning
+  right: 0;
+  font-size: $fontSizeSmall;
 }

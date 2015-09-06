@@ -2,6 +2,7 @@
 import {hJSX} from '@cycle/dom';
 import _ from 'lodash';
 import styles from './styles.scss';
+import {formatAsPercentage} from 'power-ui/utils';
 import {renderTimelineHeader, renderTimelineCases} from './view-timeline';
 
 function columnFromCriteria(criteria) {
@@ -51,8 +52,8 @@ function renderProgressBar(progress) {
   }
 }
 
-function tableHeaders(timeFrame, progress, sortCriteria) {
-  const unusedUtzLabel = `Unused UTZ in ${timeFrame.start.format('MMMM')}`;
+function tableHeaders(timeRange, progress, sortCriteria) {
+  const unusedUtzLabel = `Unused UTZ in ${timeRange.start.format('MMMM')}`;
   return (
     <tr>
       <th style={{position: 'relative'}}>{renderProgressBar(progress)}</th>
@@ -61,7 +62,7 @@ function tableHeaders(timeFrame, progress, sortCriteria) {
       {renderTableHeaderColumn('skills', 'Skills', sortCriteria)}
       {renderTableHeaderColumn('project', 'Project', sortCriteria)}
       {renderTableHeaderColumn('unused-utz', unusedUtzLabel, sortCriteria)}
-      {renderTimelineHeader(timeFrame)}
+      {renderTimelineHeader(timeRange)}
     </tr>
   );
 }
@@ -74,22 +75,15 @@ function tdClassName(column, criteria) {
   }
 }
 
-function percentageFormatter(cell) {
-  const num = parseFloat(cell);
-  if (!isNaN(num)) {
-    return (num.toFixed(2) * 100).toFixed(0) + '%';
-  }
-  return '\u200B'; // zero-width space
-}
-
-function tableRows(people, timeFrame, sortCriteria) {
+function tableRows(people, timeRange, sortCriteria) {
+  const zeroWidthSpace = '\u200B';
   return people.map(person => {
     const name = person.name;
     const tribe = person.tribe.name;
     const skills = person.skills;
     const projects = person.current_projects.join(', ');
-    const unusedUtz = percentageFormatter(person.unused_utz_in_month);
-    const timeline = renderTimelineCases(person, timeFrame);
+    const unusedUtz = formatAsPercentage(person.unused_utz_in_month) || zeroWidthSpace;
+    const timeline = renderTimelineCases(person, timeRange);
     return (
       <tr key={person.id}>
         <td></td>
@@ -105,14 +99,14 @@ function tableRows(people, timeFrame, sortCriteria) {
   });
 }
 
-function renderDataTable(people, progress, timeFrame, sortCriteria) {
+function renderDataTable(people, progress, timeRange, sortCriteria) {
   return (
     <div className={styles.dataTable}>
       <table>
         <thead>
-          {tableHeaders(timeFrame, progress, sortCriteria)}
+          {tableHeaders(timeRange, progress, sortCriteria)}
         </thead>
-        {tableRows(people, timeFrame, sortCriteria)}
+        {tableRows(people, timeRange, sortCriteria)}
       </table>
     </div>
   );
@@ -128,10 +122,10 @@ const placeholderData = _.fill(Array(10), {
   },
 });
 
-function renderNobody(people, progress, timeFrame, sortCriteria) {
+function renderNobody(people, progress, timeRange, sortCriteria) {
   return (
     <section className={styles.nobodyOverlay}>
-      {renderDataTable(placeholderData, progress, timeFrame, sortCriteria)}
+      {renderDataTable(placeholderData, progress, timeRange, sortCriteria)}
       <div className={styles.nobodyOverlayContent}>
         <h1>Nobody</h1>
         <h4>Perhaps we should hire more people?</h4>
@@ -141,13 +135,13 @@ function renderNobody(people, progress, timeFrame, sortCriteria) {
 }
 
 function view(props$) {
-  return props$.map(({people, progress, timeFrame, sortCriteria}) => {
+  return props$.map(({people, progress, timeRange, sortCriteria}) => {
     if (progress < 1 && people.length === 0) {
-      return renderDataTable(placeholderData, progress, timeFrame, sortCriteria);
+      return renderDataTable(placeholderData, progress, timeRange, sortCriteria);
     } else if (people.length === 0) {
-      return renderNobody(placeholderData, progress, timeFrame, sortCriteria);
+      return renderNobody(placeholderData, progress, timeRange, sortCriteria);
     } else {
-      return renderDataTable(people, progress, timeFrame, sortCriteria);
+      return renderDataTable(people, progress, timeRange, sortCriteria);
     }
   });
 }

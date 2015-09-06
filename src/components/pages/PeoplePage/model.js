@@ -22,7 +22,7 @@ const initialState = {
   progress: 0,
   filtered: [],
   tribes: [],
-  timeFrame: {
+  timeRange: {
     start: moment().startOf('month'),
     end: moment().clone().add(2, 'months').endOf('month'),
   },

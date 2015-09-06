@@ -1,5 +1,6 @@
 import {Rx} from '@cycle/core';
 import _ from 'lodash';
+import moment from 'moment';
 import {smartStateFold} from 'power-ui/utils';
 
 const initialState = {
@@ -8,6 +9,11 @@ const initialState = {
   filters: {
     location: 'all',
   },
+};
+
+const initialTimeRange = {
+  start: moment().startOf('month'),
+  end: moment().clone().add(2, 'months').endOf('month'),
 };
 
 function makeUpdateFn$(powerheadData$, props$) {
@@ -31,6 +37,10 @@ function model(powerheadData$, props$) {
     .scan(smartStateFold)
     .shareReplay(1);
   return state$;
+}
+
+function modelTimeRange() {
+  return Rx.Observable.just(initialTimeRange);
 }
 
 /**
@@ -71,4 +81,4 @@ function filterState(state$, location$) {
   return filteredState$;
 }
 
-export default {model, filterState};
+export default {model, modelTimeRange, filterState};

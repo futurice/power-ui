@@ -31,6 +31,23 @@ export default {
     };
   },
 
+  formatAsPercentage(input) {
+    const num = parseFloat(input);
+    if (!isNaN(num)) {
+      return (num.toFixed(2) * 100).toFixed(0) + '%';
+    }
+    return null;
+  },
+
+  timeRangeIndexArray(timeRange) {
+    const months = timeRange.end.diff(timeRange.start, 'months') + 1;
+    const array = [];
+    for (let i = 0; i < months; i++) {
+      array.push(i);
+    }
+    return array;
+  },
+
   isTruthy(x) {
     return !!x;
   },

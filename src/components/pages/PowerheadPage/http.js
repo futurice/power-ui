@@ -1,13 +1,21 @@
-import {Rx} from '@cycle/core';
 import _ from 'lodash';
 import {API_PATH} from 'power-ui/conf';
 import {urlToRequestObjectWithHeaders, isTruthy} from 'power-ui/utils';
+
+function timeRangeToUrlParams(timeRange) {
+  const format = 'YYYY-MM-DD';
+  const range_start = timeRange.start.format(format);
+  const range_end = timeRange.end.format(format);
+  return `range_start=${range_start}&range_end=${range_end}`;
+}
 
 // Handle all HTTP networking logic of this page
 function PowerheadPageHTTP(sources) {
   const POWERHEAD_URL = `${API_PATH}/powerhead/`;
 
-  const request$ = Rx.Observable.just(POWERHEAD_URL)
+  const request$ = sources.timeRange$
+    .map(timeRangeToUrlParams)
+    .map(timeRangeParams => POWERHEAD_URL + `?${timeRangeParams}`)
     .map(urlToRequestObjectWithHeaders);
 
   const response$ = sources.HTTP

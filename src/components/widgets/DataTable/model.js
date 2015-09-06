@@ -48,7 +48,7 @@ function model(props$, actions) {
     return {
       people: sort(props.people, sortCriteria),
       progress: props.progress,
-      timeFrame: props.timeFrame,
+      timeRange: props.timeRange,
       sortCriteria,
     };
   });

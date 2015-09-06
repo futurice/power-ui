@@ -2,6 +2,7 @@
 import {hJSX} from '@cycle/dom';
 import moment from 'moment';
 import styles from './styles.scss';
+import {timeRangeIndexArray} from 'power-ui/utils';
 
 const caseHeight = 25;
 const caseHeightAndMargin = caseHeight + 3;
@@ -13,9 +14,9 @@ function renderMonthSeparators(indexArray) {
   });
 }
 
-function renderNowMarker(timeFrame) {
-  const totalTime = timeFrame.end.diff(timeFrame.start);
-  const nowTime = moment().diff(timeFrame.start);
+function renderNowMarker(timeRange) {
+  const totalTime = timeRange.end.diff(timeRange.start);
+  const nowTime = moment().diff(timeRange.start);
   const nowLeftPercentage = (nowTime / totalTime) * 100;
   const style = {left: `${nowLeftPercentage}%`};
   return (
@@ -26,10 +27,10 @@ function renderNowMarker(timeFrame) {
   );
 }
 
-function renderMonthLabels(timeFrame, indexArray) {
+function renderMonthLabels(timeRange, indexArray) {
   const monthLabelWidth = `${100 / indexArray.length}%`;
   return indexArray.map(i => {
-    const monthName = timeFrame.start.clone().add(i, 'months').format('MMMM');
+    const monthName = timeRange.start.clone().add(i, 'months').format('MMMM');
     const className = styles.timelineMonthLabel;
     const style = {
       'width': monthLabelWidth,
@@ -39,22 +40,13 @@ function renderMonthLabels(timeFrame, indexArray) {
   });
 }
 
-function timeFrameIndexArray(timeFrame) {
-  const months = timeFrame.end.diff(timeFrame.start, 'months') + 1;
-  const array = [];
-  for (let i = 0; i < months; i++) {
-    array.push(i);
-  }
-  return array;
-}
-
-function renderTimelineHeader(timeFrame) {
-  const indexArray = timeFrameIndexArray(timeFrame);
+function renderTimelineHeader(timeRange) {
+  const indexArray = timeRangeIndexArray(timeRange);
   return (
     <th className={styles.timelineColumnHeader}>
-      {renderMonthLabels(timeFrame, indexArray)}
+      {renderMonthLabels(timeRange, indexArray)}
       {renderMonthSeparators(indexArray)}
-      {renderNowMarker(timeFrame)}
+      {renderNowMarker(timeRange)}
     </th>
   );
 }
@@ -75,11 +67,11 @@ function renderSingleCase(theCase, indexInList) {
   );
 }
 
-function measureCaseWith(timeFrame) {
-  const totalTime = timeFrame.end.diff(timeFrame.start);
+function measureCaseWith(timeRange) {
+  const totalTime = timeRange.end.diff(timeRange.start);
   return function measureCase({start_date, end_date, label, opacity, type}) {
-    const allocationStart = moment(start_date).diff(timeFrame.start);
-    const allocationEnd = moment(end_date).diff(timeFrame.start);
+    const allocationStart = moment(start_date).diff(timeRange.start);
+    const allocationEnd = moment(end_date).diff(timeRange.start);
     const leftStart = (Math.max(0, allocationStart) / totalTime) * 100;
     const leftEnd = (Math.min(totalTime, allocationEnd) / totalTime) * 100;
     const backgroundClass = type === 'allocation'
@@ -109,19 +101,19 @@ function preprocessAbsenceCase(absence) {
   };
 }
 
-function isCaseInTimeFrame(timeFrame) {
+function isCaseInTimeRange(timeRange) {
   return c => (
-    moment(c.end_date).isAfter(timeFrame.start)
-    && moment(c.start_date).isBefore(timeFrame.end)
+    moment(c.end_date).isAfter(timeRange.start)
+    && moment(c.start_date).isBefore(timeRange.end)
   );
 }
 
-function renderTimelineCases(person, timeFrame) {
+function renderTimelineCases(person, timeRange) {
   const allocationCases = person.allocations.map(preprocessAllocationCase);
   const absenceCases = person.absences.map(preprocessAbsenceCase);
   const allCases = allocationCases.concat(absenceCases)
-    .filter(isCaseInTimeFrame(timeFrame))
-    .map(measureCaseWith(timeFrame))
+    .filter(isCaseInTimeRange(timeRange))
+    .map(measureCaseWith(timeRange))
     .map(renderSingleCase);
   const style = {height: `${allCases.length * (caseHeightAndMargin)}px`};
   return (
