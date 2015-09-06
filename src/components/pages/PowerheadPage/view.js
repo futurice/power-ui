@@ -155,7 +155,7 @@ function view(state$, locationFilterVTree$) {
       <div className={styles.contentWrapper}>
         <h1>Powerhead</h1>
         <div className={styles.filtersContainer}>
-          {locationFilterVTree}
+          {void locationFilterVTree}
         </div>
       </div>
       {state.reports.length === 0

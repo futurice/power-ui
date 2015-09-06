@@ -37,6 +37,11 @@
   position: relative;
 }
 
+.genericStatsValue {
+  font-size: $fontSizeBig;
+  font-weight: bold;
+}
+
 // People statistics list
 $peopleStatsRightGutterWidth: 20px;
 $peopleStatsUnitBottom: 4px;
@@ -63,8 +68,8 @@ $peopleStatsUnitBottom: 4px;
 }
 
 .peopleStatsValue {
+  @extend .genericStatsValue;
   display: block;
-  font-size: $fontSizeBig;
 }
 
 .peopleStatsUnit {
@@ -96,8 +101,8 @@ $peopleStatsUnitBottom: 4px;
 }
 
 .financeStatsValue {
+  @extend .genericStatsValue;
   display: inline-block;
-  font-size: $fontSizeBig;
 }
 
 .financeStatsUnit {
