@@ -81,8 +81,37 @@ function renderMonthGraphPeople(report, monthIndex) {
   );
 }
 
-function renderMonthGraphShapes(report, monthIndex) {
-  return renderMonthGraphPeople(report, monthIndex);
+const financeGraphMaxHeight = 250; // px
+const financeGraphMinWidth = 8; // px
+const financeGraphMaxWidth = 40; // px
+
+function calculateFinanceGraphWidth(report) {
+  const x = report.maxFinancialsSum;
+  const T = report.companyWideMaxFinancialsSum;
+  const max = financeGraphMaxWidth;
+  const min = financeGraphMinWidth;
+  return ((x / T) * (max - min)) + min;
+}
+
+function renderMonthGraphFinance(report, monthIndex) {
+  const pxPerEur = financeGraphMaxHeight / report.maxFinancialsSum;
+  const confirmedRevenueThisMonth = report.value_creation[monthIndex];
+  const overrunThisMonth = report.overrun[monthIndex];
+  const graphStyle = {
+    width: `${calculateFinanceGraphWidth(report)}px`,
+  };
+  const overrunStyle = {
+    height: `${Math.ceil(overrunThisMonth * pxPerEur)}px`,
+  };
+  const confirmedStyle = {
+    height: `${Math.ceil(confirmedRevenueThisMonth * pxPerEur)}px`,
+  };
+  return (
+    <ul className={styles.monthGraphFinance} style={graphStyle}>
+      <li className={styles.monthGraphFinanceConfirmed} style={confirmedStyle}></li>
+      <li className={styles.monthGraphFinanceOverrun} style={overrunStyle}></li>
+    </ul>
+  );
 }
 
 function renderMonthGraph(report, monthIndex) {
@@ -91,7 +120,8 @@ function renderMonthGraph(report, monthIndex) {
   return (
     <div className={styles.monthGraph}>
       <div className={styles.monthGraphShapes}>
-        {renderMonthGraphShapes(report, monthIndex)}
+        {renderMonthGraphPeople(report, monthIndex)}
+        {renderMonthGraphFinance(report, monthIndex)}
       </div>
       <div className={styles.monthGraphLabel}>
         <span className={styles.monthGraphLabelTitle}>{monthTitle}</span>
@@ -126,11 +156,31 @@ function sortReportsByLargestTribe(reports) {
   return _.sortBy(reports, report => -report.fte[0]);
 }
 
+function augmentReportsWithMetadata(reports) {
+  const reportsWithRespectiveTotals = reports.map(report => {
+    // Array with the sum of all financials stats, one entry per month
+    const financialsSum = _.zipWith(
+      report.value_creation, report.overrun,
+      _.add
+    );
+    // Among all months, highest sum of all financials for this tribe report:
+    const maxFinancialsSum = Math.max(...financialsSum);
+    return {...report, financialsSum, maxFinancialsSum};
+  });
+  const maxFinancialsSumPerReport = reportsWithRespectiveTotals
+    .map(report => report.maxFinancialsSum);
+  const companyWideMaxFinancialsSum = Math.max(...maxFinancialsSumPerReport);
+  return reportsWithRespectiveTotals.map(report => {
+    return {...report, companyWideMaxFinancialsSum};
+  });
+}
+
 function renderReports(reports) {
   const sortedReports = sortReportsByLargestTribe(reports);
+  const completeReports = augmentReportsWithMetadata(sortedReports);
   return (
     <div className={styles.contentWrapper}>
-      {sortedReports.map(report =>
+      {completeReports.map(report =>
         <div className={styles.tribeReport}>
           <h2>{report.name}</h2>
           <h3>Staffing &amp; value creation</h3>

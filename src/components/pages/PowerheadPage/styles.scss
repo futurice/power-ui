@@ -15,6 +15,7 @@
   display: flex;
   padding-bottom: $spaceLarger;
   justify-content: space-between;
+  margin-top: $spaceBig;
 }
 
 .monthReport {
@@ -116,12 +117,29 @@ $peopleStatsUnitBottom: 4px;
   display: flex;
   flex-direction: column-reverse;
   margin: 0 $spaceNormal;
-  width: 125px; // TEMPORARY UNTIL THE GRAPH SHAPES DETERMINE THE WIDTH
+  min-width: 110px;
   position: relative;
 }
 
 .monthGraphShapes {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-end;
+}
 
+.monthGraphFinance {
+  margin: 0 $spaceSmall;
+  padding: 0;
+  min-width: 10px;
+  list-style-type: none;
+}
+
+.monthGraphFinanceOverrun {
+  background-color: $colorRed;
+}
+
+.monthGraphFinanceConfirmed {
+  background-color: $colorGreenLight;
 }
 
 $peopleBoxSize: 8px;
@@ -149,7 +167,7 @@ $peopleBoxSize: 8px;
 
 .monthGraphPeopleBoxBooked {
   @extend .monthGraphPeopleBox;
-  background-color: $colorGreen;
+  background-color: $colorGreenLight;
 }
 
 .monthGraphPeopleBoxBench {
