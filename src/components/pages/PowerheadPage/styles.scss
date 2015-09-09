@@ -154,6 +154,15 @@ $peopleBoxSize: 8px;
   flex-wrap: wrap-reverse;
 }
 
+.monthGraphPeopleChunk {
+  display: flex;
+  width: (2.5 * $peopleBoxSize);
+  flex-direction: row;
+  list-style-type: none;
+  flex-wrap: wrap-reverse;
+  margin-top: 4px;
+}
+
 .monthGraphPeopleBox {
   width: $peopleBoxSize;
   height: $peopleBoxSize;

@@ -21,10 +21,10 @@ function renderPeopleStatsItem(label, value, unit, special = false) {
 }
 
 function renderPeopleStatsList(report, monthIndex) {
-  const benchVal = Math.round(report.bench[monthIndex]);
-  const totalIntsVal = Math.round(report.fte[monthIndex]);
+  const benchVal = Math.ceil(report.bench[monthIndex]);
+  const totalIntsVal = Math.ceil(report.fte[monthIndex]);
   const bookedVal = totalIntsVal - benchVal;
-  const extFteVal = Math.round(report.ext_fte[monthIndex]);
+  const extFteVal = Math.ceil(report.ext_fte[monthIndex]);
   return (
     <ul className={styles.peopleStats}>
       {renderPeopleStatsItem('Total exts.', extFteVal, 'FTE', true)}
@@ -60,12 +60,12 @@ function renderFinanceStatsList(report, monthIndex) {
 }
 
 function renderMonthGraphPeople(report, monthIndex) {
-  const totalIntsVal = Math.round(report.fte[monthIndex]);
-  const benchVal = Math.round(report.bench[monthIndex]);
-  const extFteVal = Math.round(report.ext_fte[monthIndex]);
+  const totalIntsVal = Math.ceil(report.fte[monthIndex]);
+  const benchVal = Math.ceil(report.bench[monthIndex]);
+  const extFteVal = Math.ceil(report.ext_fte[monthIndex]);
   const bookedVal = totalIntsVal - benchVal;
   const totalPeople = totalIntsVal + extFteVal;
-  const boxes = _.fill(Array(totalPeople), 0).map((x, i) => {
+  const boxes = _.range(totalPeople).map(i => {
     if (i < extFteVal) {
       return <li className={styles.monthGraphPeopleBoxExternal}></li>;
     } else if (i < extFteVal + bookedVal) {
@@ -74,9 +74,14 @@ function renderMonthGraphPeople(report, monthIndex) {
       return <li className={styles.monthGraphPeopleBoxBench}></li>;
     }
   });
+  const chunks = _.chunk(boxes, 20);
   return (
     <ul className={styles.monthGraphPeopleBoxList}>
-      {boxes}
+      {chunks.map(chunk =>
+        <div className={styles.monthGraphPeopleChunk}>
+          {chunk}
+        </div>
+      )}
     </ul>
   );
 }
