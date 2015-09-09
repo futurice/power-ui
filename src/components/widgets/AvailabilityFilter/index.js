@@ -23,7 +23,7 @@ function AvailabilityFilter(sources) {
     .merge(valueToReplaceInvalidInput$);
 
   const vtree$ = state$.map(givenValue => {
-    const value = givenValue || '0';
+    const value = String(parseInt(givenValue) || '0');
     return (
       <div className={`AvailabilityFilter ${styles.availabilityFilter}`}>
         <p>Available for</p>
