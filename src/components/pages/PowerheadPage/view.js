@@ -122,10 +122,15 @@ function renderMonthReportsRow(report) {
   );
 }
 
+function sortReportsByLargestTribe(reports) {
+  return _.sortBy(reports, report => -report.fte[0]);
+}
+
 function renderReports(reports) {
+  const sortedReports = sortReportsByLargestTribe(reports);
   return (
     <div className={styles.contentWrapper}>
-      {reports.map(report =>
+      {sortedReports.map(report =>
         <div className={styles.tribeReport}>
           <h2>{report.name}</h2>
           <h3>Staffing &amp; value creation</h3>
