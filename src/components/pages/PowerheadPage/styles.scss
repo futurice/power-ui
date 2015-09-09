@@ -128,7 +128,7 @@ $peopleStatsUnitBottom: 4px;
 }
 
 .monthGraphFinance {
-  margin: 0 $spaceSmall;
+  margin: 0 $spaceNormal 0 0;
   padding: 0;
   min-width: 10px;
   list-style-type: none;
@@ -145,7 +145,7 @@ $peopleStatsUnitBottom: 4px;
 $peopleBoxSize: 8px;
 
 .monthGraphPeopleBoxList {
-  margin: 0 $spaceSmall;
+  margin: 0 0 0 $spaceNormal;
   padding: 0;
   display: flex;
   width: (2.5 * $peopleBoxSize);
@@ -160,13 +160,14 @@ $peopleBoxSize: 8px;
   flex-direction: row;
   list-style-type: none;
   flex-wrap: wrap-reverse;
-  margin-top: 4px;
+  margin-top: 3px;
 }
 
 .monthGraphPeopleBox {
   width: $peopleBoxSize;
   height: $peopleBoxSize;
-  margin: 1px;
+  margin-top: 1px;
+  margin-right: 1px;
 }
 
 .monthGraphPeopleBoxExternal {
