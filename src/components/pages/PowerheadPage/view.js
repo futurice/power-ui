@@ -50,13 +50,11 @@ function renderFinanceStatsItem(label, value, unit, special = false) {
 
 function renderFinanceStatsList(report, monthIndex) {
   const valueCreationVal = formatAsFinanceNumber(report.value_creation[monthIndex]);
-  const orderbookVal = formatAsFinanceNumber(report.orderbook[monthIndex]);
   const overrunsVal = formatAsFinanceNumber(report.overrun[monthIndex]);
   return (
     <ul className={styles.financeStats}>
       {renderFinanceStatsItem('Overruns', overrunsVal, EURO_SYMBOL, true)}
-      {renderFinanceStatsItem('Orderbook', orderbookVal, EURO_SYMBOL)}
-      {renderFinanceStatsItem('Value creation', valueCreationVal, EURO_SYMBOL)}
+      {renderFinanceStatsItem('Confirmed revenue', valueCreationVal, EURO_SYMBOL)}
     </ul>
   );
 }
