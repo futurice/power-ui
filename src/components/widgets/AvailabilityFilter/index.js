@@ -20,20 +20,18 @@ function AvailabilityFilter(sources) {
   const state$ = sources.props$
     .map(({value}) => value)
     .distinctUntilChanged()
-    .merge(valueToReplaceInvalidInput$);
+    .merge(valueToReplaceInvalidInput$)
+    .map(val => String(parseInt(val) || '0'));
 
-  const vtree$ = state$.map(givenValue => {
-    const value = String(parseInt(givenValue) || '0');
-    return (
-      <div className={`AvailabilityFilter ${styles.availabilityFilter}`}>
-        <p>Available for</p>
-        <input type="num" maxLength="2"
-          data-hook={new ControlledInputHook(value)}
-          />
-        <span>MD</span>
-      </div>
-    );
-  });
+  const vtree$ = state$.map(value =>
+    <div className={`AvailabilityFilter ${styles.availabilityFilter}`}>
+      <p>Available for</p>
+      <input type="num" maxLength="2"
+        data-hook={new ControlledInputHook(value)}
+        />
+      <span>MD</span>
+    </div>
+  );
 
   const sinks = {
     DOM: vtree$,
