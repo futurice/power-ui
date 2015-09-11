@@ -42,6 +42,7 @@
     "babel-eslint": "^4.0.5",
     "babel-loader": "^5.3.1",
     "chai": "^3.2.0",
+    "chai-virtual-dom": "^1.0.0",
     "cpx": "^1.2.1",
     "css-loader": "^0.15.1",
     "eslint": "^1.1.0",
