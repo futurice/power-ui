@@ -3,9 +3,8 @@ import chai from 'chai';
 const expect = chai.expect;
 chai.use(require('chai-virtual-dom'));
 import moment from 'moment';
-import mockDOMSource from 'power-ui/test-utils/mock-dom-source';
 import {Rx} from '@cycle/core';
-import {h} from '@cycle/dom';
+import {h, mockDOMResponse} from '@cycle/dom';
 import DataTable from './index';
 
 describe('DataTable', () => {
@@ -22,7 +21,7 @@ describe('DataTable', () => {
         end: moment().clone().add(2, 'months').endOf('month'),
       },
     });
-    const DOMSource = mockDOMSource();
+    const DOMSource = mockDOMResponse();
     const dataTable = DataTable({DOM: DOMSource, props$});
     dataTable.DOM.elementAt(0).subscribe(vtree => {
       expect(vtree).to.look.like(
@@ -57,7 +56,7 @@ describe('DataTable', () => {
         end: moment().clone().add(2, 'months').endOf('month'),
       },
     });
-    const DOMSource = mockDOMSource();
+    const DOMSource = mockDOMResponse();
     const dataTable = DataTable({DOM: DOMSource, props$});
     dataTable.DOM.elementAt(0).subscribe(vtree => {
       expect(vtree).to.look.like(

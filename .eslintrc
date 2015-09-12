@@ -127,8 +127,7 @@
     },
     "env": {
         "es6": true,
-        "browser": true,
-        "modules": true
+        "browser": true
     },
     "globals": {
         "__DEV__": true,

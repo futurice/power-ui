@@ -30,7 +30,7 @@
   "homepage": "https://github.com/futurice/power-ui#readme",
   "dependencies": {
     "@cycle/core": "3.1.x",
-    "@cycle/dom": "5.1.x",
+    "@cycle/dom": "5.3.x",
     "@cycle/http": "3.1.x",
     "lodash": "^3.10.1",
     "moment": "^2.10.6"

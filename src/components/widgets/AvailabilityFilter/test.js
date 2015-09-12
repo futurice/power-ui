@@ -1,6 +1,6 @@
 /* global describe, it */
 import {expect} from 'chai';
-import mockDOMSource from 'power-ui/test-utils/mock-dom-source';
+import {mockDOMResponse} from '@cycle/dom';
 import {Rx} from '@cycle/core';
 import AvailabilityFilter from './index';
 
@@ -11,7 +11,7 @@ describe('AvailabilityFilter', () => {
 
   it('should apply props value to the <input>', (done) => {
     const props$ = Rx.Observable.just({value: 18});
-    const DOMSource = mockDOMSource();
+    const DOMSource = mockDOMResponse();
     const availabilityFilter = AvailabilityFilter({DOM: DOMSource, props$});
     availabilityFilter.DOM.elementAt(0).subscribe(vtree => {
       expect(vtree).to.be.an('object');
@@ -27,7 +27,7 @@ describe('AvailabilityFilter', () => {
 
   it('should set <input> to zero if props value was invalid', (done) => {
     const props$ = Rx.Observable.just({value: '!'});
-    const DOMSource = mockDOMSource();
+    const DOMSource = mockDOMResponse();
     const availabilityFilter = AvailabilityFilter({DOM: DOMSource, props$});
     availabilityFilter.DOM.elementAt(0).subscribe(vtree => {
       expect(vtree).to.be.an('object');
@@ -43,7 +43,7 @@ describe('AvailabilityFilter', () => {
 
   it('should replace invalid value with zero on <input>', (done) => {
     const props$ = Rx.Observable.just({value: 18});
-    const DOMSource = mockDOMSource({
+    const DOMSource = mockDOMResponse({
       '.AvailabilityFilter input': {
         'change': Rx.Observable.just({target: {value: 'x'}}),
       },
