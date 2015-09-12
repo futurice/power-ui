@@ -47,4 +47,31 @@ describe('DataTable', () => {
       done();
     });
   });
+
+  it('should output "nobody" overlay when data has loaded but is empty', (done) => {
+    const props$ = Rx.Observable.just({
+      people: [],
+      progress: 1,
+      timeRange: {
+        start: moment().startOf('month'),
+        end: moment().clone().add(2, 'months').endOf('month'),
+      },
+    });
+    const DOMSource = mockDOMSource();
+    const dataTable = DataTable({DOM: DOMSource, props$});
+    dataTable.DOM.elementAt(0).subscribe(vtree => {
+      expect(vtree).to.look.like(
+        h('section', [
+          h('div', [
+            h('table')
+          ]),
+          h('div', [
+            h('h1', 'Nobody'),
+            h('h4')
+          ])
+        ])
+      );
+      done();
+    });
+  });
 });
