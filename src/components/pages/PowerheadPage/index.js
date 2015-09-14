@@ -9,7 +9,7 @@ function LocationFilterWrapper(state$, DOM) {
   return LocationFilter({DOM, props$});
 }
 
-function PeoplePage(sources) {
+function PowerheadPage(sources) {
   const timeRange$ = modelTimeRange();
   const powerheadPageHTTP = PowerheadPageHTTP({HTTP: sources.HTTP, timeRange$});
   const state$ = model(powerheadPageHTTP.response$, sources.props$);
@@ -23,4 +23,4 @@ function PeoplePage(sources) {
   return sinks;
 }
 
-export default PeoplePage;
+export default PowerheadPage;
