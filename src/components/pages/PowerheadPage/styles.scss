@@ -138,7 +138,7 @@ $financialsStatsLegendBarWidth: 4px;
   display: flex;
   flex-direction: column-reverse;
   margin: 0 $spaceNormal;
-  min-width: 110px;
+  min-width: 120px;
   position: relative;
 }
 
@@ -153,6 +153,9 @@ $financialsStatsLegendBarWidth: 4px;
   padding: 0;
   min-width: 10px;
   list-style-type: none;
+  position: relative;
+  display: flex;
+  flex-direction: column-reverse;
 }
 
 .monthGraphFinancialsOverrun {
@@ -161,6 +164,18 @@ $financialsStatsLegendBarWidth: 4px;
 
 .monthGraphFinancialsConfirmed {
   background-color: $colorGreenLight;
+}
+
+.monthGraphFinancialsBreakEven {
+  position: absolute;
+  right: 0;
+  border-bottom: 1px dashed $colorBlack;
+  span {
+    font-size: $fontSizeSmall;
+    font-family: $fontFamilyRegular;
+    white-space: pre;
+    vertical-align: bottom;
+  }
 }
 
 $peopleBoxSize: 8px;

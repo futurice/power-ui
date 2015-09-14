@@ -94,19 +94,21 @@ const financialsGraphMinWidth = 8; // px
 const financialsGraphMaxWidth = 40; // px
 
 function calculateFinancialsGraphWidth(report) {
-  const x = report.maxFinancialsSum;
-  const T = report.companyWideMaxFinancialsSum;
+  const x = report.maxFinancialsVal;
+  const T = report.companyWideMaxFinancialsVal;
   const max = financialsGraphMaxWidth;
   const min = financialsGraphMinWidth;
   return ((x / T) * (max - min)) + min;
 }
 
 function renderMonthGraphFinancials(report, monthIndex) {
-  const pxPerEur = financialsGraphMaxHeight / report.maxFinancialsSum;
+  const pxPerEur = financialsGraphMaxHeight / report.maxFinancialsVal;
   const confirmedRevenueThisMonth = report.value_creation[monthIndex];
   const overrunThisMonth = report.overrun[monthIndex];
+  const breakEven = report.costs[monthIndex];
   const graphStyle = {
     width: `${calculateFinancialsGraphWidth(report)}px`,
+    height: `${financialsGraphMaxHeight}px`,
   };
   const overrunStyle = {
     height: `${Math.ceil(overrunThisMonth * pxPerEur)}px`,
@@ -114,10 +116,16 @@ function renderMonthGraphFinancials(report, monthIndex) {
   const confirmedStyle = {
     height: `${Math.ceil(confirmedRevenueThisMonth * pxPerEur)}px`,
   };
+  const breakEvenStyle = {
+    bottom: `${Math.ceil(breakEven * pxPerEur)}px`,
+  };
   return (
     <ul className={styles.monthGraphFinancials} style={graphStyle}>
-      <li className={styles.monthGraphFinancialsConfirmed} style={confirmedStyle}></li>
-      <li className={styles.monthGraphFinancialsOverrun} style={overrunStyle}></li>
+      <li className={styles.monthGraphFinancialsOverrun} style={overrunStyle} />
+      <li className={styles.monthGraphFinancialsConfirmed} style={confirmedStyle} />
+      <li className={styles.monthGraphFinancialsBreakEven} style={breakEvenStyle}>
+        <span>break even</span>
+      </li>
     </ul>
   );
 }
@@ -171,15 +179,19 @@ function augmentReportsWithMetadata(reports) {
       report.value_creation, report.overrun,
       _.add
     );
+    const costs = _.zipWith(
+      report.fte, report.ext_fte,
+      _.add
+    ).map(totalFte => totalFte * report.expenses_per_fte_month);
     // Among all months, highest sum of all financials for this tribe report:
-    const maxFinancialsSum = Math.max(...financialsSum);
-    return {...report, financialsSum, maxFinancialsSum};
+    const maxFinancialsVal = Math.max(...costs, ...financialsSum);
+    return {...report, financialsSum, costs, maxFinancialsVal};
   });
-  const maxFinancialsSumPerReport = reportsWithRespectiveTotals
-    .map(report => report.maxFinancialsSum);
-  const companyWideMaxFinancialsSum = Math.max(...maxFinancialsSumPerReport);
+  const maxFinancialsValPerReport = reportsWithRespectiveTotals
+    .map(report => report.maxFinancialsVal);
+  const companyWideMaxFinancialsVal = Math.max(...maxFinancialsValPerReport);
   return reportsWithRespectiveTotals.map(report => {
-    return {...report, companyWideMaxFinancialsSum};
+    return {...report, companyWideMaxFinancialsVal};
   });
 }
 
