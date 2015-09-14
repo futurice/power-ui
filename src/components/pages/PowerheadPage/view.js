@@ -35,15 +35,16 @@ function renderPeopleStatsList(report, monthIndex) {
   );
 }
 
-function renderFinancialsStatsItem(label, value, unit, special = false) {
+function renderFinancialsStatsItem(label, value, legendBarStyle, special = false) {
   const financialsStatsItemClassName = special
     ? styles.financialsStatsItemSpecial
     : styles.financialsStatsItem;
   return (
     <li className={financialsStatsItemClassName}>
+      <div className={legendBarStyle} />
       <span className={styles.financialsStatsLabel}>{label}</span>
       <span className={styles.financialsStatsValue}>{value}</span>
-      <span className={styles.financialsStatsUnit}>{unit}</span>
+      <span className={styles.financialsStatsUnit}>{EURO_SYMBOL}</span>
     </li>
   );
 }
@@ -51,10 +52,12 @@ function renderFinancialsStatsItem(label, value, unit, special = false) {
 function renderFinancialsStatsList(report, monthIndex) {
   const revenue = formatAsFinancialsNumber(report.value_creation[monthIndex]);
   const overruns = formatAsFinancialsNumber(report.overrun[monthIndex]);
+  const overrunsBarStyle = styles.financialsStatsLegendBarOverruns;
+  const revenueBarStyle = styles.financialsStatsLegendBarRevenue;
   return (
     <ul className={styles.financialsStats}>
-      {renderFinancialsStatsItem('Overruns', overruns, EURO_SYMBOL, true)}
-      {renderFinancialsStatsItem('Confirmed revenue', revenue, EURO_SYMBOL)}
+      {renderFinancialsStatsItem('Overruns', overruns, overrunsBarStyle, true)}
+      {renderFinancialsStatsItem('Confirmed revenue', revenue, revenueBarStyle)}
     </ul>
   );
 }

@@ -81,6 +81,8 @@ $peopleStatsUnitBottom: 4px;
 }
 
 // Financials statistics list
+$financialsStatsLegendBarWidth: 4px;
+
 .financialsStats {
   @extend .genericStats;
 }
@@ -88,6 +90,7 @@ $peopleStatsUnitBottom: 4px;
 .financialsStatsItem {
   @extend .genericStatsItem;
   text-align: left;
+  padding-left: ($financialsStatsLegendBarWidth + $spaceSmall);
 }
 
 .financialsStatsItemSpecial {
@@ -110,6 +113,24 @@ $peopleStatsUnitBottom: 4px;
   display: inline-block;
   font-size: $fontSizeSmall;
   margin-left: $spaceTiny;
+}
+
+.financialsStatsLegendBar {
+  width: $financialsStatsLegendBarWidth;
+  position: absolute;
+  top: 0;
+  bottom: 6px;
+  left: 0;
+}
+
+.financialsStatsLegendBarRevenue {
+  @extend .financialsStatsLegendBar;
+  background-color: $colorGreenLight;
+}
+
+.financialsStatsLegendBarOverruns {
+  @extend .financialsStatsLegendBar;
+  background-color: $colorRed;
 }
 
 // Month graph
