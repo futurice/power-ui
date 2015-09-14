@@ -2,7 +2,7 @@
 import {hJSX} from '@cycle/dom';
 import {Rx} from '@cycle/core';
 import _ from 'lodash';
-import {formatAsFinanceNumber} from 'power-ui/utils';
+import {formatAsFinancialsNumber} from 'power-ui/utils';
 import styles from './styles.scss';
 
 const EURO_SYMBOL = '\u20AC';
@@ -35,26 +35,26 @@ function renderPeopleStatsList(report, monthIndex) {
   );
 }
 
-function renderFinanceStatsItem(label, value, unit, special = false) {
-  const financeStatsItemClassName = special
-    ? styles.financeStatsItemSpecial
-    : styles.financeStatsItem;
+function renderFinancialsStatsItem(label, value, unit, special = false) {
+  const financialsStatsItemClassName = special
+    ? styles.financialsStatsItemSpecial
+    : styles.financialsStatsItem;
   return (
-    <li className={financeStatsItemClassName}>
-      <span className={styles.financeStatsLabel}>{label}</span>
-      <span className={styles.financeStatsValue}>{value}</span>
-      <span className={styles.financeStatsUnit}>{unit}</span>
+    <li className={financialsStatsItemClassName}>
+      <span className={styles.financialsStatsLabel}>{label}</span>
+      <span className={styles.financialsStatsValue}>{value}</span>
+      <span className={styles.financialsStatsUnit}>{unit}</span>
     </li>
   );
 }
 
-function renderFinanceStatsList(report, monthIndex) {
-  const valueCreationVal = formatAsFinanceNumber(report.value_creation[monthIndex]);
-  const overrunsVal = formatAsFinanceNumber(report.overrun[monthIndex]);
+function renderFinancialsStatsList(report, monthIndex) {
+  const revenue = formatAsFinancialsNumber(report.value_creation[monthIndex]);
+  const overruns = formatAsFinancialsNumber(report.overrun[monthIndex]);
   return (
-    <ul className={styles.financeStats}>
-      {renderFinanceStatsItem('Overruns', overrunsVal, EURO_SYMBOL, true)}
-      {renderFinanceStatsItem('Confirmed revenue', valueCreationVal, EURO_SYMBOL)}
+    <ul className={styles.financialsStats}>
+      {renderFinancialsStatsItem('Overruns', overruns, EURO_SYMBOL, true)}
+      {renderFinancialsStatsItem('Confirmed revenue', revenue, EURO_SYMBOL)}
     </ul>
   );
 }
@@ -86,24 +86,24 @@ function renderMonthGraphPeople(report, monthIndex) {
   );
 }
 
-const financeGraphMaxHeight = 250; // px
-const financeGraphMinWidth = 8; // px
-const financeGraphMaxWidth = 40; // px
+const financialsGraphMaxHeight = 250; // px
+const financialsGraphMinWidth = 8; // px
+const financialsGraphMaxWidth = 40; // px
 
-function calculateFinanceGraphWidth(report) {
+function calculateFinancialsGraphWidth(report) {
   const x = report.maxFinancialsSum;
   const T = report.companyWideMaxFinancialsSum;
-  const max = financeGraphMaxWidth;
-  const min = financeGraphMinWidth;
+  const max = financialsGraphMaxWidth;
+  const min = financialsGraphMinWidth;
   return ((x / T) * (max - min)) + min;
 }
 
-function renderMonthGraphFinance(report, monthIndex) {
-  const pxPerEur = financeGraphMaxHeight / report.maxFinancialsSum;
+function renderMonthGraphFinancials(report, monthIndex) {
+  const pxPerEur = financialsGraphMaxHeight / report.maxFinancialsSum;
   const confirmedRevenueThisMonth = report.value_creation[monthIndex];
   const overrunThisMonth = report.overrun[monthIndex];
   const graphStyle = {
-    width: `${calculateFinanceGraphWidth(report)}px`,
+    width: `${calculateFinancialsGraphWidth(report)}px`,
   };
   const overrunStyle = {
     height: `${Math.ceil(overrunThisMonth * pxPerEur)}px`,
@@ -112,9 +112,9 @@ function renderMonthGraphFinance(report, monthIndex) {
     height: `${Math.ceil(confirmedRevenueThisMonth * pxPerEur)}px`,
   };
   return (
-    <ul className={styles.monthGraphFinance} style={graphStyle}>
-      <li className={styles.monthGraphFinanceConfirmed} style={confirmedStyle}></li>
-      <li className={styles.monthGraphFinanceOverrun} style={overrunStyle}></li>
+    <ul className={styles.monthGraphFinancials} style={graphStyle}>
+      <li className={styles.monthGraphFinancialsConfirmed} style={confirmedStyle}></li>
+      <li className={styles.monthGraphFinancialsOverrun} style={overrunStyle}></li>
     </ul>
   );
 }
@@ -126,7 +126,7 @@ function renderMonthGraph(report, monthIndex) {
     <div className={styles.monthGraph}>
       <div className={styles.monthGraphShapes}>
         {renderMonthGraphPeople(report, monthIndex)}
-        {renderMonthGraphFinance(report, monthIndex)}
+        {renderMonthGraphFinancials(report, monthIndex)}
       </div>
       <div className={styles.monthGraphLabel}>
         <span className={styles.monthGraphLabelTitle}>{monthTitle}</span>
@@ -141,7 +141,7 @@ function renderMonthReport(report, monthIndex) {
     <div className={styles.monthReport}>
       {renderPeopleStatsList(report, monthIndex)}
       {renderMonthGraph(report, monthIndex)}
-      {renderFinanceStatsList(report, monthIndex)}
+      {renderFinancialsStatsList(report, monthIndex)}
     </div>
   );
 }

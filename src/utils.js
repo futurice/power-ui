@@ -39,7 +39,7 @@ export default {
     return null;
   },
 
-  formatAsFinanceNumber(num) {
+  formatAsFinancialsNumber(num) {
     // Suppose num is 1035024.29
     return String(Math.ceil(num))
       // '1035024'

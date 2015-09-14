@@ -80,33 +80,33 @@ $peopleStatsUnitBottom: 4px;
   font-size: $fontSizeSmall;
 }
 
-// Finance statistics list
-.financeStats {
+// Financials statistics list
+.financialsStats {
   @extend .genericStats;
 }
 
-.financeStatsItem {
+.financialsStatsItem {
   @extend .genericStatsItem;
   text-align: left;
 }
 
-.financeStatsItemSpecial {
-  @extend .financeStatsItem;
+.financialsStatsItemSpecial {
+  @extend .financialsStatsItem;
   color: $colorRed;
 }
 
-.financeStatsLabel {
+.financialsStatsLabel {
   display: block;
   font-family: $fontFamilyRegular;
   font-size: $fontSizeSmall;
 }
 
-.financeStatsValue {
+.financialsStatsValue {
   @extend .genericStatsValue;
   display: inline-block;
 }
 
-.financeStatsUnit {
+.financialsStatsUnit {
   display: inline-block;
   font-size: $fontSizeSmall;
   margin-left: $spaceTiny;
@@ -127,18 +127,18 @@ $peopleStatsUnitBottom: 4px;
   align-items: flex-end;
 }
 
-.monthGraphFinance {
+.monthGraphFinancials {
   margin: 0 $spaceNormal 0 0;
   padding: 0;
   min-width: 10px;
   list-style-type: none;
 }
 
-.monthGraphFinanceOverrun {
+.monthGraphFinancialsOverrun {
   background-color: $colorRed;
 }
 
-.monthGraphFinanceConfirmed {
+.monthGraphFinancialsConfirmed {
   background-color: $colorGreenLight;
 }
 
