@@ -12,6 +12,7 @@
     "watch:static": "cpx \"src/static/**/*\" dist --watch",
     "make-power-ui-symlink": "cd node_modules && ln -nsf ../src power-ui",
     "prewatch": "npm run make-power-ui-symlink",
+    "postinstall": "npm run make-power-ui-symlink",
     "prebuild": "npm run make-power-ui-symlink",
     "build:static": "rm -rf dist && mkdir -p dist && cp -r src/static/* dist",
     "build:js": "BUILD_DEV=false webpack -p",
