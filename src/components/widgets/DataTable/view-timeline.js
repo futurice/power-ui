@@ -1,11 +1,12 @@
 /** @jsx hJSX */
 import {hJSX} from '@cycle/dom';
+import _ from 'lodash';
 import moment from 'moment';
 import styles from './styles.scss';
 import {timeRangeIndexArray} from 'power-ui/utils';
 
 const caseHeight = 25;
-const caseHeightAndMargin = caseHeight + 3;
+const laneHeightAndMargin = caseHeight + 3;
 
 function renderMonthSeparators(indexArray) {
   return indexArray.map(i => {
@@ -51,10 +52,10 @@ function renderTimelineHeader(timeRange) {
   );
 }
 
-function renderSingleCase(theCase, indexInList) {
+function renderSingleCase(theCase, laneIndex) {
   const liStyle = {
     'left': `${theCase.leftStart}%`,
-    'top': `${indexInList * (caseHeightAndMargin)}px`,
+    'top': `${laneIndex * (laneHeightAndMargin)}px`,
     'height': `${caseHeight}px`,
     'width': `${theCase.leftEnd - theCase.leftStart}%`,
   };
@@ -67,17 +68,67 @@ function renderSingleCase(theCase, indexInList) {
   );
 }
 
+// renderSingleLane :: [case] -> index -> [caseElem]
+function renderSingleLane(theLane, indexInList) {
+  return theLane.map(theCase => renderSingleCase(theCase, indexInList));
+}
+
+// intersect :: x1 -> x2 -> y1 -> y2 -> boolean
+function intersect(a1, a2, b1, b2) {
+  return a2 > b1 && b2 > a1;
+}
+
+// caseFitsToLane :: case -> [case] -> boolean
+function caseFitsToLane(theCase, lane) {
+  return !lane.some(laneItem =>
+    intersect(laneItem.leftStart, laneItem.leftEnd, theCase.leftStart, theCase.leftEnd)
+  );
+}
+
+// compactCases :: [case] -> [[case]]
+function compactCases(allCases) {
+  const cases = allCases.filter(c => c.type === 'allocation');
+  const absences = allCases.filter(c => c.type !== 'allocation');
+
+  const lanes = cases.reduce((laneArray, theCase) => {
+    let firstAvailableLane = laneArray.find(_.curry(caseFitsToLane)(theCase));
+    if (typeof firstAvailableLane === 'undefined') {
+      firstAvailableLane = [];
+      laneArray.push(firstAvailableLane);
+    }
+    firstAvailableLane.push(theCase);
+    return laneArray;
+  }, []);
+
+  // see if we can fit all absences to any single lane.
+  const laneForAbsences = lanes.find(lane => {
+    const fitsToLane = _.curryRight(caseFitsToLane)(lane);
+    return absences.every(absenceCase => fitsToLane(absenceCase));
+  });
+
+  if (typeof laneForAbsences !== 'undefined') {
+    absences.forEach(a => laneForAbsences.push(a));
+  } else {
+    lanes.push(absences);
+  }
+
+  return lanes;
+}
+
 function measureCaseWith(timeRange) {
   const totalTime = timeRange.end.diff(timeRange.start);
   return function measureCase({start_date, end_date, label, opacity, type}) {
     const allocationStart = moment(start_date).diff(timeRange.start);
-    const allocationEnd = moment(end_date).diff(timeRange.start);
+    const allocationEnd = moment(end_date).add(1, 'day').diff(timeRange.start);
     const leftStart = (Math.max(0, allocationStart) / totalTime) * 100;
     const leftEnd = (Math.min(totalTime, allocationEnd) / totalTime) * 100;
     const backgroundClass = type === 'allocation'
       ? styles.caseItemBackgroundAllocation
       : styles.caseItemBackgroundAbsence;
-    return {leftStart, leftEnd, backgroundClass, label, opacity};
+    return {
+      leftStart, leftEnd, backgroundClass, label,
+      opacity, start_date, end_date, type,
+    };
   };
 }
 
@@ -113,12 +164,14 @@ function renderTimelineCases(person, timeRange) {
   const absenceCases = person.absences.map(preprocessAbsenceCase);
   const allCases = allocationCases.concat(absenceCases)
     .filter(isCaseInTimeRange(timeRange))
-    .map(measureCaseWith(timeRange))
-    .map(renderSingleCase);
-  const style = {height: `${allCases.length * (caseHeightAndMargin)}px`};
+    .map(measureCaseWith(timeRange));
+
+  const lanes = compactCases(allCases).map(renderSingleLane);
+
+  const style = {height: `${lanes.length * (laneHeightAndMargin)}px`};
   return (
     <ul style={style} className={styles.casesList}>
-      {allCases}
+      {lanes}
     </ul>
   );
 }
