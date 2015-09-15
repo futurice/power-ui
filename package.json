@@ -24,7 +24,7 @@
     "url": "git+https://github.com/futurice/power-ui.git"
   },
   "author": "",
-  "license": "ISC",
+  "license": "Apache-2.0",
   "bugs": {
     "url": "https://github.com/futurice/power-ui/issues"
   },
