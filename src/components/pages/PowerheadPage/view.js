@@ -118,6 +118,7 @@ function renderMonthGraphFinancials(report, monthIndex) {
   };
   const breakEvenStyle = {
     bottom: `${Math.ceil(breakEven * pxPerEur)}px`,
+    display: confirmedRevenueThisMonth === 0 ? 'none' : 'inherit',
   };
   return (
     <ul className={styles.monthGraphFinancials} style={graphStyle}>
