@@ -87,10 +87,10 @@ function caseFitsToLane(theCase, lane) {
 
 // compactCases :: [case] -> [[case]]
 function compactCases(allCases) {
-  const cases = allCases.filter(c => c.type === 'allocation');
+  const allocations = allCases.filter(c => c.type === 'allocation');
   const absences = allCases.filter(c => c.type !== 'allocation');
 
-  const lanes = cases.reduce((laneArray, theCase) => {
+  const lanes = allocations.reduce((laneArray, theCase) => {
     let firstAvailableLane = laneArray.find(_.curry(caseFitsToLane)(theCase));
     if (typeof firstAvailableLane === 'undefined') {
       firstAvailableLane = [];
@@ -100,7 +100,7 @@ function compactCases(allCases) {
     return laneArray;
   }, []);
 
-  // see if we can fit all absences to any single lane.
+  // see if we can fit all absences to any existing single lane.
   const laneForAbsences = lanes.find(lane => {
     const fitsToLane = _.curryRight(caseFitsToLane)(lane);
     return absences.every(absenceCase => fitsToLane(absenceCase));
@@ -125,10 +125,7 @@ function measureCaseWith(timeRange) {
     const backgroundClass = type === 'allocation'
       ? styles.caseItemBackgroundAllocation
       : styles.caseItemBackgroundAbsence;
-    return {
-      leftStart, leftEnd, backgroundClass, label,
-      opacity, start_date, end_date, type,
-    };
+    return {leftStart, leftEnd, backgroundClass, label, opacity, type};
   };
 }
 
