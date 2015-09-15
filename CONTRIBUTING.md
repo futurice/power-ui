@@ -1,3 +1,10 @@
+## License
+
+By contributing your code, you agree to license your contribution under the terms of the [Apache 2.0 license](https://github.com/futurice/power-ui/blob/master/LICENSE.txt).
+
+If you add a new file, please also insert the following header:
+
+```
 /**
  * This file is part of power-ui, originally developed by Futurice Oy.
  *
@@ -13,22 +20,4 @@
  * License for the specific language governing permissions and limitations under
  * the License.
  */
-@import "~styles/spacing.scss";
-@import "~styles/common.scss";
-
-.normal {
-  border-radius: $borderRadiusNormal;
-  padding: $spaceSmaller $spaceSmall;
-  margin-right: $spaceSmall;
-  outline: none;
-  background: transparent;
-  color: $colorBlack;
-  border: solid 1px $colorGrayLighter;
-}
-
-.active {
-  @extend .normal;
-  background: $colorBlack;
-  color: $colorWhite;
-  border: solid 1px $colorBlack;
-}
+```
