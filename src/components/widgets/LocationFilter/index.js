@@ -15,11 +15,13 @@
  */
 /** @jsx hJSX */
 import {hJSX} from '@cycle/dom';
+import cuid from 'cuid';
 import buttonStyles from './locationFilterButton.scss';
 
-function intent(DOM) {
+function intent(DOM, name) {
   return {
-    selectLocation$: DOM.select('.LocationFilter button').events('click')
+    selectLocation$: DOM.select(`.${name}.LocationFilter button`)
+      .events('click')
       .map(clickEv => clickEv.target.value),
   };
 }
@@ -51,12 +53,12 @@ function renderFilterButtonsForTribes(selectedLocation, tribes) {
   );
 }
 
-function view(state$) {
+function view(state$, name) {
   return state$.map(state => {
     return (
-      <div className="LocationFilter">
+      <div className={`${name} LocationFilter`}>
         {renderFilterButton(state.location, 'Show all', 'all')}
-        {renderFilterButton(state.location, 'Helsinki')}
+        {renderFilterButton(state.location, 'Finland', 'FI')}
         {renderFilterButton(state.location, 'Germany', 'DE')}
         {renderFilterButtonsForTribes(state.location, state.tribes)}
       </div>
@@ -66,11 +68,11 @@ function view(state$) {
   );
 }
 
-function LocationFilter(sources) {
-  const actions = intent(sources.DOM);
+function LocationFilter(sources, name = cuid()) {
+  const actions = intent(sources.DOM, name);
   const update$ = makeUpdate$(actions.selectLocation$);
   const state$ = model(sources.props$, update$);
-  const vtree$ = view(state$);
+  const vtree$ = view(state$, name);
 
   const sinks = {
     DOM: vtree$,

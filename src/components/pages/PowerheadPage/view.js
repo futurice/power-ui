@@ -127,9 +127,11 @@ function renderMonthGraphFinancials(report, monthIndex) {
   };
   const overrunStyle = {
     height: `${Math.ceil(overrunThisMonth * pxPerEur)}px`,
+    display: overrunThisMonth === 0 ? 'none' : 'inherit',
   };
   const confirmedStyle = {
     height: `${Math.ceil(confirmedRevenueThisMonth * pxPerEur)}px`,
+    display: confirmedRevenueThisMonth === 0 ? 'none' : 'inherit',
   };
   const breakEvenStyle = {
     bottom: `${Math.ceil(breakEven * pxPerEur)}px`,
@@ -244,7 +246,7 @@ function view(state$, locationFilterVTree$) {
       <div className={styles.contentWrapper}>
         <h1>Powerhead</h1>
         <div className={styles.filtersContainer}>
-          {void locationFilterVTree}
+          {locationFilterVTree}
         </div>
       </div>
       {state.reports.length === 0
