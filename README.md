@@ -23,6 +23,11 @@ npm run watch
 
 Then open your browser at `localhost:8080`.
 
+Before committing a new change, run the tests with
+```
+npm run test
+```
+
 ## Deployment
 
 - Access `comedius` server via SSH.
