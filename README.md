@@ -28,6 +28,8 @@ Before committing a new change, run the tests with
 npm run test
 ```
 
+[![Build Status](https://travis-ci.org/futurice/power-ui.svg?branch=master)](https://travis-ci.org/futurice/power-ui)
+
 ## Deployment
 
 - Access `comedius` server via SSH.
