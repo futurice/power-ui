@@ -1,6 +1,6 @@
 # power-ui
 
-Power.futurice.com new UI
+Power.futurice.com new UI.
 
 ## Installation
 
@@ -11,6 +11,8 @@ npm install
 ```
 
 ## Running in development mode
+
+If you work at Futurice with access to the private backend repository, follow the instructions below. Otherwise, for the general public, this repository serves only as an example of a Cycle.js frontend app.
 
 Clone the backend repository (http://github.com/futurice/power) and follow its instructions to run it locally in your computer. It is expected to run at `http://localhost:8000/api/v1/`.
 
