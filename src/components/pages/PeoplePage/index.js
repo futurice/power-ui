@@ -1,6 +1,7 @@
 import LocationFilter from 'power-ui/components/widgets/LocationFilter/index';
 import TextFilter from 'power-ui/components/widgets/TextFilter/index';
 import AvailabilityFilter from 'power-ui/components/widgets/AvailabilityFilter/index';
+import TimeRangeFilter from 'power-ui/components/widgets/TimeRangeFilter/index';
 import DataTable from 'power-ui/components/widgets/DataTable/index';
 import PeoplePageHTTP from './http.js';
 import {model, filterState} from './model.js';
@@ -26,6 +27,15 @@ function AvailabilityFilterWrapper(state$, DOM) {
   return AvailabilityFilter({DOM, props$});
 }
 
+function TimeRangeFilterWrapper(state$, DOM) {
+  const props$ = state$
+    .map(state => ({
+      value: state.filters.timeRange,
+    }))
+    .distinctUntilChanged(state => state.value);
+  return TimeRangeFilter({DOM, props$});
+}
+
 function DataTableWrapper(state$, DOM) {
   const props$ = state$
     .map(state => ({
@@ -42,12 +52,15 @@ function PeoplePage(sources) {
   const locationFilter = LocationFilterWrapper(state$, sources.DOM);
   const textFilter = TextFilterWrapper(state$, sources.DOM);
   const availabilityFilter = AvailabilityFilterWrapper(state$, sources.DOM);
+  const timeRangeFilter = TimeRangeFilterWrapper(state$, sources.DOM);
   const filteredState$ = filterState(state$,
-    locationFilter.value$, textFilter.value$, availabilityFilter.value$
+    locationFilter.value$, textFilter.value$,
+    availabilityFilter.value$, timeRangeFilter.value$
   );
   const dataTable = DataTableWrapper(filteredState$, sources.DOM);
   const vtree$ = view(
-    locationFilter.DOM, textFilter.DOM, availabilityFilter.DOM, dataTable.DOM
+    locationFilter.DOM, textFilter.DOM, availabilityFilter.DOM,
+    timeRangeFilter.DOM, dataTable.DOM
   );
 
   const sinks = {

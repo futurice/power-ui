@@ -1,0 +1,69 @@
+@import "~styles/palette.scss";
+@import "~styles/spacing.scss";
+@import "~styles/common.scss";
+
+.timeRangeFilter {
+  display: inline-block;
+
+	section {
+	  position: relative;
+	  width: 400px;
+	  height: 35px;
+	  margin-top: $spaceNormal;
+
+	  ul {
+	  	display: flex;
+	  	width: 100%;
+	  	margin: 0;
+	  	padding-top: 19px;
+	  	padding-left: 0px;
+
+
+	  	li {
+	  		list-style-type: none;
+	  	}
+
+	  	li:nth-child(2n) {
+	  		flex-grow: 1;
+	  	
+	  	}
+	  }
+
+	  input {
+		  position: absolute;
+		  top: 0px;
+		  left: 0px;
+	 	outline: none;
+
+		}
+
+	
+		input::-webkit-slider-thumb {
+		    pointer-events: all;
+		    position: relative;
+		    z-index: 1;
+		    outline: 0;
+
+		}
+
+	}
+
+}
+
+input[type='range'] {
+	-webkit-appearance: none;
+	border: 0px solid $colorGrayLighter;
+	border-radius: 8px;
+	height: 2px;
+
+}
+
+input[type='range']::-webkit-slider-thumb {
+	-webkit-appearance: none;
+	background-color: white;
+	border: 2px solid $colorGrayLighter;
+	width: 23px;
+	height: 23px;
+	border-radius: 12px;
+	cursor: pointer;
+}

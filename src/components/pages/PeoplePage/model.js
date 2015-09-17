@@ -24,12 +24,16 @@ const initialState = {
   tribes: [],
   timeRange: {
     start: moment().startOf('month'),
-    end: moment().clone().add(2, 'months').endOf('month'),
+    end: moment().clone().add(5, 'months').endOf('month'),
   },
   filters: {
     location: 'all',
     search: null,
     availability: null,
+    timeRange: {
+      start: moment().startOf('month'),
+      end: moment().clone().add(5, 'months').endOf('month'),
+    },
   },
 };
 
@@ -98,21 +102,62 @@ function makeFilterByAvailabilityFn$(availabilityValue$) {
   );
 }
 
-function makeCombinedFilterFn$(location$, searchValue$, availability$) {
+/*
+function makeFilterByAvailabilityAndTimeRangeFn$(availabilityValue$, timeRange$) {
+  return Rx.Observable.combineLatest(availabilityValue$, timeRange$,
+    (availabilityValue, timeRange) => {
+      return function filterStateByAvailabilityAndTimeRange(oldState) {
+        const newPeople = oldState.people.map(person => {
+          // calculate man_days_available on given timeRange
+          console.log(timeRange);
+
+          return person;
+        }).filter(person => {
+          console.log(person);
+
+          // keep people who have man_days_available >= availabilityvalue
+          return true;
+        }).map(person => {
+          // remove cases/allocs that are not on the time range
+          return person;
+        });
+
+        return {...oldState, people: newPeople};
+      };
+    });
+}
+*/
+
+function makeTimeRangeFilterFn$(timeRange$) {
+  return timeRange$.map(timeRange => {
+    return function filterStateByTimeRange(oldState) {
+      console.log(timeRange, oldState);
+      return {...oldState, timeRange: timeRange.range};
+    };
+  });
+}
+
+function makeCombinedFilterFn$(location$, searchValue$, availability$, timeRange$) {
   const locationFilterFn$ = makeFilterByLocationFn$(location$);
   const searchFilterFn$ = makeFilterBySearchFn$(searchValue$);
+
   const availabilityFilterFn$ = makeFilterByAvailabilityFn$(availability$);
+  const timeRangeFilterFn$ = makeTimeRangeFilterFn$(timeRange$);
+
+ /* const availabilityAndTimeRangeFilterFn$
+    = makeFilterByAvailabilityAndTimeRangeFn$(availability$, timeRange$);
+*/
 
   // AND-combine filter functions and compose them (`_.flow`)
   // calling them one after the other.
   return Rx.Observable.combineLatest(
-    locationFilterFn$, searchFilterFn$, availabilityFilterFn$,
+    locationFilterFn$, searchFilterFn$, availabilityFilterFn$, timeRangeFilterFn$,
     _.flow
   );
 }
 
-function filterState(state$, location$, search$, availability$) {
-  const filterFn$ = makeCombinedFilterFn$(location$, search$, availability$);
+function filterState(state$, location$, search$, availability$, timeRange$) {
+  const filterFn$ = makeCombinedFilterFn$(location$, search$, availability$, timeRange$);
   const filteredState$ = Rx.Observable.combineLatest(state$, filterFn$,
     (state, filterFn) => filterFn(state)
   );
