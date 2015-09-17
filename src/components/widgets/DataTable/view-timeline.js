@@ -18,6 +18,9 @@ function renderMonthSeparators(indexArray) {
 function renderNowMarker(timeRange) {
   const totalTime = timeRange.end.diff(timeRange.start);
   const nowTime = moment().diff(timeRange.start);
+  if (nowTime < 0) {
+    return null;
+  }
   const nowLeftPercentage = (nowTime / totalTime) * 100;
   const style = {left: `${nowLeftPercentage}%`};
   return (
