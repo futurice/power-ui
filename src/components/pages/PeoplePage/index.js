@@ -6,6 +6,8 @@ import DataTable from 'power-ui/components/widgets/DataTable/index';
 import PeoplePageHTTP from './http.js';
 import {model, filterState} from './model.js';
 import view from './view.js';
+import moment from 'moment';
+import _ from 'lodash';
 
 function LocationFilterWrapper(state$, DOM) {
   const props$ = state$
@@ -30,9 +32,19 @@ function AvailabilityFilterWrapper(state$, DOM) {
 function TimeRangeFilterWrapper(state$, DOM) {
   const props$ = state$
     .map(state => ({
-      value: state.filters.timeRange,
+      range: state.filters.timeRange,
+      dynamicTimeRange: {
+        min: 0,
+        max: 3,
+      },
+      injectedTimeRange: {
+        min: 0,
+        max: 3,
+      },
+      labels: _.range(0,5).map(m => moment().add(m, 'months').format('MMM')),
     }))
-    .distinctUntilChanged(state => state.value);
+    .distinctUntilChanged(state => state.range);
+
   return TimeRangeFilter({DOM, props$});
 }
 

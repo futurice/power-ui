@@ -4,13 +4,14 @@ import styles from './styles.scss';
 import intent from './intent';
 import moment from 'moment';
 import _ from 'lodash';
+import {Rx} from '@cycle/core';
+import {ControlledInputHook} from 'power-ui/hooks';
+
 
 function makeUpdate(rangeChange$) {
   return rangeChange$
-    .startWith({min: 0, max: 2})
     .map(timeRangeSelections => function updateTimeRange(oldState) {
 
-      console.log(oldState);
 
       const labels = _.range(0,5).map(m => moment().add(m, 'months').format('MMM'));
 
@@ -19,12 +20,18 @@ function makeUpdate(rangeChange$) {
         end: moment().startOf('month').add(timeRangeSelections.max, 'months').endOf('month'),
       };
 
-      return {...oldState, timeRangeSelections, labels, range};
+      const injectedTimeRange = {
+        min: null,
+        max: null,
+      };
+
+      return {...oldState, dynamicTimeRange: timeRangeSelections, labels, range,
+        injectedTimeRange};
     });
 }
 
 function model(props$, update$) {
-  return props$.combineLatest(update$, (props, updateFn) => updateFn(props));
+  return update$.withLatestFrom(props$, (updateFn, props) => updateFn(props));
 }
 
 function renderLabels(labels) {
@@ -47,16 +54,21 @@ function TimeRangeFilter(sources) {
 
   const update$ = makeUpdate(actions.rangeChange$);
 
-  const state$ = model(sources.props$, update$);
+  const state$ = Rx.Observable.merge(
+    sources.props$.first(),
+    model(sources.props$, update$)
+  );
 
   //view
   const vtree$ = state$.map(state => {
 
+    //console.log(state);
+   
     // This should be same as in palette.scss
     const colorGrayLighter = '#D8D8D8';
 
-    const p1 = state.timeRangeSelections.min / (state.labels.length - 1);
-    const p2 = state.timeRangeSelections.max / (state.labels.length - 1);
+    const p1 = state.dynamicTimeRange.min / (state.labels.length - 1);
+    const p2 = state.dynamicTimeRange.max / (state.labels.length - 1);
 
     const sliderStyle = {
       backgroundImage: `-webkit-gradient(
@@ -74,8 +86,8 @@ function TimeRangeFilter(sources) {
     <div className={`TimeRangeFilter ${styles.timeRangeFilter}`}>
       <p>Within this time frame</p>
       <section>
-        <input style={sliderStyle} value={state.timeRangeSelections.min} min="0" max={state.labels.length - 1} step="1" type="range" />
-        <input style={sliderStyle} value={state.timeRangeSelections.max} min="0" max={state.labels.length - 1} step="1" type="range" />
+        <input style={sliderStyle} value={new ControlledInputHook(state.injectedTimeRange.min)} min="0" max={state.labels.length - 1} step="1" type="range" />
+        <input style={sliderStyle} value={new ControlledInputHook(state.injectedTimeRange.max)} min="0" max={state.labels.length - 1} step="1" type="range" />
        {renderLabels(state.labels)}     
       </section>
     </div>

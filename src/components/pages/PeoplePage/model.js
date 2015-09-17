@@ -131,7 +131,7 @@ function makeFilterByAvailabilityAndTimeRangeFn$(availabilityValue$, timeRange$)
 function makeTimeRangeFilterFn$(timeRange$) {
   return timeRange$.map(timeRange => {
     return function filterStateByTimeRange(oldState) {
-      console.log(timeRange, oldState);
+     
       return {...oldState, timeRange: timeRange.range};
     };
   });

@@ -6,14 +6,14 @@ function intent(DOM) {
     .events('input')
     .map(ev => parseInt(ev.target.value || '0'))
     .filter(val => !isNaN(parseInt(val)))
-    .startWith(0);
-
+    .startWith(0);  // TODO: refactor to be without startWith
+   
   const rangeSlider2$ = DOM
     .select('.TimeRangeFilter input:nth-child(2)')
     .events('input')
     .map(ev => parseInt(ev.target.value || '0'))
     .filter(val => !isNaN(parseInt(val)))
-    .startWith(2);
+    .startWith(2); // TODO: refactor to be without startWith
 
   return {
     rangeChange$: Rx.Observable.combineLatest(
