@@ -1,0 +1,70 @@
+/**
+ * This file is part of power-ui, originally developed by Futurice Oy.
+ *
+ * power-ui is licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License. You may
+ * obtain a copy of the License at
+ *
+ * http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS, WITHOUT
+ * WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the
+ * License for the specific language governing permissions and limitations under
+ * the License.
+ */
+@import "~styles/palette.scss";
+@import "~styles/spacing.scss";
+
+.monthSelector {
+  margin-bottom: $spaceNormal;
+  user-select: none;
+}
+
+.arrowIcon {
+  background: $colorWhite;
+  padding: $spaceNormal 0 $spaceNormal $spaceNormal;
+}
+
+.clickable {
+  &:hover {
+    cursor: pointer;
+  }
+}
+
+.leftIcon {
+  transform: rotateZ(180deg);
+}
+
+.rightIcon {
+  transform: rotateZ(0deg);
+}
+
+.arrowLeft {
+  @extend .arrowIcon;
+  @extend .leftIcon;
+  @extend .clickable;
+}
+
+.arrowRight {
+  @extend .arrowIcon;
+  @extend .rightIcon;
+  @extend .clickable;
+}
+
+.disabled {
+  opacity: 0.16;
+  cursor: initial;
+}
+
+.arrowLeftDisabled {
+  @extend .disabled;
+  @extend .arrowIcon;
+  @extend .leftIcon;
+}
+
+.arrowRightDisabled {
+  @extend .disabled;
+  @extend .arrowIcon;
+  @extend .rightIcon;
+}
