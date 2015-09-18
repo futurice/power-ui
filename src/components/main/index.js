@@ -18,10 +18,25 @@ import PowerheadPage from 'power-ui/components/pages/PowerheadPage/index';
 import {mainHTTPRequest, mainHTTPResponse} from './http';
 import view from './view';
 
+function PeoplePageWrapper(sources, tribes$) {
+  const props$ = tribes$.map(tribes => ({tribes}));
+  return PeoplePage({...sources, props$});
+}
+
+function PowerheadPageWrapper(sources, tribes$) {
+  const props$ = tribes$
+    .map(tribes => ({
+      tribes,
+      reportLength: 3,
+      lookaheadLength: 2,
+    }));
+  return PowerheadPage({...sources, props$});
+}
+
 function main(sources) {
-  const tribesState$ = mainHTTPResponse(sources.HTTP);
-  const peoplePage = PeoplePage({...sources, props$: tribesState$});
-  const powerheadPage = PowerheadPage({...sources, props$: tribesState$});
+  const tribes$ = mainHTTPResponse(sources.HTTP);
+  const peoplePage = PeoplePageWrapper(sources, tribes$);
+  const powerheadPage = PowerheadPageWrapper(sources, tribes$);
   const request$ = mainHTTPRequest(peoplePage.HTTP, powerheadPage.HTTP);
   const vtree$ = view(sources.Route, peoplePage.DOM, powerheadPage.DOM);
 

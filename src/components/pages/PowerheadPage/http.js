@@ -14,6 +14,7 @@
  * the License.
  */
 import _ from 'lodash';
+import moment from 'moment';
 import {API_PATH} from 'power-ui/conf';
 import {urlToRequestObjectWithHeaders, isTruthy} from 'power-ui/utils';
 
@@ -24,11 +25,23 @@ function timeRangeToUrlParams(timeRange) {
   return `range_start=${range_start}&range_end=${range_end}`;
 }
 
+function timeRange$(props$) {
+  return props$.map(props => {
+    const now = moment();
+    return {
+      start: now.startOf('month'),
+      end: now.clone()
+        .add(props.lookaheadLength + props.reportLength, 'months')
+        .endOf('month'),
+    };
+  });
+}
+
 // Handle all HTTP networking logic of this page
 function PowerheadPageHTTP(sources) {
   const POWERHEAD_URL = `${API_PATH}/powerhead/`;
 
-  const request$ = sources.timeRange$
+  const request$ = timeRange$(sources.props$)
     .map(timeRangeToUrlParams)
     .map(timeRangeParams => POWERHEAD_URL + `?${timeRangeParams}`)
     .map(urlToRequestObjectWithHeaders);
