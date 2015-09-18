@@ -12,8 +12,11 @@ describe('TimeRangeFilter', () => {
 
   it('should apply labels from props value to the <ul>', (done) => {
     var props = {
-      labels: ["Sep", "Oct", "Nov", "Dec", "Jan"],
-      range: {
+      availableTimeRange: {
+        start: moment([2015,8,1]).startOf("month"),
+        end: moment([2015,8,1]).startOf("month").add(5, 'months').endOf('month'),
+      },
+      selectedTimeRange: {
         start: moment([2015,8,1]).startOf("month"),
         end: moment([2015,8,1]).startOf("month").add(2, 'months').endOf('month'),
       }
@@ -37,7 +40,7 @@ describe('TimeRangeFilter', () => {
       expect(ul.children
         .filter(vn => vn.children.length > 0)
         .map(vn => vn.children[0].text)
-      ).to.eql(props.labels);
+      ).to.eql(["Sep", "Oct", "Nov", "Dec", "Jan"]);
 
 
       done();
@@ -46,8 +49,11 @@ describe('TimeRangeFilter', () => {
 
   it('should apply start date from props value to the first <input> slider', (done) => {
     var props = {
-      labels: ["Sep", "Oct", "Nov", "Dec", "Jan"],
-      range: {
+     availableTimeRange: {
+        start: moment([2015,8,1]).startOf("month"),
+        end: moment([2015,8,1]).startOf("month").add(5, 'months').endOf('month'),
+      },
+      selectedTimeRange: {
         start: moment([2015,8,1]).startOf("month"),
         end: moment([2015,8,1]).startOf("month").add(2, 'months').endOf('month'),
       }
@@ -72,8 +78,11 @@ describe('TimeRangeFilter', () => {
 
   it('should apply end date from props value to the second <input> slider', (done) => {
     var props = {
-      labels: ["Sep", "Oct", "Nov", "Dec", "Jan"],
-      range: {
+      availableTimeRange: {
+        start: moment([2015,8,1]).startOf("month"),
+        end: moment([2015,8,1]).startOf("month").add(5, 'months').endOf('month'),
+      },
+      selectedTimeRange: {
         start: moment([2015,8,1]).startOf("month"),
         end: moment([2015,8,1]).startOf("month").add(3, 'months').endOf('month'),
       }
