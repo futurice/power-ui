@@ -4,10 +4,8 @@ import AvailabilityFilter from 'power-ui/components/widgets/AvailabilityFilter/i
 import TimeRangeFilter from 'power-ui/components/widgets/TimeRangeFilter/index';
 import DataTable from 'power-ui/components/widgets/DataTable/index';
 import PeoplePageHTTP from './http.js';
-import {model, filterState} from './model.js';
+import {model, filterState, modelAvailableTimeRange} from './model.js';
 import view from './view.js';
-import moment from 'moment';
-import _ from 'lodash';
 
 function LocationFilterWrapper(state$, DOM) {
   const props$ = state$
@@ -32,10 +30,10 @@ function AvailabilityFilterWrapper(state$, DOM) {
 function TimeRangeFilterWrapper(state$, DOM) {
   const props$ = state$
     .map(state => ({
-      range: state.timeRange,
-      labels: _.range(0,5).map(m => moment().add(m, 'months').format('MMM')),
+      selectedTimeRange: state.timeRange,
+      availableTimeRange: state.availableTimeRange,
     }))
-    .distinctUntilChanged(state => state.range);
+    .distinctUntilChanged(state => state.selectedTimeRange);
 
   return TimeRangeFilter({DOM, props$});
 }
@@ -51,7 +49,8 @@ function DataTableWrapper(state$, DOM) {
 }
 
 function PeoplePage(sources) {
-  const peoplePageHTTP = PeoplePageHTTP(sources);
+  const availableTimeRange$ = modelAvailableTimeRange();
+  const peoplePageHTTP = PeoplePageHTTP({...sources, availableTimeRange$});
   const state$ = model(peoplePageHTTP.response$, sources.props$);
   const locationFilter = LocationFilterWrapper(state$, sources.DOM);
   const textFilter = TextFilterWrapper(state$, sources.DOM);
