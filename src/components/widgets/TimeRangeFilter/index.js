@@ -44,21 +44,15 @@ function model(props$, update$) {
 
 function inferSliderHandlebarLocations(injectTimeRange = false) {
   return function dateToHandlebarLocation(props) {
-    props.dynamicTimeRange = {
+    const dynamicTimeRange = {
       min: props.labels.indexOf(props.range.start.format('MMM')),
       max: props.labels.indexOf(props.range.end.format('MMM')),
     };
 
-    if (injectTimeRange) {
-      props.injectedTimeRange = _.clone(props.dynamicTimeRange);
-    } else {
-      props.injectedTimeRange = {
-        min: null,
-        max: null,
-      };
-    }
+    const injectedTimeRange = injectTimeRange
+      ? _.clone(dynamicTimeRange) : {min: null, max: null};
 
-    return {...props};
+    return {...props, dynamicTimeRange, injectedTimeRange};
   };
 }
 
