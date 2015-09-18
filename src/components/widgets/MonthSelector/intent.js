@@ -13,21 +13,15 @@
  * License for the specific language governing permissions and limitations under
  * the License.
  */
-import intent from './intent';
-import model from './model';
-import view from './view';
+import {Rx} from '@cycle/core';
 
-function MonthSelector(sources) {
-  const actions = intent(sources.DOM);
-  const state$ = model(sources.props$, actions);
-  const vtree$ = view(state$);
-  const selected$ = state$.map(({selected}) => selected);
-
-  const sinks = {
-    DOM: vtree$,
-    value$: selected$,
+function intent(DOM) {
+  return {
+    moveSelected$: Rx.Observable.merge(
+      DOM.select('.left').events('click').map(() => -1),
+      DOM.select('.right').events('click').map(() => +1)
+    ),
   };
-  return sinks;
 }
 
-export default MonthSelector;
+export default intent;
