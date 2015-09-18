@@ -1,32 +1,40 @@
 /** @jsx hJSX */
 import {hJSX} from '@cycle/dom';
 import styles from './styles.scss';
-import intent from './intent';
 import moment from 'moment';
 import _ from 'lodash';
 import {Rx} from '@cycle/core';
 import {ControlledInputHook} from 'power-ui/hooks';
 
+function intent(DOM) {
+  const rangeSlider1$ = DOM
+    .select('.TimeRangeFilter input:nth-child(1)')
+    .events('input')
+    .map(ev => parseInt(ev.target.value || '0'))
+    .filter(val => !isNaN(parseInt(val)));
 
-function makeUpdate(rangeChange$) {
-  return rangeChange$
-    .map(timeRangeSelections => function updateTimeRange(oldState) {
+  const rangeSlider2$ = DOM
+    .select('.TimeRangeFilter input:nth-child(2)')
+    .events('input')
+    .map(ev => parseInt(ev.target.value || '0'))
+    .filter(val => !isNaN(parseInt(val)));
 
+  return {rangeSlider1$, rangeSlider2$};
+}
 
-      const labels = _.range(0,5).map(m => moment().add(m, 'months').format('MMM'));
-
+function makeUpdate(actions) {
+  return Rx.Observable.combineLatest(
+    actions.rangeSlider1$, actions.rangeSlider2$,
+    (value1, value2) => {
+      return {min: Math.min(value1,value2), max: Math.max(value1,value2)};
+    })
+    .map(selection => function updateTimeRange(oldState) {
       const range = {
-        start: moment().startOf('month').add(timeRangeSelections.min, 'months'),
-        end: moment().startOf('month').add(timeRangeSelections.max, 'months').endOf('month'),
+        start: moment().startOf('month').add(selection.min, 'months'),
+        end: moment().startOf('month').add(selection.max, 'months').endOf('month'),
       };
 
-      const injectedTimeRange = {
-        min: null,
-        max: null,
-      };
-
-      return {...oldState, dynamicTimeRange: timeRangeSelections, labels, range,
-        injectedTimeRange};
+      return {...oldState, range};
     });
 }
 
@@ -34,12 +42,33 @@ function model(props$, update$) {
   return update$.withLatestFrom(props$, (updateFn, props) => updateFn(props));
 }
 
+function inferSliderHandlebarLocations(injectTimeRange = false) {
+  return function dateToHandlebarLocation(props) {
+    props.dynamicTimeRange = {
+      min: props.labels.indexOf(props.range.start.format('MMM')),
+      max: props.labels.indexOf(props.range.end.format('MMM')),
+    };
+
+    if (injectTimeRange) {
+      props.injectedTimeRange = _.clone(props.dynamicTimeRange);
+    } else {
+      props.injectedTimeRange = {
+        min: null,
+        max: null,
+      };
+    }
+
+    return {...props};
+  };
+}
+
 function renderLabels(labels) {
   //TODO, rename first label to "Now".
+
   return (
     <ul>
       {labels.reduce((list, label) => {
-        if (list.length) {
+        if (list.length > 0) {
           list.push(<li/>);
         }
         list.push(<li>{label}</li>);
@@ -49,21 +78,8 @@ function renderLabels(labels) {
   );
 }
 
-function TimeRangeFilter(sources) {
-  const actions = intent(sources.DOM);
-
-  const update$ = makeUpdate(actions.rangeChange$);
-
-  const state$ = Rx.Observable.merge(
-    sources.props$.first(),
-    model(sources.props$, update$)
-  );
-
-  //view
-  const vtree$ = state$.map(state => {
-
-    //console.log(state);
-   
+function renderView(state$) {
+  return state$.map(state => {
     // This should be same as in palette.scss
     const colorGrayLighter = '#D8D8D8';
 
@@ -83,17 +99,44 @@ function TimeRangeFilter(sources) {
     };
 
     return (
-    <div className={`TimeRangeFilter ${styles.timeRangeFilter}`}>
-      <p>Within this time frame</p>
-      <section>
-        <input style={sliderStyle} value={new ControlledInputHook(state.injectedTimeRange.min)} min="0" max={state.labels.length - 1} step="1" type="range" />
-        <input style={sliderStyle} value={new ControlledInputHook(state.injectedTimeRange.max)} min="0" max={state.labels.length - 1} step="1" type="range" />
-       {renderLabels(state.labels)}     
-      </section>
-    </div>
-    )
-    }
+      <div className={`TimeRangeFilter ${styles.timeRangeFilter}`}>
+        <p>Within this time frame</p>
+        <section>
+          <input
+            data-hook={new ControlledInputHook(state.injectedTimeRange.min)}
+            min="0"
+            max={state.labels.length - 1}
+            step="1"
+            type="range"
+          />
+          <input style={sliderStyle}
+            data-hook={new ControlledInputHook(state.injectedTimeRange.max)}
+            min="0"
+            max={state.labels.length - 1}
+            step="1"
+            type="range"
+          />
+         {renderLabels(state.labels)}
+        </section>
+      </div>
+    );
+  });
+}
+
+function TimeRangeFilter(sources) {
+  const actions = intent(sources.DOM);
+
+  const update$ = makeUpdate({
+    rangeSlider1$: actions.rangeSlider1$.startWith(0),
+    rangeSlider2$: actions.rangeSlider2$.startWith(2),
+  });
+
+  const state$ = Rx.Observable.merge(
+    sources.props$.first().map(inferSliderHandlebarLocations(true)),
+    model(sources.props$, update$).map(inferSliderHandlebarLocations())
   );
+
+  const vtree$ = renderView(state$);
 
   const sinks = {
     DOM: vtree$,

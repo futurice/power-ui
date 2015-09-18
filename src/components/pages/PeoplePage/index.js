@@ -32,15 +32,7 @@ function AvailabilityFilterWrapper(state$, DOM) {
 function TimeRangeFilterWrapper(state$, DOM) {
   const props$ = state$
     .map(state => ({
-      range: state.filters.timeRange,
-      dynamicTimeRange: {
-        min: 0,
-        max: 3,
-      },
-      injectedTimeRange: {
-        min: 0,
-        max: 3,
-      },
+      range: state.timeRange,
       labels: _.range(0,5).map(m => moment().add(m, 'months').format('MMM')),
     }))
     .distinctUntilChanged(state => state.range);

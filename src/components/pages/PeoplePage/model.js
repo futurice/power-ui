@@ -24,16 +24,12 @@ const initialState = {
   tribes: [],
   timeRange: {
     start: moment().startOf('month'),
-    end: moment().clone().add(5, 'months').endOf('month'),
+    end: moment().clone().add(2, 'months').endOf('month'),
   },
   filters: {
     location: 'all',
     search: null,
     availability: null,
-    timeRange: {
-      start: moment().startOf('month'),
-      end: moment().clone().add(5, 'months').endOf('month'),
-    },
   },
 };
 
@@ -102,36 +98,9 @@ function makeFilterByAvailabilityFn$(availabilityValue$) {
   );
 }
 
-/*
-function makeFilterByAvailabilityAndTimeRangeFn$(availabilityValue$, timeRange$) {
-  return Rx.Observable.combineLatest(availabilityValue$, timeRange$,
-    (availabilityValue, timeRange) => {
-      return function filterStateByAvailabilityAndTimeRange(oldState) {
-        const newPeople = oldState.people.map(person => {
-          // calculate man_days_available on given timeRange
-          console.log(timeRange);
-
-          return person;
-        }).filter(person => {
-          console.log(person);
-
-          // keep people who have man_days_available >= availabilityvalue
-          return true;
-        }).map(person => {
-          // remove cases/allocs that are not on the time range
-          return person;
-        });
-
-        return {...oldState, people: newPeople};
-      };
-    });
-}
-*/
-
 function makeTimeRangeFilterFn$(timeRange$) {
   return timeRange$.map(timeRange => {
     return function filterStateByTimeRange(oldState) {
-     
       return {...oldState, timeRange: timeRange.range};
     };
   });
@@ -144,7 +113,12 @@ function makeCombinedFilterFn$(location$, searchValue$, availability$, timeRange
   const availabilityFilterFn$ = makeFilterByAvailabilityFn$(availability$);
   const timeRangeFilterFn$ = makeTimeRangeFilterFn$(timeRange$);
 
- /* const availabilityAndTimeRangeFilterFn$
+ /*
+  AvailabilityFilter and TimeRangeFilter should be combined after the
+  backend has been updated to support availability calculations on a
+  given time range.
+
+ const availabilityAndTimeRangeFilterFn$
     = makeFilterByAvailabilityAndTimeRangeFn$(availability$, timeRange$);
 */
 

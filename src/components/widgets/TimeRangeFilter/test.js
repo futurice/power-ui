@@ -3,61 +3,99 @@ import {expect} from 'chai';
 import {mockDOMResponse} from '@cycle/dom';
 import {Rx} from '@cycle/core';
 import TimeRangeFilter from './index';
+import moment from "moment";
 
 describe('TimeRangeFilter', () => {
   it('should be a function', () => {
     expect(TimeRangeFilter).to.be.a('function');
   });
 
-  it('should apply props value to the <input>', (done) => {
-    const props$ = Rx.Observable.just({value: 18});
+  it('should apply labels from props value to the <ul>', (done) => {
+    var props = {
+      labels: ["Sep", "Oct", "Nov", "Dec", "Jan"],
+      range: {
+        start: moment([2015,8,1]).startOf("month"),
+        end: moment([2015,8,1]).startOf("month").add(2, 'months').endOf('month'),
+      }
+    };
+
+    const props$ = Rx.Observable.just(props);
     const DOMSource = mockDOMResponse();
     const timeRangeFilter = TimeRangeFilter({DOM: DOMSource, props$});
     timeRangeFilter.DOM.elementAt(0).subscribe(vtree => {
       expect(vtree).to.be.an('object');
+
       expect(vtree.children).to.be.an('array');
       expect(vtree.children[1]).to.be.an('object');
-      expect(vtree.children[1].tagName).to.be.equal('INPUT');
-      expect(vtree.children[1].properties).to.be.an('object');
-      expect(vtree.children[1].properties['data-hook'].injectedText)
-        .to.be.equal('18');
+      expect(vtree.children[1].tagName).to.be.equal('SECTION');
+
+      const section = vtree.children[1];
+      const input1 = section.children[0]
+      const input2 = section.children[1]
+      const ul = section.children[2]
+
+      expect(ul.children
+        .filter(vn => vn.children.length > 0)
+        .map(vn => vn.children[0].text)
+      ).to.eql(props.labels);
+
+
       done();
     });
   });
 
-  it('should set <input> to zero if props value was invalid', (done) => {
-    const props$ = Rx.Observable.just({value: '!'});
+  it('should apply start date from props value to the first <input> slider', (done) => {
+    var props = {
+      labels: ["Sep", "Oct", "Nov", "Dec", "Jan"],
+      range: {
+        start: moment([2015,8,1]).startOf("month"),
+        end: moment([2015,8,1]).startOf("month").add(2, 'months').endOf('month'),
+      }
+    };
+
+    const props$ = Rx.Observable.just(props);
     const DOMSource = mockDOMResponse();
     const timeRangeFilter = TimeRangeFilter({DOM: DOMSource, props$});
     timeRangeFilter.DOM.elementAt(0).subscribe(vtree => {
       expect(vtree).to.be.an('object');
-      expect(vtree.children).to.be.an('array');
-      expect(vtree.children[1]).to.be.an('object');
-      expect(vtree.children[1].tagName).to.be.equal('INPUT');
-      expect(vtree.children[1].properties).to.be.an('object');
-      expect(vtree.children[1].properties['data-hook'].injectedText)
-        .to.be.equal('0');
+
+      const section = vtree.children[1];
+      const input1 = section.children[0]
+      const input2 = section.children[1]
+ 
+      expect(input1.properties['data-hook'].injectedText)
+        .to.be.equal(0);
+
       done();
     });
   });
 
-  it('should replace invalid value with zero on <input>', (done) => {
-    const props$ = Rx.Observable.just({value: 18});
-    const DOMSource = mockDOMResponse({
-      '.TimeRangeFilter input': {
-        'change': Rx.Observable.just({target: {value: 'x'}}),
-      },
-    });
+  it('should apply end date from props value to the second <input> slider', (done) => {
+    var props = {
+      labels: ["Sep", "Oct", "Nov", "Dec", "Jan"],
+      range: {
+        start: moment([2015,8,1]).startOf("month"),
+        end: moment([2015,8,1]).startOf("month").add(3, 'months').endOf('month'),
+      }
+    };
+
+    const props$ = Rx.Observable.just(props);
+    const DOMSource = mockDOMResponse();
     const timeRangeFilter = TimeRangeFilter({DOM: DOMSource, props$});
-    timeRangeFilter.DOM.elementAt(1).subscribe(vtree => {
+    timeRangeFilter.DOM.elementAt(0).subscribe(vtree => {
       expect(vtree).to.be.an('object');
-      expect(vtree.children).to.be.an('array');
-      expect(vtree.children[1]).to.be.an('object');
-      expect(vtree.children[1].tagName).to.be.equal('INPUT');
-      expect(vtree.children[1].properties).to.be.an('object');
-      expect(vtree.children[1].properties['data-hook'].injectedText)
-        .to.be.equal('0');
+
+      const section = vtree.children[1];
+      const input1 = section.children[0]
+      const input2 = section.children[1]
+ 
+      expect(input2.properties['data-hook'].injectedText)
+        .to.be.equal(3);
+
+
       done();
     });
   });
+
+
 });
