@@ -16,7 +16,7 @@
 import LocationFilter from 'power-ui/components/widgets/LocationFilter/index';
 import MonthSelector from 'power-ui/components/widgets/MonthSelector/index';
 import PowerheadPageHTTP from './http.js';
-import {model, filterState} from './model';
+import {model, defaultProps$, filterState} from './model';
 import view from './view';
 
 function LocationFilterWrapper(state$, DOM) {
@@ -31,7 +31,7 @@ function MonthSelectorWrapper(DOM, state$) {
 }
 
 function PowerheadPage(sources) {
-  const powerheadPageHTTP = PowerheadPageHTTP({...sources});
+  const powerheadPageHTTP = PowerheadPageHTTP({...sources, props$: defaultProps$});
   const state$ = model(powerheadPageHTTP.response$, sources.props$);
   const locationFilter = LocationFilterWrapper(state$, sources.DOM);
   const monthSelector = MonthSelectorWrapper(sources.DOM, state$);

@@ -21,13 +21,18 @@ const initialState = {
   reports: [],
   tribes: [],
   // How many months are included in a report:
-  reportLength: 3,
+  reportLength: 1,
   // How many months beyond the current month can we see a report:
-  lookaheadLength: 2,
+  lookaheadLength: 0,
   filters: {
     location: 'all',
   },
 };
+
+const defaultProps$ = Rx.Observable.just({
+  reportLength: 3,
+  lookaheadLength: 2,
+});
 
 function makeUpdateFn$(powerheadData$, props$) {
   const updatePowerheadReports$ = powerheadData$
@@ -35,12 +40,14 @@ function makeUpdateFn$(powerheadData$, props$) {
       return {...oldState, reports};
     });
 
-  const updateTribes$ = props$
+  const updateWithProps$ = props$.combineLatest(defaultProps$,
+      (props, defaultProps) => ({...defaultProps, ...props})
+    )
     .map(props => function updateStateWithTribes(oldState) {
       return {...oldState, ...props};
     });
 
-  return Rx.Observable.merge(updatePowerheadReports$, updateTribes$);
+  return Rx.Observable.merge(updatePowerheadReports$, updateWithProps$);
 }
 
 function model(powerheadData$, props$) {
@@ -105,4 +112,4 @@ function filterState(state$, monthIndex$, location$) {
   return filteredState$;
 }
 
-export default {model, filterState};
+export default {model, filterState, defaultProps$};
