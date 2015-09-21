@@ -36,15 +36,15 @@ function makeUpdate(actions, props$) {
       actions.rangeSlider2$.startWith(endIdx),
       (value1, value2) => {
         return {min: Math.min(value1,value2), max: Math.max(value1,value2)};
-      })
-      .map(selection => function updateTimeRange(oldState) {
-        const selectedTimeRange = {
-          start: moment().startOf('month').add(selection.min, 'months'),
-          end: moment().startOf('month').add(selection.max, 'months').endOf('month'),
-        };
-        return {...oldState, selectedTimeRange};
       });
-  });
+  })
+  .map(selection => function updateTimeRange(oldState) {
+    const selectedTimeRange = {
+      start: moment().startOf('month').add(selection.min, 'months'),
+      end: moment().startOf('month').add(selection.max, 'months').endOf('month'),
+    };
+    return {...oldState, selectedTimeRange};
+  }).skip(1); // first update comes from initialization, which should be discarded.
 }
 
 function model(props$, update$) {
@@ -54,8 +54,8 @@ function model(props$, update$) {
 function inferSliderHandlebarLocations(injectTimeRange = false) {
   return function dateToHandlebarLocation(props) {
     const dynamicTimeRange = {
-      min: props.selectedTimeRange.start.diff(props.availableTimeRange.start,'months'),
-      max: props.selectedTimeRange.end.diff(props.availableTimeRange.start,'months'),
+      min: props.selectedTimeRange.start.diff(props.availableTimeRange.start, 'months'),
+      max: props.selectedTimeRange.end.diff(props.availableTimeRange.start, 'months'),
     };
 
     const injectedTimeRange = injectTimeRange
@@ -82,15 +82,15 @@ function renderLabels(labels) {
 
 function renderView(state$) {
   return state$.map(state => {
+    // This should be same as in palette.scss
+    const colorGrayLighter = '#D8D8D8';
+
     const selectableMonthCount
      = state.availableTimeRange.end.diff(state.availableTimeRange.start, 'months');
 
     const labels = _.range(selectableMonthCount)
       .map(m => state.availableTimeRange.start.clone()
       .add(m,'month').format('MMM'));
-
-    // This should be same as in palette.scss
-    const colorGrayLighter = '#D8D8D8';
 
     const p1 = state.dynamicTimeRange.min / (selectableMonthCount - 1);
     const p2 = state.dynamicTimeRange.max / (selectableMonthCount - 1);
@@ -134,21 +134,16 @@ function renderView(state$) {
 
 function TimeRangeFilter(sources) {
   const actions = intent(sources.DOM);
-
   const update$ = makeUpdate(actions, sources.props$);
-
-  // The delay here is a hack: otherwise both funcs will be called before rendering,
-  // causing hook to be null for the first render.
-  const state$ = Rx.Observable.merge(
+  const state$ = Rx.Observable.concat(
     sources.props$.first().map(inferSliderHandlebarLocations(true)),
-    model(sources.props$, update$).map(inferSliderHandlebarLocations()).delay(10)
+    model(sources.props$, update$).map(inferSliderHandlebarLocations())
   );
-
   const vtree$ = renderView(state$);
-
   const sinks = {
     DOM: vtree$,
-    value$: state$,
+    value$: state$.debounce(100),
+    // Time range change cause a lot of re-rendering.
   };
   return sinks;
 }

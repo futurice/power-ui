@@ -106,5 +106,31 @@ describe('TimeRangeFilter', () => {
     });
   });
 
+  it('should change the selectedTimeRange when slider handles are moved', (done) => {
+    var props = {
+      availableTimeRange: {
+        start: moment([2015,8,1]).startOf("month"),
+        end: moment([2015,8,1]).startOf("month").add(5, 'months').endOf('month'),
+      },
+      selectedTimeRange: {
+        start: moment([2015,8,1]).startOf("month"),
+        end: moment([2015,8,1]).startOf("month").add(3, 'months').endOf('month'),
+      }
+    };
+
+    const props$ = Rx.Observable.just(props);
+    const DOMSource = mockDOMResponse({
+       '.TimeRangeFilter input:nth-child(2)': {
+        'input': Rx.Observable.just({target: {value: '1'}}),
+      },
+    });
+
+    const timeRangeFilter = TimeRangeFilter({DOM: DOMSource, props$});
+    timeRangeFilter.value$.subscribe(state => {
+
+      expect(state.selectedTimeRange.end.format("YYYY-MM-DD")).to.equal("2015-10-31");
+      done();
+    });
+  });
 
 });
