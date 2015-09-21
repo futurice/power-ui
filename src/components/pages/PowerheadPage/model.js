@@ -21,9 +21,9 @@ const initialState = {
   reports: [],
   tribes: [],
   // How many months are included in a report:
-  reportLength: 0,
+  reportLength: 3,
   // How many months beyond the current month can we see a report:
-  lookaheadLength: 0,
+  lookaheadLength: 2,
   filters: {
     location: 'all',
   },

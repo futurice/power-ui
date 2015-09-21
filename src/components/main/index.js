@@ -24,12 +24,7 @@ function PeoplePageWrapper(sources, tribes$) {
 }
 
 function PowerheadPageWrapper(sources, tribes$) {
-  const props$ = tribes$
-    .map(tribes => ({
-      tribes,
-      reportLength: 3,
-      lookaheadLength: 2,
-    }));
+  const props$ = tribes$.map(tribes => ({tribes}));
   return PowerheadPage({...sources, props$});
 }
 
