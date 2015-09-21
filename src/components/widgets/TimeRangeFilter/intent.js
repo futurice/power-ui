@@ -13,20 +13,21 @@
  * License for the specific language governing permissions and limitations under
  * the License.
  */
-import intent from './intent';
-import model from './model';
-import view from './view';
 
-function TimeRangeFilter(sources) {
-  const actions = intent(sources.DOM);
-  const state$ = model(sources.props$, actions);
-  const vtree$ = view(state$);
-  const sinks = {
-    DOM: vtree$,
-    value$: state$.debounce(100),
-    // Time range change cause a lot of re-rendering.
-  };
-  return sinks;
+function intent(DOM) {
+  const rangeSlider1$ = DOM
+    .select('.TimeRangeFilter input:nth-child(1)')
+    .events('input')
+    .map(ev => parseInt(ev.target.value || '0'))
+    .filter(val => !isNaN(parseInt(val)));
+
+  const rangeSlider2$ = DOM
+    .select('.TimeRangeFilter input:nth-child(2)')
+    .events('input')
+    .map(ev => parseInt(ev.target.value || '0'))
+    .filter(val => !isNaN(parseInt(val)));
+
+  return {rangeSlider1$, rangeSlider2$};
 }
 
-export default TimeRangeFilter;
+export default intent;

@@ -1,6 +1,21 @@
+/**
+ * This file is part of power-ui, originally developed by Futurice Oy.
+ *
+ * power-ui is licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License. You may
+ * obtain a copy of the License at
+ *
+ * http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS, WITHOUT
+ * WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the
+ * License for the specific language governing permissions and limitations under
+ * the License.
+ */
 /* global describe, it */
 import {expect} from 'chai';
-import {mockDOMResponse} from '@cycle/dom';
+import {h, mockDOMResponse} from '@cycle/dom';
 import {Rx} from '@cycle/core';
 import TimeRangeFilter from './index';
 import moment from "moment";
@@ -26,23 +41,22 @@ describe('TimeRangeFilter', () => {
     const DOMSource = mockDOMResponse();
     const timeRangeFilter = TimeRangeFilter({DOM: DOMSource, props$});
     timeRangeFilter.DOM.elementAt(0).subscribe(vtree => {
-      expect(vtree).to.be.an('object');
-
-      expect(vtree.children).to.be.an('array');
-      expect(vtree.children[1]).to.be.an('object');
-      expect(vtree.children[1].tagName).to.be.equal('SECTION');
-
-      const section = vtree.children[1];
-      const input1 = section.children[0]
-      const input2 = section.children[1]
-      const ul = section.children[2]
-
-      expect(ul.children
-        .filter(vn => vn.children.length > 0)
-        .map(vn => vn.children[0].text)
-      ).to.eql(["Sep", "Oct", "Nov", "Dec", "Jan"]);
-
-
+      expect(vtree).to.look.like(
+        h('div.TimeRangeFilter', [
+          h('p', 'Within this time frame'),
+          h('section', [
+            h('input', {type: 'range', min: '0', step: '1', max: '4'}),
+            h('input', {type: 'range', min: '0', step: '1', max: '4'}),
+            h('ul', [
+              h('li', 'Now'),
+              h('li', moment().add(1, 'months').format('MMM')),
+              h('li', moment().add(2, 'months').format('MMM')),
+              h('li', moment().add(3, 'months').format('MMM')),
+              h('li', moment().add(4, 'months').format('MMM'))
+            ])
+          ])
+        ])
+      );
       done();
     });
   });
@@ -68,7 +82,7 @@ describe('TimeRangeFilter', () => {
       const section = vtree.children[1];
       const input1 = section.children[0]
       const input2 = section.children[1]
- 
+
       expect(input1.properties['data-hook'].injectedText)
         .to.be.equal(0);
 
@@ -97,10 +111,9 @@ describe('TimeRangeFilter', () => {
       const section = vtree.children[1];
       const input1 = section.children[0]
       const input2 = section.children[1]
- 
+
       expect(input2.properties['data-hook'].injectedText)
         .to.be.equal(3);
-
 
       done();
     });
@@ -127,7 +140,6 @@ describe('TimeRangeFilter', () => {
 
     const timeRangeFilter = TimeRangeFilter({DOM: DOMSource, props$});
     timeRangeFilter.value$.subscribe(state => {
-
       expect(state.selectedTimeRange.end.format("YYYY-MM-DD")).to.equal("2015-10-31");
       done();
     });
