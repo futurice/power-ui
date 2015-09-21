@@ -15,7 +15,7 @@
  */
 import _ from 'lodash';
 
-const DEFAULT_SORT_CRITERIA = '+name';
+const DEFAULT_SORT_CRITERIA = '-unused-utz';
 
 function makeSortKeyFn(sortProperty) {
   return function sortKeyFn(person) {
