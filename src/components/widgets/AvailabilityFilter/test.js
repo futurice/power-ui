@@ -14,8 +14,10 @@
  * the License.
  */
 /* global describe, it */
-import {expect} from 'chai';
-import {mockDOMResponse} from '@cycle/dom';
+import chai from 'chai';
+const expect = chai.expect;
+chai.use(require('chai-virtual-dom'));
+import {h, mockDOMResponse} from '@cycle/dom';
 import {Rx} from '@cycle/core';
 import AvailabilityFilter from './index';
 
@@ -29,11 +31,13 @@ describe('AvailabilityFilter', () => {
     const DOMSource = mockDOMResponse();
     const availabilityFilter = AvailabilityFilter({DOM: DOMSource, props$});
     availabilityFilter.DOM.elementAt(0).subscribe(vtree => {
-      expect(vtree).to.be.an('object');
-      expect(vtree.children).to.be.an('array');
-      expect(vtree.children[1]).to.be.an('object');
-      expect(vtree.children[1].tagName).to.be.equal('INPUT');
-      expect(vtree.children[1].properties).to.be.an('object');
+      expect(vtree).to.look.like(
+        h('div.AvailabilityFilter', [
+          h('p', 'Available for'),
+          h('input', {type: 'num', maxLength: '2'}),
+          h('span', 'MD')
+        ])
+      );
       expect(vtree.children[1].properties['data-hook'].injectedText)
         .to.be.equal('18');
       done();
@@ -45,11 +49,13 @@ describe('AvailabilityFilter', () => {
     const DOMSource = mockDOMResponse();
     const availabilityFilter = AvailabilityFilter({DOM: DOMSource, props$});
     availabilityFilter.DOM.elementAt(0).subscribe(vtree => {
-      expect(vtree).to.be.an('object');
-      expect(vtree.children).to.be.an('array');
-      expect(vtree.children[1]).to.be.an('object');
-      expect(vtree.children[1].tagName).to.be.equal('INPUT');
-      expect(vtree.children[1].properties).to.be.an('object');
+      expect(vtree).to.look.like(
+        h('div.AvailabilityFilter', [
+          h('p', 'Available for'),
+          h('input', {type: 'num', maxLength: '2'}),
+          h('span', 'MD')
+        ])
+      );
       expect(vtree.children[1].properties['data-hook'].injectedText)
         .to.be.equal('0');
       done();
@@ -65,11 +71,13 @@ describe('AvailabilityFilter', () => {
     });
     const availabilityFilter = AvailabilityFilter({DOM: DOMSource, props$});
     availabilityFilter.DOM.elementAt(1).subscribe(vtree => {
-      expect(vtree).to.be.an('object');
-      expect(vtree.children).to.be.an('array');
-      expect(vtree.children[1]).to.be.an('object');
-      expect(vtree.children[1].tagName).to.be.equal('INPUT');
-      expect(vtree.children[1].properties).to.be.an('object');
+      expect(vtree).to.look.like(
+        h('div.AvailabilityFilter', [
+          h('p', 'Available for'),
+          h('input', {type: 'num', maxLength: '2'}),
+          h('span', 'MD')
+        ])
+      );
       expect(vtree.children[1].properties['data-hook'].injectedText)
         .to.be.equal('0');
       done();

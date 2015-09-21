@@ -16,7 +16,9 @@
 /** @jsx hJSX */
 import {hJSX} from '@cycle/dom';
 import {ControlledInputHook} from 'power-ui/hooks';
+import {safeCoerceToString} from 'power-ui/utils';
 import styles from './styles.scss';
+const availabilityFilterStyle = safeCoerceToString(styles.availabilityFilter);
 
 function AvailabilityFilter(sources) {
   const newValue$ = sources.DOM
@@ -39,7 +41,7 @@ function AvailabilityFilter(sources) {
     .map(val => String(parseInt(val) || '0'));
 
   const vtree$ = state$.map(value =>
-    <div className={`AvailabilityFilter ${styles.availabilityFilter}`}>
+    <div className={`AvailabilityFilter ${availabilityFilterStyle}`.trim()}>
       <p>Available for</p>
       <input type="num" maxLength="2"
         data-hook={new ControlledInputHook(value)}

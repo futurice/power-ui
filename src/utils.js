@@ -82,4 +82,13 @@ export default {
   isTruthy(x) {
     return !!x;
   },
+
+  // Coerces the val to String, but replaces the annoying 'undefined' with ''.
+  safeCoerceToString(val) {
+    if (typeof val === 'undefined') {
+      return '';
+    } else {
+      return String(val);
+    }
+  },
 };
