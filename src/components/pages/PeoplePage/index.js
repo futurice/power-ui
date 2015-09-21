@@ -16,9 +16,10 @@
 import LocationFilter from 'power-ui/components/widgets/LocationFilter/index';
 import TextFilter from 'power-ui/components/widgets/TextFilter/index';
 import AvailabilityFilter from 'power-ui/components/widgets/AvailabilityFilter/index';
+import TimeRangeFilter from 'power-ui/components/widgets/TimeRangeFilter/index';
 import DataTable from 'power-ui/components/widgets/DataTable/index';
 import PeoplePageHTTP from './http.js';
-import {model, filterState} from './model.js';
+import {model, filterState, modelAvailableTimeRange} from './model.js';
 import view from './view.js';
 
 function LocationFilterWrapper(state$, DOM) {
@@ -41,6 +42,17 @@ function AvailabilityFilterWrapper(state$, DOM) {
   return AvailabilityFilter({DOM, props$});
 }
 
+function TimeRangeFilterWrapper(state$, DOM) {
+  const props$ = state$
+    .map(state => ({
+      selectedTimeRange: state.timeRange,
+      availableTimeRange: state.availableTimeRange,
+    }))
+    .distinctUntilChanged(state => state.selectedTimeRange);
+
+  return TimeRangeFilter({DOM, props$});
+}
+
 function DataTableWrapper(state$, DOM) {
   const props$ = state$
     .map(state => ({
@@ -52,17 +64,21 @@ function DataTableWrapper(state$, DOM) {
 }
 
 function PeoplePage(sources) {
-  const peoplePageHTTP = PeoplePageHTTP(sources);
+  const availableTimeRange$ = modelAvailableTimeRange();
+  const peoplePageHTTP = PeoplePageHTTP({...sources, availableTimeRange$});
   const state$ = model(peoplePageHTTP.response$, sources.props$);
   const locationFilter = LocationFilterWrapper(state$, sources.DOM);
   const textFilter = TextFilterWrapper(state$, sources.DOM);
   const availabilityFilter = AvailabilityFilterWrapper(state$, sources.DOM);
+  const timeRangeFilter = TimeRangeFilterWrapper(state$, sources.DOM);
   const filteredState$ = filterState(state$,
-    locationFilter.value$, textFilter.value$, availabilityFilter.value$
+    locationFilter.value$, textFilter.value$,
+    availabilityFilter.value$, timeRangeFilter.value$
   );
   const dataTable = DataTableWrapper(filteredState$, sources.DOM);
   const vtree$ = view(
-    locationFilter.DOM, textFilter.DOM, availabilityFilter.DOM, dataTable.DOM
+    locationFilter.DOM, textFilter.DOM, availabilityFilter.DOM,
+    timeRangeFilter.DOM, dataTable.DOM
   );
 
   const sinks = {

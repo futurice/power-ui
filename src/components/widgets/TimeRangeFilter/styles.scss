@@ -1,0 +1,73 @@
+/**
+ * This file is part of power-ui, originally developed by Futurice Oy.
+ *
+ * power-ui is licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License. You may
+ * obtain a copy of the License at
+ *
+ * http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS, WITHOUT
+ * WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the
+ * License for the specific language governing permissions and limitations under
+ * the License.
+ */
+@import "~styles/palette.scss";
+@import "~styles/spacing.scss";
+@import "~styles/common.scss";
+
+.timeRangeFilter {
+  display: inline-block;
+
+  section {
+    position: relative;
+    width: 400px;
+    height: 35px;
+    margin-top: $spaceNormal;
+
+    ul {
+      display: flex;
+      width: 100%;
+      margin: 0;
+      padding-top: 19px;
+      padding-left: 0px;
+      justify-content: space-between;
+
+      li {
+        list-style-type: none;
+      }
+    }
+
+    input {
+      position: absolute;
+      top: 0px;
+      left: 0px;
+      outline: none;
+    }
+
+    input::-webkit-slider-thumb {
+      pointer-events: all;
+      position: relative;
+      z-index: 1;
+      outline: 0;
+    }
+  }
+
+  input[type='range'] {
+    -webkit-appearance: none;
+    border: 0px solid $colorGrayLighter;
+    border-radius: 8px;
+    height: 2px;
+  }
+
+  input[type='range']::-webkit-slider-thumb {
+    -webkit-appearance: none;
+    background-color: white;
+    border: 2px solid $colorGrayLighter;
+    width: 23px;
+    height: 23px;
+    border-radius: 12px;
+    cursor: pointer;
+  }
+}
