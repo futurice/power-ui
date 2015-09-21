@@ -14,8 +14,9 @@
  * the License.
  */
 import LocationFilter from 'power-ui/components/widgets/LocationFilter/index';
+import MonthSelector from 'power-ui/components/widgets/MonthSelector/index';
 import PowerheadPageHTTP from './http.js';
-import {model, filterState, modelTimeRange} from './model';
+import {model, filterState} from './model';
 import view from './view';
 
 function LocationFilterWrapper(state$, DOM) {
@@ -24,13 +25,20 @@ function LocationFilterWrapper(state$, DOM) {
   return LocationFilter({DOM, props$});
 }
 
+function MonthSelectorWrapper(DOM, state$) {
+  const props$ = state$.map(state => ({length: 1 + state.lookaheadLength}));
+  return MonthSelector({DOM, props$});
+}
+
 function PowerheadPage(sources) {
-  const timeRange$ = modelTimeRange();
-  const powerheadPageHTTP = PowerheadPageHTTP({HTTP: sources.HTTP, timeRange$});
+  const powerheadPageHTTP = PowerheadPageHTTP({...sources});
   const state$ = model(powerheadPageHTTP.response$, sources.props$);
   const locationFilter = LocationFilterWrapper(state$, sources.DOM);
-  const filteredState$ = filterState(state$, locationFilter.value$);
-  const vtree$ = view(filteredState$, locationFilter.DOM);
+  const monthSelector = MonthSelectorWrapper(sources.DOM, state$);
+  const filteredState$ = filterState(state$,
+    monthSelector.value$, locationFilter.value$
+  );
+  const vtree$ = view(filteredState$, monthSelector.DOM, locationFilter.DOM);
 
   const sinks = {
     DOM: vtree$,

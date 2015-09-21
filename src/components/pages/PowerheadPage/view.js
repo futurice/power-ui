@@ -223,7 +223,6 @@ function renderReports(reports) {
           <h2>{report.name}</h2>
           <h3>Staffing &amp; value creation</h3>
           {renderMonthReportsRow(report)}
-          {void JSON.stringify(report)}
         </div>
       )}
     </div>
@@ -238,13 +237,14 @@ function renderLoadingIndicator() {
   );
 }
 
-function view(state$, locationFilterVTree$) {
+function view(state$, monthSelectorVTree$, locationFilterVTree$) {
   return Rx.Observable.combineLatest(
-    state$, locationFilterVTree$,
-    (state, locationFilterVTree) =>
+    state$, monthSelectorVTree$, locationFilterVTree$,
+    (state, monthSelectorVTree, locationFilterVTree) =>
     <div>
       <div className={styles.contentWrapper}>
         <h1>Powerhead</h1>
+        {monthSelectorVTree}
         <div className={styles.filtersContainer}>
           {locationFilterVTree}
         </div>

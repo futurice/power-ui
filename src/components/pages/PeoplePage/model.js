@@ -32,7 +32,7 @@ function makeUpdateFn$(peopleData$, props$) {
     });
 
   const updateTribes$ = props$
-    .map(tribes => function updateStateWithTribes(oldState) {
+    .map(({tribes}) => function updateStateWithTribes(oldState) {
       return {...oldState, tribes};
     });
 

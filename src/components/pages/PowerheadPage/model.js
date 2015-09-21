@@ -15,20 +15,18 @@
  */
 import {Rx} from '@cycle/core';
 import _ from 'lodash';
-import moment from 'moment';
 import {smartStateFold} from 'power-ui/utils';
 
 const initialState = {
   reports: [],
   tribes: [],
+  // How many months are included in a report:
+  reportLength: 3,
+  // How many months beyond the current month can we see a report:
+  lookaheadLength: 2,
   filters: {
     location: 'all',
   },
-};
-
-const initialTimeRange = {
-  start: moment().startOf('month'),
-  end: moment().clone().add(2, 'months').endOf('month'),
 };
 
 function makeUpdateFn$(powerheadData$, props$) {
@@ -38,8 +36,8 @@ function makeUpdateFn$(powerheadData$, props$) {
     });
 
   const updateTribes$ = props$
-    .map(tribes => function updateStateWithTribes(oldState) {
-      return {...oldState, tribes};
+    .map(props => function updateStateWithTribes(oldState) {
+      return {...oldState, ...props};
     });
 
   return Rx.Observable.merge(updatePowerheadReports$, updateTribes$);
@@ -54,46 +52,57 @@ function model(powerheadData$, props$) {
   return state$;
 }
 
-function modelTimeRange() {
-  return Rx.Observable.just(initialTimeRange);
-}
-
-/**
- * Returns an Observable of filter functions, built from the value$ using
- * a criteria function built with criteriaFnFactory.
- * criteriaFnFactory :: value -> person -> Boolean
- */
-function makeFilterFn$(value$, criteriaFnFactory) {
-  return value$
-    .map(value => {
-      const criteriaFn = criteriaFnFactory(value);
-      return function filterStateByCriteria(oldState) {
-        const newReports = oldState.reports.filter(criteriaFn);
-        return {...oldState, reports: newReports};
-      };
-    })
-    .startWith(_.identity); // identity means "allow anything"
-}
-
 function makeFilterByLocationFn$(selectedLocation$) {
-  return makeFilterFn$(selectedLocation$, location =>
-    function filterStateByLocation(report) {
-      return (
+  return selectedLocation$
+    .map(location => function filterStateByLocation(oldState) {
+      const newReports = oldState.reports.filter(report =>
         location === 'all'
         || location === report.name
         || location === report.country
         || location === report.site
       );
-    }
-  );
+      return {...oldState, reports: newReports};
+    })
+    .startWith(_.identity); // identity means "allow anything"
 }
 
-function filterState(state$, location$) {
-  const filterFn$ = makeFilterByLocationFn$(location$);
+function makeFilterByCurrentMonthFn$(monthIndex$) {
+  return monthIndex$
+    .map(monthIndex => function filterStateByCurrentMonth(oldState) {
+      const sliceArray = (arr) =>
+        arr.slice(monthIndex, monthIndex + oldState.reportLength);
+      const newReports = oldState.reports.map(report => {
+        return {
+          ...report,
+          months: sliceArray(report.months),
+          value_creation: sliceArray(report.value_creation),
+          overrun: sliceArray(report.overrun),
+          business_days: sliceArray(report.business_days),
+          fte: sliceArray(report.fte),
+          bench: sliceArray(report.bench),
+          ext_fte: sliceArray(report.ext_fte),
+        };
+      });
+      return {...oldState, reports: newReports};
+    })
+    .startWith(_.identity); // identity means "allow anything"
+}
+
+function makeCombinedFilterFn$(monthIndex$, location$) {
+  const locationFilterFn$ = makeFilterByLocationFn$(location$);
+  const monthFilterFn$ = makeFilterByCurrentMonthFn$(monthIndex$);
+
+  // AND-combine filter functions and compose them (`_.flow`)
+  // calling them one after the other.
+  return Rx.Observable.combineLatest(locationFilterFn$, monthFilterFn$, _.flow);
+}
+
+function filterState(state$, monthIndex$, location$) {
+  const filterFn$ = makeCombinedFilterFn$(monthIndex$, location$);
   const filteredState$ = Rx.Observable.combineLatest(state$, filterFn$,
     (state, filterFn) => filterFn(state)
   );
   return filteredState$;
 }
 
-export default {model, modelTimeRange, filterState};
+export default {model, filterState};
