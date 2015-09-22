@@ -18,38 +18,34 @@ import _ from 'lodash';
 import moment from 'moment';
 import {smartStateFold} from 'power-ui/utils';
 
-function modelAvailableTimeRange() {
-  return Rx.Observable.just({
+const defaultProps$ = Rx.Observable.just({
+  timeRange: {
     start: moment().startOf('month'),
     end: moment().clone().add(5, 'months').endOf('month'),
-  });
-}
+  },
+});
 
-function makeUpdateFn$(peopleData$, props$) {
-  const updatePeopleArray$ = peopleData$
-    .map(({people, progress}) => function updateStateWithPeopleArray(oldState) {
-      return {...oldState, people, progress};
+function makeUpdateFn$(projectsData$, props$) {
+  const updateProjectsArray$ = projectsData$
+    .map(({projects, progress}) => function updateStateWithPeopleArray(oldState) {
+      return {...oldState, projects, progress};
     });
 
-  const updateTribes$ = props$
+  const updateTribes$ = props$.combineLatest(defaultProps$,
+      (props, defaultProps) => ({...defaultProps, ...props})
+    )
     .map(({tribes}) => function updateStateWithTribes(oldState) {
       return {...oldState, tribes};
     });
 
-  const updateAvailableTimeRange$ = modelAvailableTimeRange()
-    .map(availableTimeRange => function updateAvailableTimeRange(oldState) {
-      return {...oldState, availableTimeRange};
-    });
-
   return Rx.Observable.merge(
-    updatePeopleArray$,
-    updateTribes$,
-    updateAvailableTimeRange$
+    updateProjectsArray$,
+    updateTribes$
   );
 }
 
 const initialState = {
-  people: [],
+  projects: [],
   progress: 0,
   filtered: [],
   tribes: [],
@@ -64,8 +60,8 @@ const initialState = {
   },
 };
 
-function model(peopleData$, props$) {
-  const update$ = makeUpdateFn$(peopleData$, props$);
+function model(projectsData$, props$) {
+  const update$ = makeUpdateFn$(projectsData$, props$);
   const state$ = update$
     .startWith(initialState)
     .scan(smartStateFold)
@@ -117,56 +113,21 @@ function makeFilterBySearchFn$(searchValue$) {
   );
 }
 
-function makeFilterByAvailabilityFn$(availabilityValue$) {
-  return makeFilterFn$(availabilityValue$, availabilityValue =>
-    function filterStateBySearch(person) {
-      const man_days_available = parseInt(person.man_days_available);
-      return (
-        availabilityValue === null
-        || man_days_available >= availabilityValue
-      );
-    }
-  );
-}
-
-function makeTimeRangeFilterFn$(timeRange$) {
-  return timeRange$.map(timeRange => {
-    return function filterStateByTimeRange(oldState) {
-      return {...oldState, timeRange: timeRange.selectedTimeRange};
-    };
-  });
-}
-
-function makeCombinedFilterFn$(location$, searchValue$, availability$, timeRange$) {
+function makeCombinedFilterFn$(location$, searchValue$) {
   const locationFilterFn$ = makeFilterByLocationFn$(location$);
   const searchFilterFn$ = makeFilterBySearchFn$(searchValue$);
 
-  const availabilityFilterFn$ = makeFilterByAvailabilityFn$(availability$);
-  const timeRangeFilterFn$ = makeTimeRangeFilterFn$(timeRange$);
-
- /*
-  AvailabilityFilter and TimeRangeFilter should be combined after the
-  backend has been updated to support availability calculations on a
-  given time range.
-
- const availabilityAndTimeRangeFilterFn$
-    = makeFilterByAvailabilityAndTimeRangeFn$(availability$, timeRange$);
-*/
-
   // AND-combine filter functions and compose them (`_.flow`)
   // calling them one after the other.
-  return Rx.Observable.combineLatest(
-    locationFilterFn$, searchFilterFn$, availabilityFilterFn$, timeRangeFilterFn$,
-    _.flow
-  );
+  return Rx.Observable.combineLatest(locationFilterFn$, searchFilterFn$, _.flow);
 }
 
-function filterState(state$, location$, search$, availability$, timeRange$) {
-  const filterFn$ = makeCombinedFilterFn$(location$, search$, availability$, timeRange$);
+function filterState(state$, location$, search$) {
+  const filterFn$ = makeCombinedFilterFn$(location$, search$);
   const filteredState$ = Rx.Observable.combineLatest(state$, filterFn$,
     (state, filterFn) => filterFn(state)
   );
   return filteredState$;
 }
 
-export default {model, filterState, modelAvailableTimeRange};
+export default {model, filterState, defaultProps$};

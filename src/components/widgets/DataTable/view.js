@@ -17,7 +17,6 @@
 import {hJSX} from '@cycle/dom';
 import _ from 'lodash';
 import styles from './styles.scss';
-import {formatAsPercentage} from 'power-ui/utils';
 import {renderTimelineHeader, renderTimelineCases} from './view-timeline';
 
 function columnFromCriteria(criteria) {
@@ -31,7 +30,7 @@ function thClassName(column, criteria) {
   } else {
     selectableClassName = styles.selectableColumnHeader;
   }
-  return `${selectableClassName} column-sort-${column}`;
+  return `${selectableClassName} sortable-column`;
 }
 
 function renderHeaderArrowOrNot(column, criteria) {
@@ -52,7 +51,9 @@ function renderHeaderArrowOrNot(column, criteria) {
 
 function renderTableHeaderColumn(column, label, criteria) {
   return (
-    <th className={thClassName(column, criteria)}>
+    <th
+      className={thClassName(column, criteria)}
+      attributes={{'data-column': column}}>
       <span>{label}</span>
       {renderHeaderArrowOrNot(column, criteria)}
     </th>
@@ -67,17 +68,14 @@ function renderProgressBar(progress) {
   }
 }
 
-function tableHeaders(timeRange, progress, sortCriteria) {
-  const unusedUtzLabel = `Unused UTZ in ${timeRange.start.format('MMMM')}`;
+function tableHeaders(state) {
   return (
     <tr>
-      <th style={{position: 'relative'}}>{renderProgressBar(progress)}</th>
-      {renderTableHeaderColumn('name', 'Name', sortCriteria)}
-      {renderTableHeaderColumn('tribe', 'Tribe', sortCriteria)}
-      {renderTableHeaderColumn('skills', 'Skills', sortCriteria)}
-      {renderTableHeaderColumn('project', 'Project', sortCriteria)}
-      {renderTableHeaderColumn('unused-utz', unusedUtzLabel, sortCriteria)}
-      {renderTimelineHeader(timeRange)}
+      <th style={{position: 'relative'}}>{renderProgressBar(state.progress)}</th>
+      {state.columns.map(column =>
+        renderTableHeaderColumn(column.name, column.label, state.sortCriteria)
+      )}
+      {renderTimelineHeader(state.timeRange)}
     </tr>
   );
 }
@@ -90,57 +88,51 @@ function tdClassName(column, criteria) {
   }
 }
 
-function tableRows(people, timeRange, sortCriteria) {
+function tableRows(state) {
   const zeroWidthSpace = '\u200B';
-  return people.map(person => {
-    const name = person.name;
-    const tribe = person.tribe.name;
-    const skills = person.skills;
-    const projects = person.current_projects.join(', ');
-    const unusedUtz = formatAsPercentage(person.unused_utz_in_month) || zeroWidthSpace;
-    const timeline = renderTimelineCases(person, timeRange);
+  return state.items.map(item => {
+    const timeline = renderTimelineCases(item, state.timeRange);
+    const columnValues = state.columns.map(column => {
+      let maybeValue;
+      try {
+        maybeValue = column.valueFn(item);
+      } catch (err) {
+        maybeValue = null;
+      }
+      const cellValue = maybeValue === null ? zeroWidthSpace : maybeValue;
+      return {cellValue, columnName: column.name, sortCriteria: state.sortCriteria};
+    });
     return (
-      <tr key={person.id}>
+      <tr key={item.id}>
         <td></td>
-        <span style={{display: 'none'}}>{JSON.stringify(person)}</span>
-        <td className={tdClassName('name', sortCriteria)}>{name}</td>
-        <td className={tdClassName('tribe', sortCriteria)}>{tribe}</td>
-        <td className={tdClassName('skills', sortCriteria)}>{skills}</td>
-        <td className={tdClassName('project', sortCriteria)}>{projects}</td>
-        <td className={tdClassName('unused-utz', sortCriteria)}>{unusedUtz}</td>
+        {columnValues.map(({cellValue, columnName, sortCriteria}) =>
+          <td className={tdClassName(columnName, sortCriteria)}>{cellValue}</td>
+        )}
         <td className={styles.timelineColumn}>{timeline}</td>
       </tr>
     );
   });
 }
 
-function renderDataTable(people, progress, timeRange, sortCriteria) {
+function renderDataTable(state, name) {
   return (
-    <div className={styles.dataTable}>
+    <div className={`${name} ${styles.dataTable}`}>
       <table>
         <thead>
-          {tableHeaders(timeRange, progress, sortCriteria)}
+          {tableHeaders(state)}
         </thead>
-        {tableRows(people, timeRange, sortCriteria)}
+        {tableRows(state)}
       </table>
     </div>
   );
 }
 
-const placeholderData = _.fill(Array(10), {
-  name: '',
-  current_projects: [],
-  allocations: [],
-  absences: [],
-  tribe: {
-    name: '',
-  },
-});
+const placeholderData = _.fill(Array(10), {name: '', cases: []});
 
-function renderNobody(people, progress, timeRange, sortCriteria) {
+function renderNobody(state, name) {
   return (
     <section className={styles.nobodyOverlay}>
-      {renderDataTable(placeholderData, progress, timeRange, sortCriteria)}
+      {renderDataTable({...state, items: placeholderData}, name)}
       <div className={styles.nobodyOverlayContent}>
         <h1>Nobody</h1>
         <h4>Perhaps we should hire more people?</h4>
@@ -149,14 +141,14 @@ function renderNobody(people, progress, timeRange, sortCriteria) {
   );
 }
 
-function view(props$) {
-  return props$.map(({people, progress, timeRange, sortCriteria}) => {
-    if (progress < 1 && people.length === 0) {
-      return renderDataTable(placeholderData, progress, timeRange, sortCriteria);
-    } else if (people.length === 0) {
-      return renderNobody(placeholderData, progress, timeRange, sortCriteria);
+function view(state$, name) {
+  return state$.map(state => {
+    if (state.progress < 1 && state.items.length === 0) {
+      return renderDataTable({...state, items: placeholderData}, name);
+    } else if (state.items.length === 0) {
+      return renderNobody(state, name);
     } else {
-      return renderDataTable(people, progress, timeRange, sortCriteria);
+      return renderDataTable(state, name);
     }
   });
 }

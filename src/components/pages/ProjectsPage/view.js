@@ -14,29 +14,30 @@
  * the License.
  */
 /** @jsx hJSX */
-import {hJSX} from '@cycle/dom';
 import {Rx} from '@cycle/core';
-import renderNavBar from 'power-ui/components/widgets/NavBar/index';
-import 'power-ui/styles/global.scss';
+import {hJSX} from '@cycle/dom';
+import styles from './styles.scss';
 
-function selectPage(route, peopleVTree, projectsVTree, powerheadVTree) {
-  switch (route) {
-  case '/powerhead': return powerheadVTree;
-  case '/projects': return projectsVTree;
-  default:
-  case '/people': return peopleVTree;
-  }
-}
-
-function view(route$, peopleVTree$, projectsVTree$, powerheadVTree$) {
+function view(locationFilterVTree$, textFilterVTree$, dataTableVTree$) {
   return Rx.Observable.combineLatest(
-    route$, peopleVTree$, projectsVTree$, powerheadVTree$,
-    (route, peopleVTree, projectsVTree, powerheadVTree) =>
+    locationFilterVTree$, textFilterVTree$, dataTableVTree$,
+    (locationFilterVTree, textFilterVTree, dataTableVTree) =>
       <div>
-        {renderNavBar(route)}
-        {selectPage(route, peopleVTree, projectsVTree, powerheadVTree)}
+        <div className={styles.contentWrapper}>
+          <h1>People</h1>
+          <div className={styles.filtersContainer}>
+            {locationFilterVTree}
+            <div className={styles.borderBottomLine}>
+              <h3 className={styles.borderBottomLine}>Filter tools</h3>
+              <div className={styles.filtersList}>
+                {textFilterVTree}
+              </div>
+            </div>
+          </div>
+        </div>
+        {dataTableVTree}
       </div>
-  );
+    );
 }
 
 export default view;

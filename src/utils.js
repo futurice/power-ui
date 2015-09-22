@@ -70,6 +70,8 @@ export default {
       // '1 035 024'
   },
 
+  EURO_SYMBOL: '\u20AC',
+
   timeRangeIndexArray(timeRange) {
     const months = timeRange.end.diff(timeRange.start, 'months') + 1;
     const array = [];

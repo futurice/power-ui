@@ -13,13 +13,11 @@
  * License for the specific language governing permissions and limitations under
  * the License.
  */
-import PeoplePageHTTP from './http';
 import LocationFilter from 'power-ui/components/widgets/LocationFilter/index';
 import TextFilter from 'power-ui/components/widgets/TextFilter/index';
-import AvailabilityFilter from 'power-ui/components/widgets/AvailabilityFilter/index';
-import TimeRangeFilter from 'power-ui/components/widgets/TimeRangeFilter/index';
 import DataTableWrapper from './data-table-wrapper';
-import {model, filterState, modelAvailableTimeRange} from './model';
+import ProjectsPageHTTP from './http';
+import {model, filterState, defaultProps$} from './model';
 import view from './view';
 
 function LocationFilterWrapper(state$, DOM) {
@@ -35,47 +33,24 @@ function TextFilterWrapper(state$, DOM) {
   return TextFilter({DOM, props$});
 }
 
-function AvailabilityFilterWrapper(state$, DOM) {
-  const props$ = state$
-    .map(state => ({value: state.filters.availability}))
-    .distinctUntilChanged(state => state.value);
-  return AvailabilityFilter({DOM, props$});
-}
-
-function TimeRangeFilterWrapper(state$, DOM) {
-  const props$ = state$
-    .map(state => ({
-      selectedTimeRange: state.timeRange,
-      availableTimeRange: state.availableTimeRange,
-    }))
-    .distinctUntilChanged(state => state.selectedTimeRange);
-
-  return TimeRangeFilter({DOM, props$});
-}
-
-function PeoplePage(sources) {
-  const availableTimeRange$ = modelAvailableTimeRange();
-  const peoplePageHTTP = PeoplePageHTTP({...sources, availableTimeRange$});
-  const state$ = model(peoplePageHTTP.response$, sources.props$);
+function ProjectsPage(sources) {
+  const projectsPageHTTP = ProjectsPageHTTP({...sources, props$: defaultProps$});
+  const state$ = model(projectsPageHTTP.response$, sources.props$);
   const locationFilter = LocationFilterWrapper(state$, sources.DOM);
   const textFilter = TextFilterWrapper(state$, sources.DOM);
-  const availabilityFilter = AvailabilityFilterWrapper(state$, sources.DOM);
-  const timeRangeFilter = TimeRangeFilterWrapper(state$, sources.DOM);
   const filteredState$ = filterState(state$,
-    locationFilter.value$, textFilter.value$,
-    availabilityFilter.value$, timeRangeFilter.value$
+    locationFilter.value$, textFilter.value$
   );
   const dataTable = DataTableWrapper(filteredState$, sources.DOM);
   const vtree$ = view(
-    locationFilter.DOM, textFilter.DOM, availabilityFilter.DOM,
-    timeRangeFilter.DOM, dataTable.DOM
+    locationFilter.DOM, textFilter.DOM, dataTable.DOM
   );
 
   const sinks = {
     DOM: vtree$,
-    HTTP: peoplePageHTTP.request$,
+    HTTP: projectsPageHTTP.request$,
   };
   return sinks;
 }
 
-export default PeoplePage;
+export default ProjectsPage;

@@ -13,13 +13,25 @@
  * License for the specific language governing permissions and limitations under
  * the License.
  */
-function intent(DOM, name) {
-  return {
-    toggleSortCriteria$: DOM
-        .select(`.${name} .sortable-column`)
-        .events('click')
-        .map(ev => ev.currentTarget.dataset['column']),
-  };
+@import "~styles/palette.scss";
+@import "~styles/spacing.scss";
+@import "~styles/common.scss";
+
+.filtersContainer {
+  font-weight: bold;
 }
 
-export default intent;
+.verticalSeparator {
+  display: inline-block;
+  width: 1px;
+  background-color: $colorGrayLighter;
+  margin: 0 $spaceNormal;
+}
+
+.filtersList {
+  display: flex;
+  flex-direction: row;
+  flex-wrap: wrap;
+  align-items: stretch;
+  padding: $spaceSmall 0;
+}
