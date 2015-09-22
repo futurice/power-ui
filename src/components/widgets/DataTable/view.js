@@ -93,7 +93,10 @@ function tdClassName(column, criteria) {
 function tableRows(people, timeRange, sortCriteria) {
   const zeroWidthSpace = '\u200B';
   return people.map(person => {
-    const name = person.name;
+    const name = person.name; 
+    // TODO: this will not work in production. Also note that if popup is not in same domain, it might will not do the autorefresh.
+    const personEditTarget = `http://localhost:8000/admin/spreadsheet/person/${person.id}/?_popup=1`;
+    const nameLink = <a href={personEditTarget}>{name}</a>;
     const tribe = person.tribe.name;
     const skills = person.skills;
     const projects = person.current_projects.join(', ');
@@ -103,7 +106,7 @@ function tableRows(people, timeRange, sortCriteria) {
       <tr key={person.id}>
         <td></td>
         <span style={{display: 'none'}}>{JSON.stringify(person)}</span>
-        <td className={tdClassName('name', sortCriteria)}>{name}</td>
+        <td className={'personName ' + tdClassName('name', sortCriteria)}>{nameLink}</td>
         <td className={tdClassName('tribe', sortCriteria)}>{tribe}</td>
         <td className={tdClassName('skills', sortCriteria)}>{skills}</td>
         <td className={tdClassName('project', sortCriteria)}>{projects}</td>

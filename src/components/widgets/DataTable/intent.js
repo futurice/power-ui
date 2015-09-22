@@ -24,6 +24,11 @@ function intent(DOM) {
       DOM.select('.column-sort-project').events('click').map(() => 'project'),
       DOM.select('.column-sort-unused-utz').events('click').map(() => 'unused-utz')
     ),
+    personNameClick$: DOM.select('.personName a').events('click')
+      .map(ev => {
+        ev.preventDefault();
+        return {url: ev.target.href};
+      }),
   };
 }
 

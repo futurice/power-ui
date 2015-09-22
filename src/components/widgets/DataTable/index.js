@@ -22,7 +22,10 @@ function DataTable(sources) {
   const state$ = model(sources.props$, actions);
   const vtree$ = view(state$);
 
-  return {DOM: vtree$};
+  return {
+    DOM: vtree$,
+    Popup: actions.personNameClick$,
+  };
 }
 
 export default DataTable;

@@ -84,6 +84,7 @@ function PeoplePage(sources) {
   const sinks = {
     DOM: vtree$,
     HTTP: peoplePageHTTP.request$,
+    Popup: dataTable.Popup,
   };
   return sinks;
 }
