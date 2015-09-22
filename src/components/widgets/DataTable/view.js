@@ -19,6 +19,7 @@ import _ from 'lodash';
 import styles from './styles.scss';
 import {formatAsPercentage} from 'power-ui/utils';
 import {renderTimelineHeader, renderTimelineCases} from './view-timeline';
+import {HOST} from 'power-ui/conf';
 
 function columnFromCriteria(criteria) {
   return criteria.replace(/^(\-|\+)/, '');
@@ -93,9 +94,9 @@ function tdClassName(column, criteria) {
 function tableRows(people, timeRange, sortCriteria) {
   const zeroWidthSpace = '\u200B';
   return people.map(person => {
-    const name = person.name; 
-    // TODO: this will not work in production. Also note that if popup is not in same domain, it might will not do the autorefresh.
-    const personEditTarget = `http://localhost:8000/admin/spreadsheet/person/${person.id}/?_popup=1`;
+    const name = person.name;
+    // Note: if popup is not in same domain, it will not do the autorefresh.
+    const personEditTarget = `${HOST}/admin/spreadsheet/person/${person.id}/?_popup=1`;
     const nameLink = <a href={personEditTarget}>{name}</a>;
     const tribe = person.tribe.name;
     const skills = person.skills;
