@@ -15,6 +15,7 @@
  */
 import PeoplePage from 'power-ui/components/pages/PeoplePage/index';
 import PowerheadPage from 'power-ui/components/pages/PowerheadPage/index';
+import NavBar from 'power-ui/components/widgets/NavBar/index';
 import {mainHTTPRequest, mainHTTPResponse} from './http';
 import view from './view';
 
@@ -28,12 +29,23 @@ function PowerheadPageWrapper(sources, tribes$) {
   return PowerheadPage({...sources, props$});
 }
 
+function selectPage(route, peopleVTree, powerheadVTree) {
+  switch (route) {
+  case '/powerhead': return powerheadVTree;
+  default:
+  case '/people': return peopleVTree;
+  }
+}
+
 function main(sources) {
   const tribes$ = mainHTTPResponse(sources.HTTP);
   const peoplePage = PeoplePageWrapper(sources, tribes$);
   const powerheadPage = PowerheadPageWrapper(sources, tribes$);
+  const navBar = NavBar(sources);
   const request$ = mainHTTPRequest(peoplePage.HTTP, powerheadPage.HTTP);
-  const vtree$ = view(sources.Route, peoplePage.DOM, powerheadPage.DOM);
+  const pageVTree$ = sources.Route.combineLatest(peoplePage.DOM, powerheadPage.DOM,
+    selectPage);
+  const vtree$ = view(navBar.DOM, pageVTree$);
 
   const sinks = {
     DOM: vtree$,

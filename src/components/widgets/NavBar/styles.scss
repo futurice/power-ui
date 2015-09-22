@@ -89,3 +89,20 @@ a.linkSelected {
     bottom: (- $spaceSmaller)
   }
 }
+
+.toolsList {
+  margin: 0;
+  padding: 0;
+  height: 100%;
+  position: absolute;
+  right: $spaceLarge;
+}
+
+.toolsList li {
+  height: 100%;
+  padding: 0 $spaceNormal;
+  line-height: $spaceNavBarHeight;
+  &:hover {
+    background-color: lighten($colorGreen, 2%);
+  }
+}
