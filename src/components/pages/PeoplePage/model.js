@@ -25,7 +25,7 @@ const defaultProps$ = Rx.Observable.just({
   },
 });
 
-function makeUpdateFn$(peopleData$, props$) {
+function makeUpdateFn$(peopleData$, props$, actions) {
   const updatePeopleArray$ = peopleData$
     .map(({dataArray, progress}) => function updateStateWithPeopleArray(oldState) {
       return {...oldState, people: dataArray, progress};
@@ -43,10 +43,16 @@ function makeUpdateFn$(peopleData$, props$) {
       return {...oldState, ...props};
     });
 
+  const updateSearchFilter$ = actions.setSearchFilter$
+    .map(search => function updateStateWithSearchFilter(oldState) {
+      return {...oldState, filters: {...oldState.filters, search}};
+    });
+
   return Rx.Observable.merge(
     updatePeopleArray$,
     updateTribes$,
-    updateStateWithProps$
+    updateStateWithProps$,
+    updateSearchFilter$
   );
 }
 
@@ -70,8 +76,8 @@ const initialState = {
   },
 };
 
-function model(peopleData$, props$) {
-  const update$ = makeUpdateFn$(peopleData$, props$);
+function model(peopleData$, props$, actions) {
+  const update$ = makeUpdateFn$(peopleData$, props$, actions);
   const state$ = update$
     .startWith(initialState)
     .scan(smartStateFold)

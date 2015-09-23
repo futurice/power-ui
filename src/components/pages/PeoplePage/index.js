@@ -13,6 +13,8 @@
  * License for the specific language governing permissions and limitations under
  * the License.
  */
+import {Rx} from '@cycle/core';
+import {replicateStream} from 'power-ui/utils';
 import makeDataTablePageHTTP from 'power-ui/components/pages/common/data-table-page-http';
 import LocationFilter from 'power-ui/components/widgets/LocationFilter/index';
 import TextFilter from 'power-ui/components/widgets/TextFilter/index';
@@ -30,8 +32,11 @@ function LocationFilterWrapper(state$, DOM) {
 
 function TextFilterWrapper(state$, DOM) {
   const props$ = state$
-    .map(state => ({value: state.filters.search}))
-    .distinctUntilChanged(state => state.searchString);
+    .map(state => ({
+      value: state.filters.search,
+      label: 'Find a person or specific skills',
+    }))
+    .distinctUntilChanged(state => state.value);
   return TextFilter({DOM, props$});
 }
 
@@ -57,11 +62,20 @@ function PeoplePageHTTP(sources) {
   return makeDataTablePageHTTP('/people/')(sources);
 }
 
+function intent(textFilterSinks) {
+  return {
+    setSearchFilter$: textFilterSinks.value$,
+  };
+}
+
 function PeoplePage(sources) {
   const peoplePageHTTP = PeoplePageHTTP({...sources, props$: defaultProps$});
-  const state$ = model(peoplePageHTTP.response$, sources.props$);
+  const proxyTextFilterSinks = {value$: new Rx.Subject()};
+  const actions = intent(proxyTextFilterSinks);
+  const state$ = model(peoplePageHTTP.response$, sources.props$, actions);
   const locationFilter = LocationFilterWrapper(state$, sources.DOM);
   const textFilter = TextFilterWrapper(state$, sources.DOM);
+  replicateStream(textFilter.value$, proxyTextFilterSinks.value$);
   const availabilityFilter = AvailabilityFilterWrapper(state$, sources.DOM);
   const timeRangeFilter = TimeRangeFilterWrapper(state$, sources.DOM);
   const filteredState$ = filterState(state$,

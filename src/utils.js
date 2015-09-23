@@ -93,4 +93,8 @@ export default {
       return String(val);
     }
   },
+
+  replicateStream(origin$, proxy$) {
+    origin$.subscribe(proxy$.asObserver());
+  },
 };

@@ -25,7 +25,7 @@ const defaultProps$ = Rx.Observable.just({
   },
 });
 
-function makeUpdateFn$(projectsData$, props$) {
+function makeUpdateFn$(projectsData$, props$, actions) {
   const updateProjectsArray$ = projectsData$
     .map(({dataArray, progress}) => function updateStateWithPeopleArray(oldState) {
       return {...oldState, projects: dataArray, progress};
@@ -38,9 +38,15 @@ function makeUpdateFn$(projectsData$, props$) {
       return {...oldState, ...props};
     });
 
+  const updateSearchFilter$ = actions.setSearchFilter$
+    .map(search => function updateStateWithSearchFilter(oldState) {
+      return {...oldState, filters: {...oldState.filters, search}};
+    });
+
   return Rx.Observable.merge(
     updateProjectsArray$,
-    updateStateWithProps$
+    updateStateWithProps$,
+    updateSearchFilter$
   );
 }
 
@@ -64,8 +70,8 @@ const initialState = {
   },
 };
 
-function model(projectsData$, props$) {
-  const update$ = makeUpdateFn$(projectsData$, props$);
+function model(projectsData$, props$, actions) {
+  const update$ = makeUpdateFn$(projectsData$, props$, actions);
   const state$ = update$
     .startWith(initialState)
     .scan(smartStateFold)
@@ -105,13 +111,13 @@ function makeFilterByLocationFn$(selectedLocation$) {
 
 function makeFilterBySearchFn$(searchValue$) {
   return makeFilterFn$(searchValue$, searchValue =>
-    function filterStateBySearch(person) {
+    function filterStateBySearch(project) {
       const lowerCaseSearch = searchValue.toLowerCase();
       return (
         lowerCaseSearch === null
         || lowerCaseSearch.length === 0
-        || person.name.toLowerCase().indexOf(lowerCaseSearch) !== -1
-        || person.skills.toLowerCase().indexOf(lowerCaseSearch) !== -1
+        || project.customer.name.toLowerCase().indexOf(lowerCaseSearch) !== -1
+        || project.name.toLowerCase().indexOf(lowerCaseSearch) !== -1
       );
     }
   );
