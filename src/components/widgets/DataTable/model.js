@@ -15,13 +15,14 @@
  */
 import _ from 'lodash';
 import {Rx} from '@cycle/core';
+import moment from 'moment';
 
 const defaultProps$ = Rx.Observable.just({
   items: [],
   progress: 0,
   timeRange: {
-    start: null,
-    end: null,
+    start: moment().startOf('month'),
+    end: moment().clone().add(2, 'months').endOf('month'),
   },
   columns: [],
   defaultSortCriteria: '-',

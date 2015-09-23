@@ -31,7 +31,8 @@ function thClassName(column, criteria) {
   } else {
     selectableClassName = styles.selectableColumnHeader;
   }
-  return `${selectableClassName} sortable-column`;
+  selectableClassName = safeCoerceToString(selectableClassName);
+  return `${selectableClassName} sortable-column`.trim();
 }
 
 function renderHeaderArrowOrNot(column, criteria) {
@@ -85,7 +86,7 @@ function tdClassName(column, criteria) {
   if (columnFromCriteria(criteria) === column) {
     return styles.cellInSortedColumn;
   } else {
-    return '';
+    return void 0; // undefined
   }
 }
 
