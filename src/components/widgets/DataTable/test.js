@@ -35,12 +35,13 @@ describe('DataTable', () => {
         start: moment().startOf('month'),
         end: moment().clone().add(2, 'months').endOf('month'),
       },
+      defaultSortCriteria: '-',
     });
     const DOMSource = mockDOMResponse();
-    const dataTable = DataTable({DOM: DOMSource, props$});
+    const dataTable = DataTable({DOM: DOMSource, props$}, 'dataTable');
     dataTable.DOM.elementAt(0).subscribe(vtree => {
       expect(vtree).to.look.like(
-        h('div', [
+        h('div.dataTable', [
           h('table', [
             h('thead', [
               h('tr')
@@ -62,7 +63,7 @@ describe('DataTable', () => {
     });
   });
 
-  it('should output "nobody" overlay when data has loaded but is empty', (done) => {
+  it('should output "empty" overlay when data has loaded but is empty', (done) => {
     const props$ = Rx.Observable.just({
       people: [],
       progress: 1,
@@ -70,17 +71,19 @@ describe('DataTable', () => {
         start: moment().startOf('month'),
         end: moment().clone().add(2, 'months').endOf('month'),
       },
+      defaultSortCriteria: '-',
+      emptyTitle: 'Empty',
     });
     const DOMSource = mockDOMResponse();
-    const dataTable = DataTable({DOM: DOMSource, props$});
+    const dataTable = DataTable({DOM: DOMSource, props$}, 'dataTable');
     dataTable.DOM.elementAt(0).subscribe(vtree => {
       expect(vtree).to.look.like(
         h('section', [
-          h('div', [
+          h('div.dataTable', [
             h('table')
           ]),
           h('div', [
-            h('h1', 'Nobody'),
+            h('h1', 'Empty'),
             h('h4')
           ])
         ])

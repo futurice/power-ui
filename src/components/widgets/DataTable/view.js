@@ -18,6 +18,7 @@ import {hJSX} from '@cycle/dom';
 import _ from 'lodash';
 import styles from './styles.scss';
 import {renderTimelineHeader, renderTimelineCases} from './view-timeline';
+import {safeCoerceToString} from 'power-ui/utils';
 
 function columnFromCriteria(criteria) {
   return criteria.replace(/^(\-|\+)/, '');
@@ -115,8 +116,9 @@ function tableRows(state) {
 }
 
 function renderDataTable(state, name) {
+  const dataTableStyle = safeCoerceToString(styles.dataTable);
   return (
-    <div className={`${name} ${styles.dataTable}`}>
+    <div className={`${name} ${dataTableStyle}`.trim()}>
       <table>
         <thead>
           {tableHeaders(state)}
@@ -129,13 +131,13 @@ function renderDataTable(state, name) {
 
 const placeholderData = _.fill(Array(10), {name: '', cases: []});
 
-function renderNobody(state, name) {
+function renderEmpty(state, name) {
   return (
-    <section className={styles.nobodyOverlay}>
+    <section className={styles.emptyOverlay}>
       {renderDataTable({...state, items: placeholderData}, name)}
-      <div className={styles.nobodyOverlayContent}>
-        <h1>Nobody</h1>
-        <h4>Perhaps we should hire more people?</h4>
+      <div className={styles.emptyOverlayContent}>
+        <h1>{state.emptyTitle}</h1>
+        <h4>{state.emptySubtitle}</h4>
       </div>
     </section>
   );
@@ -146,7 +148,7 @@ function view(state$, name) {
     if (state.progress < 1 && state.items.length === 0) {
       return renderDataTable({...state, items: placeholderData}, name);
     } else if (state.items.length === 0) {
-      return renderNobody(state, name);
+      return renderEmpty(state, name);
     } else {
       return renderDataTable(state, name);
     }

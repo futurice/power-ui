@@ -41,7 +41,7 @@ $borderWidthThin: 2px;
   width: $spaceLarge;
 }
 
-.nobodyOverlay {
+.emptyOverlay {
   position: relative;
   &:before {
     content: '';
@@ -56,7 +56,7 @@ $borderWidthThin: 2px;
   }
 }
 
-.nobodyOverlayContent {
+.emptyOverlayContent {
   position: absolute;
   z-index: $zLayer5;
   top: $spaceLarger;

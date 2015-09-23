@@ -65,6 +65,8 @@ function DataTableWrapper(state$, DOM) {
         },
       ],
       defaultSortCriteria: '-unused-utz',
+      emptyTitle: 'Nobody',
+      emptySubtitle: 'Perhaps we should hire more people?',
     }));
   return DataTable({DOM, props$});
 }

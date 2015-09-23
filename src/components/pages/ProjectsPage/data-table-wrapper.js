@@ -138,6 +138,8 @@ function DataTableWrapper(state$, DOM) {
       MAN_DAYS_COLUMN,
     ],
     defaultSortCriteria: '-overrun',
+    emptyTitle: 'Nothing',
+    emptySubtitle: 'No projects found.',
   }));
   return DataTable({DOM, props$});
 }

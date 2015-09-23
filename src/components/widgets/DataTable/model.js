@@ -14,6 +14,20 @@
  * the License.
  */
 import _ from 'lodash';
+import {Rx} from '@cycle/core';
+
+const defaultProps$ = Rx.Observable.just({
+  items: [],
+  progress: 0,
+  timeRange: {
+    start: null,
+    end: null,
+  },
+  columns: [],
+  defaultSortCriteria: '-',
+  emptyTitle: 'Empty',
+  emptySubtitle: '',
+});
 
 function makeSortKeyFn(sortProperty, columns) {
   return function sortKeyFn(item) {
@@ -62,15 +76,21 @@ function model(props$, actions) {
       }
     });
 
-  return props$.combineLatest(sortCriteria$, (props, sortCriteria) => {
-    return {
-      items: sort(props.items, sortCriteria, props.columns),
-      progress: props.progress,
-      timeRange: props.timeRange,
-      columns: props.columns,
-      sortCriteria,
-    };
-  });
+  return props$
+    .combineLatest(defaultProps$,
+      (props, defaultProps) => ({...defaultProps, ...props})
+    )
+    .combineLatest(sortCriteria$, (props, sortCriteria) => {
+      return {
+        items: sort(props.items, sortCriteria, props.columns),
+        progress: props.progress,
+        timeRange: props.timeRange,
+        columns: props.columns,
+        sortCriteria,
+        emptyTitle: props.emptyTitle,
+        emptySubtitle: props.emptySubtitle,
+      };
+    });
 }
 
 export default model;
