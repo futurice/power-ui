@@ -76,15 +76,15 @@ function model(projectsData$, props$) {
 /**
  * Returns an Observable of filter functions, built from the value$ using
  * a criteria function built with criteriaFnFactory.
- * criteriaFnFactory :: value -> person -> Boolean
+ * criteriaFnFactory :: value -> project -> Boolean
  */
 function makeFilterFn$(value$, criteriaFnFactory) {
   return value$
     .map(value => {
       const criteriaFn = criteriaFnFactory(value);
       return function filterStateByCriteria(oldState) {
-        const newPeople = oldState.people.filter(criteriaFn);
-        return {...oldState, people: newPeople};
+        const newProjects = oldState.projects.filter(criteriaFn);
+        return {...oldState, projects: newProjects};
       };
     })
     .startWith(_.identity); // identity means "allow anything"
@@ -92,12 +92,12 @@ function makeFilterFn$(value$, criteriaFnFactory) {
 
 function makeFilterByLocationFn$(selectedLocation$) {
   return makeFilterFn$(selectedLocation$, location =>
-    function filterStateByLocation(person) {
+    function filterStateByLocation(project) {
       return (
         location === 'all'
-        || location === person.tribe.name
-        || location === person.tribe.country
-        || location === person.tribe.site.name
+        || location === project.tribe.name
+        || location === project.tribe.country
+        || location === project.tribe.site.name
       );
     }
   );
