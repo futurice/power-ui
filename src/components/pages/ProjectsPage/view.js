@@ -24,7 +24,7 @@ function view(locationFilterVTree$, textFilterVTree$, dataTableVTree$) {
     (locationFilterVTree, textFilterVTree, dataTableVTree) =>
       <div>
         <div className={styles.contentWrapper}>
-          <h1>People</h1>
+          <h1>Projects</h1>
           <div className={styles.filtersContainer}>
             {locationFilterVTree}
             <div className={styles.borderBottomLine}>
