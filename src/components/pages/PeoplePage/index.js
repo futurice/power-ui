@@ -13,13 +13,13 @@
  * License for the specific language governing permissions and limitations under
  * the License.
  */
-import PeoplePageHTTP from './http';
+import makeDataTablePageHTTP from 'power-ui/components/pages/common/data-table-page-http';
 import LocationFilter from 'power-ui/components/widgets/LocationFilter/index';
 import TextFilter from 'power-ui/components/widgets/TextFilter/index';
 import AvailabilityFilter from 'power-ui/components/widgets/AvailabilityFilter/index';
 import TimeRangeFilter from 'power-ui/components/widgets/TimeRangeFilter/index';
 import DataTableWrapper from './data-table-wrapper';
-import {model, filterState, modelAvailableTimeRange} from './model';
+import {model, filterState, defaultProps$} from './model';
 import view from './view';
 
 function LocationFilterWrapper(state$, DOM) {
@@ -53,9 +53,12 @@ function TimeRangeFilterWrapper(state$, DOM) {
   return TimeRangeFilter({DOM, props$});
 }
 
+function PeoplePageHTTP(sources) {
+  return makeDataTablePageHTTP('/people/')(sources);
+}
+
 function PeoplePage(sources) {
-  const availableTimeRange$ = modelAvailableTimeRange();
-  const peoplePageHTTP = PeoplePageHTTP({...sources, availableTimeRange$});
+  const peoplePageHTTP = PeoplePageHTTP({...sources, props$: defaultProps$});
   const state$ = model(peoplePageHTTP.response$, sources.props$);
   const locationFilter = LocationFilterWrapper(state$, sources.DOM);
   const textFilter = TextFilterWrapper(state$, sources.DOM);

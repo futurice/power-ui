@@ -19,7 +19,7 @@ import moment from 'moment';
 import {smartStateFold} from 'power-ui/utils';
 
 const defaultProps$ = Rx.Observable.just({
-  timeRange: {
+  availableTimeRange: {
     start: moment().startOf('month'),
     end: moment().clone().add(5, 'months').endOf('month'),
   },
@@ -27,20 +27,20 @@ const defaultProps$ = Rx.Observable.just({
 
 function makeUpdateFn$(projectsData$, props$) {
   const updateProjectsArray$ = projectsData$
-    .map(({projects, progress}) => function updateStateWithPeopleArray(oldState) {
-      return {...oldState, projects, progress};
+    .map(({dataArray, progress}) => function updateStateWithPeopleArray(oldState) {
+      return {...oldState, projects: dataArray, progress};
     });
 
-  const updateTribes$ = props$.combineLatest(defaultProps$,
+  const updateStateWithProps$ = props$.combineLatest(defaultProps$,
       (props, defaultProps) => ({...defaultProps, ...props})
     )
-    .map(({tribes}) => function updateStateWithTribes(oldState) {
-      return {...oldState, tribes};
+    .map(props => function updateStateWithTribes(oldState) {
+      return {...oldState, ...props};
     });
 
   return Rx.Observable.merge(
     updateProjectsArray$,
-    updateTribes$
+    updateStateWithProps$
   );
 }
 
@@ -52,6 +52,10 @@ const initialState = {
   timeRange: { // selected time range
     start: moment().startOf('month'),
     end: moment().clone().add(2, 'months').endOf('month'),
+  },
+  availableTimeRange: {
+    start: null,
+    end: null,
   },
   filters: {
     location: 'all',

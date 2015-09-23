@@ -18,17 +18,17 @@ import _ from 'lodash';
 import moment from 'moment';
 import {smartStateFold} from 'power-ui/utils';
 
-function modelAvailableTimeRange() {
-  return Rx.Observable.just({
+const defaultProps$ = Rx.Observable.just({
+  availableTimeRange: {
     start: moment().startOf('month'),
     end: moment().clone().add(5, 'months').endOf('month'),
-  });
-}
+  },
+});
 
 function makeUpdateFn$(peopleData$, props$) {
   const updatePeopleArray$ = peopleData$
-    .map(({people, progress}) => function updateStateWithPeopleArray(oldState) {
-      return {...oldState, people, progress};
+    .map(({dataArray, progress}) => function updateStateWithPeopleArray(oldState) {
+      return {...oldState, people: dataArray, progress};
     });
 
   const updateTribes$ = props$
@@ -36,15 +36,17 @@ function makeUpdateFn$(peopleData$, props$) {
       return {...oldState, tribes};
     });
 
-  const updateAvailableTimeRange$ = modelAvailableTimeRange()
-    .map(availableTimeRange => function updateAvailableTimeRange(oldState) {
-      return {...oldState, availableTimeRange};
+  const updateStateWithProps$ = props$.combineLatest(defaultProps$,
+      (props, defaultProps) => ({...defaultProps, ...props})
+    )
+    .map(props => function updateStateWithTribes(oldState) {
+      return {...oldState, ...props};
     });
 
   return Rx.Observable.merge(
     updatePeopleArray$,
     updateTribes$,
-    updateAvailableTimeRange$
+    updateStateWithProps$
   );
 }
 
@@ -56,6 +58,10 @@ const initialState = {
   timeRange: { // selected time range
     start: moment().startOf('month'),
     end: moment().clone().add(2, 'months').endOf('month'),
+  },
+  availableTimeRange: {
+    start: null,
+    end: null,
   },
   filters: {
     location: 'all',
@@ -169,4 +175,4 @@ function filterState(state$, location$, search$, availability$, timeRange$) {
   return filteredState$;
 }
 
-export default {model, filterState, modelAvailableTimeRange};
+export default {model, filterState, defaultProps$};

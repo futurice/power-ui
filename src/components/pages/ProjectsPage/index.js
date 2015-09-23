@@ -13,10 +13,10 @@
  * License for the specific language governing permissions and limitations under
  * the License.
  */
+import makeDataTablePageHTTP from 'power-ui/components/pages/common/data-table-page-http';
 import LocationFilter from 'power-ui/components/widgets/LocationFilter/index';
 import TextFilter from 'power-ui/components/widgets/TextFilter/index';
 import DataTableWrapper from './data-table-wrapper';
-import ProjectsPageHTTP from './http';
 import {model, filterState, defaultProps$} from './model';
 import view from './view';
 
@@ -31,6 +31,10 @@ function TextFilterWrapper(state$, DOM) {
     .map(state => ({value: state.filters.search}))
     .distinctUntilChanged(state => state.searchString);
   return TextFilter({DOM, props$});
+}
+
+function ProjectsPageHTTP(sources) {
+  return makeDataTablePageHTTP('/projects/')(sources);
 }
 
 function ProjectsPage(sources) {

@@ -16,7 +16,7 @@
 /** @jsx hJSX */
 import {Rx} from '@cycle/core';
 import {hJSX} from '@cycle/dom';
-import styles from './styles.scss';
+import styles from 'power-ui/components/pages/common/data-table-page-styles.scss';
 
 function view(locationFilterVTree$, textFilterVTree$, dataTableVTree$) {
   return Rx.Observable.combineLatest(
