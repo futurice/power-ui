@@ -18,8 +18,6 @@ import {replicateStream} from 'power-ui/utils';
 import makeDataTablePageHTTP from 'power-ui/components/pages/common/data-table-page-http';
 import LocationFilter from 'power-ui/components/widgets/LocationFilter/index';
 import TextFilter from 'power-ui/components/widgets/TextFilter/index';
-import AvailabilityFilter from 'power-ui/components/widgets/AvailabilityFilter/index';
-import TimeRangeFilter from 'power-ui/components/widgets/TimeRangeFilter/index';
 import DataTableWrapper from './data-table-wrapper';
 import {model, filterState, defaultProps$} from './model';
 import view from './view';
@@ -34,32 +32,14 @@ function TextFilterWrapper(state$, DOM) {
   const props$ = state$
     .map(state => ({
       value: state.filters.search,
-      label: 'Find a person or specific skills',
+      label: 'Customer/Project name',
     }))
     .distinctUntilChanged(state => state.value);
   return TextFilter({DOM, props$});
 }
 
-function AvailabilityFilterWrapper(state$, DOM) {
-  const props$ = state$
-    .map(state => ({value: state.filters.availability}))
-    .distinctUntilChanged(state => state.value);
-  return AvailabilityFilter({DOM, props$});
-}
-
-function TimeRangeFilterWrapper(state$, DOM) {
-  const props$ = state$
-    .map(state => ({
-      selectedTimeRange: state.timeRange,
-      availableTimeRange: state.availableTimeRange,
-    }))
-    .distinctUntilChanged(state => state.selectedTimeRange);
-
-  return TimeRangeFilter({DOM, props$});
-}
-
-function PeoplePageHTTP(sources) {
-  return makeDataTablePageHTTP('/people/')(sources);
+function ProjectsPageHTTP(sources) {
+  return makeDataTablePageHTTP('/projects/')(sources);
 }
 
 function intent(textFilterSinks) {
@@ -68,44 +48,27 @@ function intent(textFilterSinks) {
   };
 }
 
-function PeoplePage(sources) {
-  const peoplePageHTTP = PeoplePageHTTP({...sources, props$: defaultProps$});
+function ProjectsPage(sources) {
+  const projectsPageHTTP = ProjectsPageHTTP({...sources, props$: defaultProps$});
   const proxyTextFilterSinks = {value$: new Rx.Subject()};
   const actions = intent(proxyTextFilterSinks);
-  const state$ = model(peoplePageHTTP.response$, sources.props$, actions);
+  const state$ = model(projectsPageHTTP.response$, sources.props$, actions);
   const locationFilter = LocationFilterWrapper(state$, sources.DOM);
   const textFilter = TextFilterWrapper(state$, sources.DOM);
   replicateStream(textFilter.value$, proxyTextFilterSinks.value$);
-  const availabilityFilter = AvailabilityFilterWrapper(state$, sources.DOM);
-  const timeRangeFilter = TimeRangeFilterWrapper(state$, sources.DOM);
   const filteredState$ = filterState(state$,
-    locationFilter.value$, textFilter.value$,
-    availabilityFilter.value$, timeRangeFilter.value$
+    locationFilter.value$, textFilter.value$
   );
   const dataTable = DataTableWrapper(filteredState$, sources.DOM);
   const vtree$ = view(
-    locationFilter.DOM, textFilter.DOM, availabilityFilter.DOM,
-    timeRangeFilter.DOM, dataTable.DOM
+    locationFilter.DOM, textFilter.DOM, dataTable.DOM
   );
-
-  const storageStream$ = Rx.Observable.combineLatest(
-    locationFilter.value$, textFilter.value$,
-    availabilityFilter.value$,
-    (location, text, availability) => {
-      return {location, text, availability};
-    }
-  );
-
-  storageStream$.subscribe(val => console.log('LS writes', val));
-
-  sources.LocalStorage.subscribe(val => console.log('LS reads', val));
 
   const sinks = {
     DOM: vtree$,
-    HTTP: peoplePageHTTP.request$,
-    LocalStorage: Rx.Observable.just('test' + new Date()),
+    HTTP: projectsPageHTTP.request$,
   };
   return sinks;
 }
 
-export default PeoplePage;
+export default ProjectsPage;

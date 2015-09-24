@@ -104,9 +104,9 @@ function caseFitsToLane(theCase, lane) {
 }
 
 // compactCases :: [case] -> [[case]]
-function compactCases(allCases) {
-  const allocations = allCases.filter(c => c.type === 'allocation');
-  const absences = allCases.filter(c => c.type !== 'allocation');
+function compactCases(cases) {
+  const allocations = cases.filter(c => c.type === 'allocation');
+  const absences = cases.filter(c => c.type !== 'allocation');
 
   const lanes = allocations.reduce((laneArray, theCase) => {
     let firstAvailableLane = laneArray.find(_.curry(caseFitsToLane)(theCase));
@@ -147,26 +147,6 @@ function measureCaseWith(timeRange) {
   };
 }
 
-function preprocessAllocationCase(allocation) {
-  return {
-    type: 'allocation',
-    label: allocation.project.name,
-    start_date: allocation.start_date,
-    end_date: allocation.end_date,
-    opacity: parseFloat(allocation.total_allocation),
-  };
-}
-
-function preprocessAbsenceCase(absence) {
-  return {
-    type: 'absence',
-    label: 'Absence',
-    start_date: absence.start_date,
-    end_date: absence.end_date,
-    opacity: 1,
-  };
-}
-
 function isCaseInTimeRange(timeRange) {
   return c => (
     moment(c.end_date).isAfter(timeRange.start)
@@ -174,14 +154,12 @@ function isCaseInTimeRange(timeRange) {
   );
 }
 
-function renderTimelineCases(person, timeRange) {
-  const allocationCases = person.allocations.map(preprocessAllocationCase);
-  const absenceCases = person.absences.map(preprocessAbsenceCase);
-  const allCases = allocationCases.concat(absenceCases)
+function renderTimelineCases(item, timeRange) {
+  const measuredCases = item.cases
     .filter(isCaseInTimeRange(timeRange))
     .map(measureCaseWith(timeRange));
 
-  const lanes = compactCases(allCases).map(renderSingleLane);
+  const lanes = compactCases(measuredCases).map(renderSingleLane);
 
   const style = {height: `${lanes.length * (laneHeightAndMargin)}px`};
   return (

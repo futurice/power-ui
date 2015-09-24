@@ -18,26 +18,19 @@ import {Rx} from '@cycle/core';
 import {hJSX} from '@cycle/dom';
 import styles from 'power-ui/components/pages/common/data-table-page-styles.scss';
 
-function view(locationFilterVTree$, textFilterVTree$,
-              availabilityFilterVTree$, timeRangeFilterVTree$, dataTableVTree$) {
+function view(locationFilterVTree$, textFilterVTree$, dataTableVTree$) {
   return Rx.Observable.combineLatest(
-    locationFilterVTree$, textFilterVTree$, availabilityFilterVTree$,
-    timeRangeFilterVTree$, dataTableVTree$,
-    (locationFilterVTree, textFilterVTree, availabilityFilterVTree,
-      timeRangeFilterVTree, dataTableVTree) =>
+    locationFilterVTree$, textFilterVTree$, dataTableVTree$,
+    (locationFilterVTree, textFilterVTree, dataTableVTree) =>
       <div>
         <div className={styles.contentWrapper}>
-          <h1>People</h1>
+          <h1>Projects</h1>
           <div className={styles.filtersContainer}>
             {locationFilterVTree}
             <div className={styles.borderBottomLine}>
               <h3 className={styles.borderBottomLine}>Filter tools</h3>
               <div className={styles.filtersList}>
                 {textFilterVTree}
-                <div className={styles.verticalSeparator}/>
-                {availabilityFilterVTree}
-                <div className={styles.verticalSeparator}/>
-                {timeRangeFilterVTree}
               </div>
             </div>
           </div>

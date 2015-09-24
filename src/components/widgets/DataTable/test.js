@@ -29,18 +29,19 @@ describe('DataTable', () => {
 
   it('should output DOM which looks like a basic data table', (done) => {
     const props$ = Rx.Observable.just({
-      people: [],
+      items: [],
       progress: 0,
       timeRange: {
         start: moment().startOf('month'),
         end: moment().clone().add(2, 'months').endOf('month'),
       },
+      defaultSortCriteria: '-',
     });
     const DOMSource = mockDOMResponse();
-    const dataTable = DataTable({DOM: DOMSource, props$});
+    const dataTable = DataTable({DOM: DOMSource, props$}, 'dataTable');
     dataTable.DOM.elementAt(0).subscribe(vtree => {
       expect(vtree).to.look.like(
-        h('div', [
+        h('div.dataTable', [
           h('table', [
             h('thead', [
               h('tr')
@@ -62,26 +63,147 @@ describe('DataTable', () => {
     });
   });
 
-  it('should output "nobody" overlay when data has loaded but is empty', (done) => {
+  it('should output "empty" overlay when data has loaded but is empty', (done) => {
     const props$ = Rx.Observable.just({
-      people: [],
+      items: [],
       progress: 1,
       timeRange: {
         start: moment().startOf('month'),
         end: moment().clone().add(2, 'months').endOf('month'),
       },
+      defaultSortCriteria: '-',
+      emptyTitle: 'Empty',
     });
     const DOMSource = mockDOMResponse();
-    const dataTable = DataTable({DOM: DOMSource, props$});
+    const dataTable = DataTable({DOM: DOMSource, props$}, 'dataTable');
     dataTable.DOM.elementAt(0).subscribe(vtree => {
       expect(vtree).to.look.like(
         h('section', [
-          h('div', [
+          h('div.dataTable', [
             h('table')
           ]),
           h('div', [
-            h('h1', 'Nobody'),
+            h('h1', 'Empty'),
             h('h4')
+          ])
+        ])
+      );
+      done();
+    });
+  });
+
+  it('should sort a column when clicking on its header', (done) => {
+    const props$ = Rx.Observable.just({
+      items: [
+        {number: '11', letter: 'c', cases: []},
+        {number: '22', letter: 'a', cases: []},
+        {number: '33', letter: 'b', cases: []},
+      ],
+      progress: 1,
+      columns: [
+        {name: 'number', label: 'Number column', valueFn: x => x.number},
+        {name: 'letter', label: 'Letter column', valueFn: x => x.letter},
+      ],
+      defaultSortCriteria: '-number',
+    });
+
+    const DOMSource = mockDOMResponse({
+      '.dataTable .sortable-column': {
+        'click': Rx.Observable.of(
+          {currentTarget: {dataset: {column: 'number'}}},
+          {currentTarget: {dataset: {column: 'letter'}}}
+        )
+      },
+    });
+
+    const dataTable = DataTable({DOM: DOMSource, props$}, 'dataTable');
+
+    const expectedTableHeader =
+      h('thead', [
+        h('tr', [
+          h('th', []),
+          h('th.sortable-column', {attributes: {'data-column': 'number'}}, [
+            h('span', 'Number column')
+          ]),
+          h('th.sortable-column', {attributes: {'data-column': 'letter'}}, [
+            h('span', 'Letter column')
+          ])
+        ]),
+      ]);
+
+    dataTable.DOM.elementAt(0).subscribe(vtree => {
+      // Decreasing numbers
+      expect(vtree).to.look.like(
+        h('div.dataTable', [
+          h('table', [
+            expectedTableHeader,
+            h('tr', [
+              h('td', []),
+              h('td', ['33']),
+              h('td', ['b']),
+            ]),
+            h('tr', [
+              h('td', []),
+              h('td', ['22']),
+              h('td', ['a']),
+            ]),
+            h('tr', [
+              h('td', []),
+              h('td', ['11']),
+              h('td', ['c']),
+            ]),
+          ])
+        ])
+      );
+    });
+
+    dataTable.DOM.elementAt(1).subscribe(vtree => {
+      // Increasing numbers
+      expect(vtree).to.look.like(
+        h('div.dataTable', [
+          h('table', [
+            expectedTableHeader,
+            h('tr', [
+              h('td', []),
+              h('td', ['11']),
+              h('td', ['c']),
+            ]),
+            h('tr', [
+              h('td', []),
+              h('td', ['22']),
+              h('td', ['a']),
+            ]),
+            h('tr', [
+              h('td', []),
+              h('td', ['33']),
+              h('td', ['b']),
+            ]),
+          ])
+        ])
+      );
+    });
+
+    dataTable.DOM.elementAt(2).subscribe(vtree => {
+      // Increasing letters
+      expect(vtree).to.look.like(
+        h('div.dataTable', [
+          h('table', [
+            expectedTableHeader,
+            h('tr', [
+              h('td', []),
+              h('td', ['22']),
+              h('td', ['a']),
+            ]),
+            h('tr', [
+              h('td', []),
+              h('td', ['33']),
+              h('td', ['b']),
+            ]),
+            h('tr', [
+              h('td', []),
+              h('td', ['11']),
+              h('td', ['c']),
+            ]),
           ])
         ])
       );
