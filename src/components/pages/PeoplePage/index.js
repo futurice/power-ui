@@ -21,6 +21,7 @@ import DataTable from 'power-ui/components/widgets/DataTable/index';
 import PeoplePageHTTP from './http.js';
 import {model, filterState, modelAvailableTimeRange} from './model.js';
 import view from './view.js';
+import {Rx} from '@cycle/core';
 
 function LocationFilterWrapper(state$, DOM) {
   const props$ = state$
@@ -81,9 +82,22 @@ function PeoplePage(sources) {
     timeRangeFilter.DOM, dataTable.DOM
   );
 
+  const storageStream$ = Rx.Observable.combineLatest(
+    locationFilter.value$, textFilter.value$,
+    availabilityFilter.value$,
+    (location, text, availability) => {
+      return {location, text, availability};
+    }
+  );
+
+  storageStream$.subscribe(val => console.log('LS writes', val));
+
+  sources.LocalStorage.subscribe(val => console.log('LS reads', val));
+
   const sinks = {
     DOM: vtree$,
     HTTP: peoplePageHTTP.request$,
+    LocalStorage: Rx.Observable.just('test' + new Date()),
   };
   return sinks;
 }

@@ -73,10 +73,11 @@ function LocationFilter(sources, name = cuid()) {
   const update$ = makeUpdate$(actions.selectLocation$);
   const state$ = model(sources.props$, update$);
   const vtree$ = view(state$, name);
+  const initialValue$ = sources.props$.first().map(props => props.location);
 
   const sinks = {
     DOM: vtree$,
-    value$: actions.selectLocation$,
+    value$: initialValue$.concat(actions.selectLocation$),
   };
   return sinks;
 }

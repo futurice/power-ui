@@ -38,6 +38,7 @@ function main(sources) {
   const sinks = {
     DOM: vtree$,
     HTTP: request$,
+    LocalStorage: peoplePage.LocalStorage,
   };
   return sinks;
 }

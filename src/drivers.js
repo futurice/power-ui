@@ -24,4 +24,14 @@ function hashRouteDriver() {
   );
 }
 
-export default {hashRouteDriver};
+function makeLocalStorageDriver(key) {
+  return function localStorageDriver(payload$) {
+    payload$.subscribe(payload => {
+      localStorage.setItem(key, payload);
+    });
+
+    return Rx.Observable.just(localStorage.getItem(key));
+  };
+}
+
+export default {hashRouteDriver, makeLocalStorageDriver};
