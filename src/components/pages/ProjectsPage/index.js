@@ -19,7 +19,7 @@ import makeDataTablePageHTTP from 'power-ui/components/pages/common/data-table-p
 import LocationFilter from 'power-ui/components/widgets/LocationFilter/index';
 import TextFilter from 'power-ui/components/widgets/TextFilter/index';
 import DataTableWrapper from './data-table-wrapper';
-import {model, filterState, defaultProps$} from './model';
+import {model, filterState} from './model';
 import view from './view';
 
 function LocationFilterWrapper(state$, DOM) {
@@ -31,8 +31,8 @@ function LocationFilterWrapper(state$, DOM) {
 function TextFilterWrapper(state$, DOM) {
   const props$ = state$
     .map(state => ({
-      value: state.filters.search,
       label: 'Customer/Project name',
+      value: state.filters.search,
     }))
     .distinctUntilChanged(state => state.value);
   return TextFilter({DOM, props$});
@@ -49,7 +49,7 @@ function intent(textFilterSinks) {
 }
 
 function ProjectsPage(sources) {
-  const projectsPageHTTP = ProjectsPageHTTP({...sources, props$: defaultProps$});
+  const projectsPageHTTP = ProjectsPageHTTP(sources);
   const proxyTextFilterSinks = {value$: new Rx.Subject()};
   const actions = intent(proxyTextFilterSinks);
   const state$ = model(projectsPageHTTP.response$, sources.props$, actions);
@@ -63,10 +63,12 @@ function ProjectsPage(sources) {
   const vtree$ = view(
     locationFilter.DOM, textFilter.DOM, dataTable.DOM
   );
+  const localStorageSink$ = locationFilter.value$.map(location => ({location}));
 
   const sinks = {
     DOM: vtree$,
     HTTP: projectsPageHTTP.request$,
+    LocalStorage: localStorageSink$,
   };
   return sinks;
 }

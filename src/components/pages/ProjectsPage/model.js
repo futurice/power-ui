@@ -18,24 +18,23 @@ import _ from 'lodash';
 import moment from 'moment';
 import {smartStateFold} from 'power-ui/utils';
 
-const defaultProps$ = Rx.Observable.just({
-  availableTimeRange: {
-    start: moment().startOf('month'),
-    end: moment().clone().add(5, 'months').endOf('month'),
-  },
-});
-
 function makeUpdateFn$(projectsData$, props$, actions) {
   const updateProjectsArray$ = projectsData$
     .map(({dataArray, progress}) => function updateStateWithPeopleArray(oldState) {
       return {...oldState, projects: dataArray, progress};
     });
 
-  const updateStateWithProps$ = props$.combineLatest(defaultProps$,
-      (props, defaultProps) => ({...defaultProps, ...props})
-    )
-    .map(props => function updateStateWithTribes(oldState) {
-      return {...oldState, ...props};
+  const updateStateWithProps$ = props$
+    .map(props => function updateStateWithProps(oldState) {
+      return {
+        ...oldState,
+        tribes: props.tribes || oldState.tribes,
+        availableTimeRange: props.availableTimeRange || oldState.availableTimeRange,
+        filters: {
+          ...oldState.filters,
+          location: props.location || oldState.filters.location,
+        },
+      };
     });
 
   const updateSearchFilter$ = actions.setSearchFilter$
@@ -60,12 +59,12 @@ const initialState = {
     end: moment().clone().add(2, 'months').endOf('month'),
   },
   availableTimeRange: {
-    start: null,
-    end: null,
+    start: moment().startOf('month'),
+    end: moment().clone().add(5, 'months').endOf('month'),
   },
   filters: {
     location: 'all',
-    search: null,
+    search: '',
     availability: null,
   },
 };
@@ -73,8 +72,7 @@ const initialState = {
 function model(projectsData$, props$, actions) {
   const update$ = makeUpdateFn$(projectsData$, props$, actions);
   const state$ = update$
-    .startWith(initialState)
-    .scan(smartStateFold)
+    .scan(smartStateFold, initialState)
     .shareReplay(1);
   return state$;
 }
@@ -112,10 +110,9 @@ function makeFilterByLocationFn$(selectedLocation$) {
 function makeFilterBySearchFn$(searchValue$) {
   return makeFilterFn$(searchValue$, searchValue =>
     function filterStateBySearch(project) {
-      const lowerCaseSearch = searchValue.toLowerCase();
+      const lowerCaseSearch = (searchValue || '').toLowerCase();
       return (
-        lowerCaseSearch === null
-        || lowerCaseSearch.length === 0
+        lowerCaseSearch.length === 0
         || project.customer.name.toLowerCase().indexOf(lowerCaseSearch) !== -1
         || project.name.toLowerCase().indexOf(lowerCaseSearch) !== -1
       );
@@ -140,4 +137,4 @@ function filterState(state$, location$, search$) {
   return filteredState$;
 }
 
-export default {model, filterState, defaultProps$};
+export default {model, filterState};

@@ -66,7 +66,7 @@ describe('AvailabilityFilter', () => {
     const props$ = Rx.Observable.just({value: 18});
     const DOMSource = mockDOMResponse({
       '.AvailabilityFilter input': {
-        'change': Rx.Observable.just({target: {value: 'x'}}),
+        'change': Rx.Observable.just({target: {value: 'x'}}).delay(5),
       },
     });
     const availabilityFilter = AvailabilityFilter({DOM: DOMSource, props$});

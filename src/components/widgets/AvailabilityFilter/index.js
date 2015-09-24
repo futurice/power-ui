@@ -21,7 +21,11 @@ import styles from './styles.scss';
 const availabilityFilterStyle = safeCoerceToString(styles.availabilityFilter);
 
 function AvailabilityFilter(sources) {
-  const newValue$ = sources.DOM
+  const props$ = sources.props$.shareReplay(1);
+
+  const initialValue$ = props$.first().map(({value}) => value);
+
+  const dynamicValue$ = sources.DOM
     .select('.AvailabilityFilter input')
     .events('input')
     .map(ev => parseInt(ev.target.value || '0'))
@@ -34,7 +38,7 @@ function AvailabilityFilter(sources) {
     .filter(val => isNaN(parseInt(val)) || val.length === 0)
     .map(() => '0');
 
-  const state$ = sources.props$
+  const state$ = props$
     .map(({value}) => value)
     .distinctUntilChanged()
     .merge(valueToReplaceInvalidInput$)
@@ -52,7 +56,7 @@ function AvailabilityFilter(sources) {
 
   const sinks = {
     DOM: vtree$,
-    value$: newValue$,
+    value$: initialValue$.concat(dynamicValue$.debounce(60)),
   };
   return sinks;
 }
