@@ -14,26 +14,22 @@
  * the License.
  */
 import PeoplePage from 'power-ui/components/pages/PeoplePage/index';
+import ProjectsPage from 'power-ui/components/pages/ProjectsPage/index';
 import PowerheadPage from 'power-ui/components/pages/PowerheadPage/index';
 import {mainHTTPRequest, mainHTTPResponse} from './http';
 import view from './view';
 
-function PeoplePageWrapper(sources, tribes$) {
-  const props$ = tribes$.map(tribes => ({tribes}));
-  return PeoplePage({...sources, props$});
-}
-
-function PowerheadPageWrapper(sources, tribes$) {
-  const props$ = tribes$.map(tribes => ({tribes}));
-  return PowerheadPage({...sources, props$});
-}
-
 function main(sources) {
-  const tribes$ = mainHTTPResponse(sources.HTTP);
-  const peoplePage = PeoplePageWrapper(sources, tribes$);
-  const powerheadPage = PowerheadPageWrapper(sources, tribes$);
-  const request$ = mainHTTPRequest(peoplePage.HTTP, powerheadPage.HTTP);
-  const vtree$ = view(sources.Route, peoplePage.DOM, powerheadPage.DOM);
+  const props$ = mainHTTPResponse(sources.HTTP).map(tribes => ({tribes}));
+  const peoplePage = PeoplePage({...sources, props$});
+  const projectsPage = ProjectsPage({...sources, props$});
+  const powerheadPage = PowerheadPage({...sources, props$});
+  const request$ = mainHTTPRequest(
+    peoplePage.HTTP, projectsPage.HTTP, powerheadPage.HTTP
+  );
+  const vtree$ = view(sources.Route,
+    peoplePage.DOM, projectsPage.DOM, powerheadPage.DOM
+  );
 
   const sinks = {
     DOM: vtree$,

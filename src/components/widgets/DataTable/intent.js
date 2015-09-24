@@ -13,17 +13,12 @@
  * License for the specific language governing permissions and limitations under
  * the License.
  */
-import {Rx} from '@cycle/core';
-
-function intent(DOM) {
+function intent(DOM, name) {
   return {
-    toggleSortCriteria$: Rx.Observable.merge(
-      DOM.select('.column-sort-name').events('click').map(() => 'name'),
-      DOM.select('.column-sort-tribe').events('click').map(() => 'tribe'),
-      DOM.select('.column-sort-skills').events('click').map(() => 'skills'),
-      DOM.select('.column-sort-project').events('click').map(() => 'project'),
-      DOM.select('.column-sort-unused-utz').events('click').map(() => 'unused-utz')
-    ),
+    toggleSortCriteria$: DOM
+        .select(`.${name} .sortable-column`)
+        .events('click')
+        .map(ev => ev.currentTarget.dataset['column']),
   };
 }
 

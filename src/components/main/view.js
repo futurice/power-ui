@@ -19,20 +19,22 @@ import {Rx} from '@cycle/core';
 import renderNavBar from 'power-ui/components/widgets/NavBar/index';
 import 'power-ui/styles/global.scss';
 
-function selectPage(route, peopleVTree, powerheadVTree) {
+function selectPage(route, peopleVTree, projectsVTree, powerheadVTree) {
   switch (route) {
   case '/powerhead': return powerheadVTree;
+  case '/projects': return projectsVTree;
   default:
   case '/people': return peopleVTree;
   }
 }
 
-function view(route$, peopleVTree$, powerheadVTree$) {
-  return Rx.Observable.combineLatest(route$, peopleVTree$, powerheadVTree$,
-    (route, peopleVTree, powerheadVTree) =>
+function view(route$, peopleVTree$, projectsVTree$, powerheadVTree$) {
+  return Rx.Observable.combineLatest(
+    route$, peopleVTree$, projectsVTree$, powerheadVTree$,
+    (route, peopleVTree, projectsVTree, powerheadVTree) =>
       <div>
         {renderNavBar(route)}
-        {selectPage(route, peopleVTree, powerheadVTree)}
+        {selectPage(route, peopleVTree, projectsVTree, powerheadVTree)}
       </div>
   );
 }

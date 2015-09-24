@@ -25,15 +25,10 @@ const defaultProps$ = Rx.Observable.just({
   },
 });
 
-function makeUpdateFn$(peopleData$, props$, actions) {
-  const updatePeopleArray$ = peopleData$
+function makeUpdateFn$(projectsData$, props$, actions) {
+  const updateProjectsArray$ = projectsData$
     .map(({dataArray, progress}) => function updateStateWithPeopleArray(oldState) {
-      return {...oldState, people: dataArray, progress};
-    });
-
-  const updateTribes$ = props$
-    .map(({tribes}) => function updateStateWithTribes(oldState) {
-      return {...oldState, tribes};
+      return {...oldState, projects: dataArray, progress};
     });
 
   const updateStateWithProps$ = props$.combineLatest(defaultProps$,
@@ -49,15 +44,14 @@ function makeUpdateFn$(peopleData$, props$, actions) {
     });
 
   return Rx.Observable.merge(
-    updatePeopleArray$,
-    updateTribes$,
+    updateProjectsArray$,
     updateStateWithProps$,
     updateSearchFilter$
   );
 }
 
 const initialState = {
-  people: [],
+  projects: [],
   progress: 0,
   filtered: [],
   tribes: [],
@@ -76,8 +70,8 @@ const initialState = {
   },
 };
 
-function model(peopleData$, props$, actions) {
-  const update$ = makeUpdateFn$(peopleData$, props$, actions);
+function model(projectsData$, props$, actions) {
+  const update$ = makeUpdateFn$(projectsData$, props$, actions);
   const state$ = update$
     .startWith(initialState)
     .scan(smartStateFold)
@@ -88,15 +82,15 @@ function model(peopleData$, props$, actions) {
 /**
  * Returns an Observable of filter functions, built from the value$ using
  * a criteria function built with criteriaFnFactory.
- * criteriaFnFactory :: value -> person -> Boolean
+ * criteriaFnFactory :: value -> project -> Boolean
  */
 function makeFilterFn$(value$, criteriaFnFactory) {
   return value$
     .map(value => {
       const criteriaFn = criteriaFnFactory(value);
       return function filterStateByCriteria(oldState) {
-        const newPeople = oldState.people.filter(criteriaFn);
-        return {...oldState, people: newPeople};
+        const newProjects = oldState.projects.filter(criteriaFn);
+        return {...oldState, projects: newProjects};
       };
     })
     .startWith(_.identity); // identity means "allow anything"
@@ -104,12 +98,12 @@ function makeFilterFn$(value$, criteriaFnFactory) {
 
 function makeFilterByLocationFn$(selectedLocation$) {
   return makeFilterFn$(selectedLocation$, location =>
-    function filterStateByLocation(person) {
+    function filterStateByLocation(project) {
       return (
         location === 'all'
-        || location === person.tribe.name
-        || location === person.tribe.country
-        || location === person.tribe.site.name
+        || location === project.tribe.name
+        || location === project.tribe.country
+        || location === project.tribe.site.name
       );
     }
   );
@@ -117,64 +111,29 @@ function makeFilterByLocationFn$(selectedLocation$) {
 
 function makeFilterBySearchFn$(searchValue$) {
   return makeFilterFn$(searchValue$, searchValue =>
-    function filterStateBySearch(person) {
+    function filterStateBySearch(project) {
       const lowerCaseSearch = searchValue.toLowerCase();
       return (
         lowerCaseSearch === null
         || lowerCaseSearch.length === 0
-        || person.name.toLowerCase().indexOf(lowerCaseSearch) !== -1
-        || person.skills.toLowerCase().indexOf(lowerCaseSearch) !== -1
+        || project.customer.name.toLowerCase().indexOf(lowerCaseSearch) !== -1
+        || project.name.toLowerCase().indexOf(lowerCaseSearch) !== -1
       );
     }
   );
 }
 
-function makeFilterByAvailabilityFn$(availabilityValue$) {
-  return makeFilterFn$(availabilityValue$, availabilityValue =>
-    function filterStateBySearch(person) {
-      const man_days_available = parseInt(person.man_days_available);
-      return (
-        availabilityValue === null
-        || man_days_available >= availabilityValue
-      );
-    }
-  );
-}
-
-function makeTimeRangeFilterFn$(timeRange$) {
-  return timeRange$.map(timeRange => {
-    return function filterStateByTimeRange(oldState) {
-      return {...oldState, timeRange: timeRange.selectedTimeRange};
-    };
-  });
-}
-
-function makeCombinedFilterFn$(location$, searchValue$, availability$, timeRange$) {
+function makeCombinedFilterFn$(location$, searchValue$) {
   const locationFilterFn$ = makeFilterByLocationFn$(location$);
   const searchFilterFn$ = makeFilterBySearchFn$(searchValue$);
 
-  const availabilityFilterFn$ = makeFilterByAvailabilityFn$(availability$);
-  const timeRangeFilterFn$ = makeTimeRangeFilterFn$(timeRange$);
-
- /*
-  AvailabilityFilter and TimeRangeFilter should be combined after the
-  backend has been updated to support availability calculations on a
-  given time range.
-
- const availabilityAndTimeRangeFilterFn$
-    = makeFilterByAvailabilityAndTimeRangeFn$(availability$, timeRange$);
-*/
-
   // AND-combine filter functions and compose them (`_.flow`)
   // calling them one after the other.
-  return Rx.Observable.combineLatest(
-    locationFilterFn$, searchFilterFn$, availabilityFilterFn$, timeRangeFilterFn$,
-    _.flow
-  );
+  return Rx.Observable.combineLatest(locationFilterFn$, searchFilterFn$, _.flow);
 }
 
-function filterState(state$, location$, search$, availability$, timeRange$) {
-  const filterFn$ = makeCombinedFilterFn$(location$, search$, availability$, timeRange$);
+function filterState(state$, location$, search$) {
+  const filterFn$ = makeCombinedFilterFn$(location$, search$);
   const filteredState$ = Rx.Observable.combineLatest(state$, filterFn$,
     (state, filterFn) => filterFn(state)
   );
