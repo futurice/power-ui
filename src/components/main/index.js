@@ -24,9 +24,10 @@ import view from './view';
 function makeDataTablePageWrapper(Page) {
   return function DataTablePageWrapper(sources, tribes$) {
     const props$ = sources.LocalStorage.combineLatest(tribes$,
-      ({location}, {tribes}) => ({
+      ({location}, tribes) => ({
         location,
         tribes,
+        // Bad approach: we should not need to pass props to the page
         availableTimeRange: {
           start: moment().startOf('month'),
           end: moment().clone().add(5, 'months').endOf('month'),
@@ -37,11 +38,24 @@ function makeDataTablePageWrapper(Page) {
   };
 }
 
+function PowerheadPageWrapper(sources, tribes$) {
+  const props$ = sources.LocalStorage.combineLatest(tribes$,
+    ({location}, tribes) => ({
+      location,
+      tribes,
+      // Bad approach: we should not need to pass props to the page
+      reportLength: 3,
+      lookaheadLength: 2,
+    })
+  );
+  return PowerheadPage({...sources, props$});
+}
+
 function main(sources) {
-  const props$ = mainHTTPResponse(sources.HTTP).map(tribes => ({tribes}));
-  const peoplePage = makeDataTablePageWrapper(PeoplePage)(sources, props$);
-  const projectsPage = makeDataTablePageWrapper(ProjectsPage)(sources, props$);
-  const powerheadPage = PowerheadPage({...sources, props$});
+  const tribes$ = mainHTTPResponse(sources.HTTP);
+  const peoplePage = makeDataTablePageWrapper(PeoplePage)(sources, tribes$);
+  const projectsPage = makeDataTablePageWrapper(ProjectsPage)(sources, tribes$);
+  const powerheadPage = PowerheadPageWrapper(sources, tribes$);
   const request$ = mainHTTPRequest(
     peoplePage.HTTP, projectsPage.HTTP, powerheadPage.HTTP
   );
@@ -49,7 +63,7 @@ function main(sources) {
     peoplePage.DOM, projectsPage.DOM, powerheadPage.DOM
   );
   const localStorageSink$ = Rx.Observable.merge(
-    peoplePage.LocalStorage, projectsPage.LocalStorage
+    peoplePage.LocalStorage, projectsPage.LocalStorage, powerheadPage.LocalStorage
   );
 
   const sinks = {

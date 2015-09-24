@@ -18,6 +18,26 @@ import _ from 'lodash';
 import moment from 'moment';
 import {smartStateFold} from 'power-ui/utils';
 
+const initialState = {
+  projects: [],
+  progress: 0,
+  filtered: [],
+  tribes: [],
+  timeRange: { // selected time range
+    start: moment().startOf('month'),
+    end: moment().clone().add(2, 'months').endOf('month'),
+  },
+  availableTimeRange: {
+    start: moment().startOf('month'),
+    end: moment().clone().add(5, 'months').endOf('month'),
+  },
+  filters: {
+    location: 'all',
+    search: '',
+    availability: null,
+  },
+};
+
 function makeUpdateFn$(projectsData$, props$, actions) {
   const updateProjectsArray$ = projectsData$
     .map(({dataArray, progress}) => function updateStateWithPeopleArray(oldState) {
@@ -48,26 +68,6 @@ function makeUpdateFn$(projectsData$, props$, actions) {
     updateSearchFilter$
   );
 }
-
-const initialState = {
-  projects: [],
-  progress: 0,
-  filtered: [],
-  tribes: [],
-  timeRange: { // selected time range
-    start: moment().startOf('month'),
-    end: moment().clone().add(2, 'months').endOf('month'),
-  },
-  availableTimeRange: {
-    start: moment().startOf('month'),
-    end: moment().clone().add(5, 'months').endOf('month'),
-  },
-  filters: {
-    location: 'all',
-    search: '',
-    availability: null,
-  },
-};
 
 function model(projectsData$, props$, actions) {
   const update$ = makeUpdateFn$(projectsData$, props$, actions);

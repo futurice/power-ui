@@ -21,18 +21,13 @@ const initialState = {
   reports: [],
   tribes: [],
   // How many months are included in a report:
-  reportLength: 1,
+  reportLength: 3,
   // How many months beyond the current month can we see a report:
-  lookaheadLength: 0,
+  lookaheadLength: 2,
   filters: {
     location: 'all',
   },
 };
-
-const defaultProps$ = Rx.Observable.just({
-  reportLength: 3,
-  lookaheadLength: 2,
-});
 
 function makeUpdateFn$(powerheadData$, props$) {
   const updatePowerheadReports$ = powerheadData$
@@ -40,21 +35,25 @@ function makeUpdateFn$(powerheadData$, props$) {
       return {...oldState, reports};
     });
 
-  const updateWithProps$ = props$.combineLatest(defaultProps$,
-      (props, defaultProps) => ({...defaultProps, ...props})
-    )
-    .map(props => function updateStateWithTribes(oldState) {
-      return {...oldState, ...props};
+  const updateStateWithProps$ = props$
+    .map(props => function updateStateWithProps(oldState) {
+      return {
+        ...oldState,
+        tribes: props.tribes || oldState.tribes,
+        filters: {
+          ...oldState.filters,
+          location: props.location || oldState.filters.location,
+        },
+      };
     });
 
-  return Rx.Observable.merge(updatePowerheadReports$, updateWithProps$);
+  return Rx.Observable.merge(updatePowerheadReports$, updateStateWithProps$);
 }
 
 function model(powerheadData$, props$) {
   const update$ = makeUpdateFn$(powerheadData$, props$);
   const state$ = update$
-    .startWith(initialState)
-    .scan(smartStateFold)
+    .scan(smartStateFold, initialState)
     .shareReplay(1);
   return state$;
 }
@@ -112,4 +111,4 @@ function filterState(state$, monthIndex$, location$) {
   return filteredState$;
 }
 
-export default {model, filterState, defaultProps$};
+export default {model, filterState};
