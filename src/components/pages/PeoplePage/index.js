@@ -21,7 +21,7 @@ import TextFilter from 'power-ui/components/widgets/TextFilter/index';
 import AvailabilityFilter from 'power-ui/components/widgets/AvailabilityFilter/index';
 import TimeRangeFilter from 'power-ui/components/widgets/TimeRangeFilter/index';
 import DataTableWrapper from './data-table-wrapper';
-import {model, filterState, defaultProps$} from './model';
+import {model, filterState} from './model';
 import view from './view';
 
 function LocationFilterWrapper(state$, DOM) {
@@ -33,8 +33,8 @@ function LocationFilterWrapper(state$, DOM) {
 function TextFilterWrapper(state$, DOM) {
   const props$ = state$
     .map(state => ({
-      value: state.filters.search,
       label: 'Find a person or specific skills',
+      value: state.filters.search,
     }))
     .distinctUntilChanged(state => state.value);
   return TextFilter({DOM, props$});
@@ -69,7 +69,7 @@ function intent(textFilterSinks) {
 }
 
 function PeoplePage(sources) {
-  const peoplePageHTTP = PeoplePageHTTP({...sources, props$: defaultProps$});
+  const peoplePageHTTP = PeoplePageHTTP(sources);
   const proxyTextFilterSinks = {value$: new Rx.Subject()};
   const actions = intent(proxyTextFilterSinks);
   const state$ = model(peoplePageHTTP.response$, sources.props$, actions);
@@ -87,10 +87,12 @@ function PeoplePage(sources) {
     locationFilter.DOM, textFilter.DOM, availabilityFilter.DOM,
     timeRangeFilter.DOM, dataTable.DOM
   );
+  const localStorageSink$ = locationFilter.value$.map(location => ({location}));
 
   const sinks = {
     DOM: vtree$,
     HTTP: peoplePageHTTP.request$,
+    LocalStorage: localStorageSink$,
   };
   return sinks;
 }

@@ -105,7 +105,7 @@ function tableRows(state) {
       return {cellValue, columnName: column.name, sortCriteria: state.sortCriteria};
     });
     return (
-      <tr key={item.id}>
+      <tr>
         <td></td>
         {columnValues.map(({cellValue, columnName, sortCriteria}) =>
           <td className={tdClassName(columnName, sortCriteria)}>{cellValue}</td>

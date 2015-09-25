@@ -15,6 +15,7 @@
  */
 /** @jsx hJSX */
 import {hJSX} from '@cycle/dom';
+import _ from 'lodash';
 import cuid from 'cuid';
 import buttonStyles from './locationFilterButton.scss';
 
@@ -28,14 +29,22 @@ function intent(DOM, name) {
 
 function makeUpdate$(selectLocation$) {
   return selectLocation$
-    .startWith('all')
     .map(location => function updateLocation(oldState) {
       return {...oldState, location};
-    });
+    })
+    .startWith(_.identity);
 }
 
-function model(props$, update$) {
-  return props$.combineLatest(update$, (props, updateFn) => updateFn(props));
+const initialState = {
+  location: 'all',
+  tribes: [],
+};
+
+function model(props$, actions) {
+  const update$ = makeUpdate$(actions.selectLocation$);
+  return props$
+    .startWith(initialState)
+    .combineLatest(update$, (props, updateFn) => updateFn(props));
 }
 
 function renderFilterButton(selectedLocation, label, value = label) {
@@ -63,20 +72,19 @@ function view(state$, name) {
         {renderFilterButtonsForTribes(state.location, state.tribes)}
       </div>
     );
-  }).startWith(
-    <div>Loading...</div>
-  );
+  });
 }
 
 function LocationFilter(sources, name = cuid()) {
+  const props$ = sources.props$.shareReplay(1);
   const actions = intent(sources.DOM, name);
-  const update$ = makeUpdate$(actions.selectLocation$);
-  const state$ = model(sources.props$, update$);
+  const state$ = model(props$, actions);
   const vtree$ = view(state$, name);
+  const initialValue$ = props$.first().map(props => props.location);
 
   const sinks = {
     DOM: vtree$,
-    value$: actions.selectLocation$,
+    value$: initialValue$.concat(actions.selectLocation$),
   };
   return sinks;
 }

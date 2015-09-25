@@ -42,7 +42,7 @@ function makeDataTablePageHTTP(pathSegment) {
       .filter(response => isTruthy(response.body))
       .shareReplay(1);
 
-    const request$ = sources.props$.flatMap(({availableTimeRange}) => {
+    const request$ = sources.props$.first().flatMap(({availableTimeRange}) => {
       const timeRangeParams = timeRangeToUrlParams(availableTimeRange);
       return atomicResponse$
         .filter(response => response.body.next)

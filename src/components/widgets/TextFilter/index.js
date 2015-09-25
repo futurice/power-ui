@@ -20,11 +20,16 @@ import {ControlledInputHook} from 'power-ui/hooks';
 import styles from './styles.scss';
 
 function TextFilter(sources, name = cuid()) {
-  const value$ = sources.DOM
+  const props$ = sources.props$.shareReplay(1);
+
+  const initialValue$ = props$.first().map(props => props.value);
+
+  const dynamicValue$ = sources.DOM
     .select(`.${name}.TextFilter input`)
     .events('input')
     .map(ev => ev.target.value);
-  const vtree$ = sources.props$.map(props =>
+
+  const vtree$ = props$.map(props =>
     <div key={name} className={`${name} TextFilter ${styles.textFilter}`}>
       <p>{props.label}</p>
       <input type="text" placeholder="Add filter"
@@ -35,7 +40,7 @@ function TextFilter(sources, name = cuid()) {
 
   const sinks = {
     DOM: vtree$,
-    value$: value$.debounce(60),
+    value$: initialValue$.concat(dynamicValue$.debounce(60)),
   };
   return sinks;
 }
