@@ -15,8 +15,8 @@
  */
 import LocationFilter from 'power-ui/components/widgets/LocationFilter/index';
 import MonthSelector from 'power-ui/components/widgets/MonthSelector/index';
-import PowerheadPageHTTP from './http.js';
-import {model, defaultProps$, filterState} from './model';
+import PowerheadPageHTTP from './http';
+import {model, filterState} from './model';
 import view from './view';
 
 function LocationFilterWrapper(state$, DOM) {
@@ -31,7 +31,7 @@ function MonthSelectorWrapper(DOM, state$) {
 }
 
 function PowerheadPage(sources) {
-  const powerheadPageHTTP = PowerheadPageHTTP({...sources, props$: defaultProps$});
+  const powerheadPageHTTP = PowerheadPageHTTP(sources);
   const state$ = model(powerheadPageHTTP.response$, sources.props$);
   const locationFilter = LocationFilterWrapper(state$, sources.DOM);
   const monthSelector = MonthSelectorWrapper(sources.DOM, state$);
@@ -39,10 +39,12 @@ function PowerheadPage(sources) {
     monthSelector.value$, locationFilter.value$
   );
   const vtree$ = view(filteredState$, monthSelector.DOM, locationFilter.DOM);
+  const localStorageSink$ = locationFilter.value$.map(location => ({location}));
 
   const sinks = {
     DOM: vtree$,
     HTTP: powerheadPageHTTP.request$,
+    LocalStorage: localStorageSink$,
   };
   return sinks;
 }

@@ -13,18 +13,19 @@
  * License for the specific language governing permissions and limitations under
  * the License.
  */
+import cuid from 'cuid';
 import intent from './intent';
 import model from './model';
 import view from './view';
 
-function DataTable(sources) {
-  const actions = intent(sources.DOM);
+function DataTable(sources, name = cuid()) {
+  const actions = intent(sources.DOM, name);
   const state$ = model(sources.props$, actions);
-  const vtree$ = view(state$);
+  const vtree$ = view(state$, name);
 
   return {
     DOM: vtree$,
-    Popup: actions.personNameClick$,
+    Popup: actions.linkClick$,
   };
 }
 

@@ -17,10 +17,8 @@
 import {hJSX} from '@cycle/dom';
 import {Rx} from '@cycle/core';
 import _ from 'lodash';
-import {formatAsFinancialsNumber} from 'power-ui/utils';
+import {formatAsFinancialsNumber, EURO_SYMBOL} from 'power-ui/utils';
 import styles from './styles.scss';
-
-const EURO_SYMBOL = '\u20AC';
 
 function renderPeopleStatsItem(label, value, unit, special = false) {
   const peopleStatsItemClassName = special

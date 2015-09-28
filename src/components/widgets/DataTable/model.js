@@ -14,30 +14,46 @@
  * the License.
  */
 import _ from 'lodash';
+import {Rx} from '@cycle/core';
+import moment from 'moment';
 
-const DEFAULT_SORT_CRITERIA = '-unused-utz';
+const defaultProps$ = Rx.Observable.just({
+  items: [],
+  progress: 0,
+  timeRange: {
+    start: moment().startOf('month'),
+    end: moment().clone().add(2, 'months').endOf('month'),
+  },
+  columns: [],
+  defaultSortCriteria: '-',
+  emptyTitle: 'Empty',
+  emptySubtitle: '',
+});
 
-function makeSortKeyFn(sortProperty) {
-  return function sortKeyFn(person) {
-    switch (sortProperty) {
-    case 'name': return person.name.toLowerCase();
-    case 'tribe': return person.tribe.name.toLowerCase();
-    case 'skills': return person.skills.toLowerCase();
-    case 'project': return person.current_projects.join(' ').toLowerCase();
-    case 'unused-utz': return person.unused_utz_in_month;
-    default: return person.name;
+function makeSortKeyFn(sortProperty, columns) {
+  return function sortKeyFn(item) {
+    const correctColumn = columns.filter(column => column.name === sortProperty);
+    if (correctColumn.length !== 1) {
+      throw new Error(`Unable to sort DataTable on invalid property ${sortProperty}`);
+    }
+    if (typeof correctColumn[0].sortValueFn === 'function') {
+      return correctColumn[0].sortValueFn(item);
+    }
+    const value = correctColumn[0].valueFn(item);
+    if (typeof value === 'string') {
+      return value.toLowerCase();
     }
   };
 }
 
-function sort(peopleArray, sortCriteria) {
+function sort(items, sortCriteria, columns) {
   const sortProperty = sortCriteria.substring(1);
   const shouldReverse = sortCriteria.charAt(0) === '-';
-  const sortedPeopleArray = _.sortBy(peopleArray, makeSortKeyFn(sortProperty));
+  const sortedItems = _.sortBy(items, makeSortKeyFn(sortProperty, columns));
   if (shouldReverse) {
-    return sortedPeopleArray.slice().reverse();
+    return sortedItems.slice().reverse();
   } else {
-    return sortedPeopleArray;
+    return sortedItems;
   }
 }
 
@@ -49,8 +65,10 @@ function reverseCriteria(criteria) {
 }
 
 function model(props$, actions) {
-  const sortCriteria$ = actions.toggleSortCriteria$
-    .startWith(DEFAULT_SORT_CRITERIA)
+  const sortCriteria$ = props$.first()
+    .flatMap(props =>
+      actions.toggleSortCriteria$.startWith(props.defaultSortCriteria)
+    )
     .scan((prevCriteria, nextCriteria) => {
       if (prevCriteria.substring(1) === nextCriteria) {
         return reverseCriteria(prevCriteria);
@@ -59,14 +77,21 @@ function model(props$, actions) {
       }
     });
 
-  return props$.combineLatest(sortCriteria$, (props, sortCriteria) => {
-    return {
-      people: sort(props.people, sortCriteria),
-      progress: props.progress,
-      timeRange: props.timeRange,
-      sortCriteria,
-    };
-  });
+  return props$
+    .combineLatest(defaultProps$,
+      (props, defaultProps) => ({...defaultProps, ...props})
+    )
+    .combineLatest(sortCriteria$, (props, sortCriteria) => {
+      return {
+        items: sort(props.items, sortCriteria, props.columns),
+        progress: props.progress,
+        timeRange: props.timeRange,
+        columns: props.columns,
+        sortCriteria,
+        emptyTitle: props.emptyTitle,
+        emptySubtitle: props.emptySubtitle,
+      };
+    });
 }
 
 export default model;

@@ -37,6 +37,7 @@ function renderNavBar(route) {
 
       <ul className={styles.linkList}>
         <li>{renderHeaderLink(route, 'People')}</li>
+        <li>{renderHeaderLink(route, 'Projects')}</li>
         <li>{renderHeaderLink(route, 'Powerhead')}</li>
       </ul>
     </nav>

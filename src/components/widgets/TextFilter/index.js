@@ -15,17 +15,23 @@
  */
 /** @jsx hJSX */
 import {hJSX} from '@cycle/dom';
+import cuid from 'cuid';
 import {ControlledInputHook} from 'power-ui/hooks';
 import styles from './styles.scss';
 
-function TextFilter(sources) {
-  const value$ = sources.DOM
-    .select('.TextFilter input')
+function TextFilter(sources, name = cuid()) {
+  const props$ = sources.props$.shareReplay(1);
+
+  const initialValue$ = props$.first().map(props => props.value);
+
+  const dynamicValue$ = sources.DOM
+    .select(`.${name}.TextFilter input`)
     .events('input')
     .map(ev => ev.target.value);
-  const vtree$ = sources.props$.map(props =>
-    <div className={`TextFilter ${styles.textFilter}`}>
-      <p>Find a person or specific skills</p>
+
+  const vtree$ = props$.map(props =>
+    <div key={name} className={`${name} TextFilter ${styles.textFilter}`}>
+      <p>{props.label}</p>
       <input type="text" placeholder="Add filter"
         data-hook={new ControlledInputHook(props.value)}
         />
@@ -34,7 +40,7 @@ function TextFilter(sources) {
 
   const sinks = {
     DOM: vtree$,
-    value$,
+    value$: initialValue$.concat(dynamicValue$.debounce(60)),
   };
   return sinks;
 }

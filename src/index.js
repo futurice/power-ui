@@ -16,7 +16,7 @@
 import {run} from '@cycle/core';
 import {makeDOMDriver} from '@cycle/dom';
 import {makeHTTPDriver} from '@cycle/http';
-import {hashRouteDriver, popupDriver} from 'power-ui/drivers';
+import {hashRouteDriver, popupDriver, makeLocalStorageDriver} from 'power-ui/drivers';
 import main from 'power-ui/components/main/index';
 
 run(main, {
@@ -24,4 +24,5 @@ run(main, {
   HTTP: makeHTTPDriver({autoSubscribe: true}),
   Popup: popupDriver,
   Route: hashRouteDriver,
+  LocalStorage: makeLocalStorageDriver('power-ui-test'),
 });

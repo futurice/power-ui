@@ -27,12 +27,16 @@ describe('LocationFilter', () => {
   });
 
   it('should display loading DOM when given no props', (done) => {
-    const props$ = Rx.Observable.never();
+    const props$ = Rx.Observable.empty();
     const DOMSource = mockDOMResponse();
-    const locationFilter = LocationFilter({DOM: DOMSource, props$});
-    locationFilter.DOM.debounce(10).first().subscribe(vtree => {
+    const locationFilter = LocationFilter({DOM: DOMSource, props$}, 'test');
+    locationFilter.DOM.last().subscribe(vtree => {
       expect(vtree).to.look.like(
-        h('div', 'Loading...')
+        h('div.test.LocationFilter', [
+          h('button', 'Show all'),
+          h('button', 'Finland'),
+          h('button', 'Germany')
+        ])
       );
       done();
     });
@@ -42,12 +46,33 @@ describe('LocationFilter', () => {
     const props$ = Rx.Observable.just({location: null, tribes: []});
     const DOMSource = mockDOMResponse();
     const locationFilter = LocationFilter({DOM: DOMSource, props$}, 'test');
-    locationFilter.DOM.debounce(10).first().subscribe(vtree => {
+    locationFilter.DOM.last().subscribe(vtree => {
       expect(vtree).to.look.like(
         h('div.test.LocationFilter', [
           h('button', 'Show all'),
           h('button', 'Finland'),
           h('button', 'Germany')
+        ])
+      );
+      done();
+    });
+  });
+
+  it('should display more locations when given props with tribes', (done) => {
+    const props$ = Rx.Observable.just({location: null, tribes: [
+      {name: 'Patagonia'},
+      {name: 'Atlantis'},
+    ]});
+    const DOMSource = mockDOMResponse();
+    const locationFilter = LocationFilter({DOM: DOMSource, props$}, 'test');
+    locationFilter.DOM.last().subscribe(vtree => {
+      expect(vtree).to.look.like(
+        h('div.test.LocationFilter', [
+          h('button', 'Show all'),
+          h('button', 'Finland'),
+          h('button', 'Germany'),
+          h('button', 'Patagonia'),
+          h('button', 'Atlantis')
         ])
       );
       done();
