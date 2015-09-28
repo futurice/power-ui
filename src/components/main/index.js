@@ -14,48 +14,25 @@
  * the License.
  */
 import {Rx} from '@cycle/core';
-import moment from 'moment';
 import PeoplePage from 'power-ui/components/pages/PeoplePage/index';
 import ProjectsPage from 'power-ui/components/pages/ProjectsPage/index';
 import PowerheadPage from 'power-ui/components/pages/PowerheadPage/index';
 import {mainHTTPRequest, mainHTTPResponse} from './http';
 import view from './view';
 
-function makeDataTablePageWrapper(Page) {
-  return function DataTablePageWrapper(sources, tribes$) {
-    const props$ = sources.LocalStorage.combineLatest(tribes$,
-      ({location}, tribes) => ({
-        location,
-        tribes,
-        // Bad approach: we should not need to pass props to the page
-        availableTimeRange: {
-          start: moment().startOf('month'),
-          end: moment().clone().add(5, 'months').endOf('month'),
-        },
-      })
-    );
-    return Page({...sources, props$});
-  };
-}
-
-function PowerheadPageWrapper(sources, tribes$) {
-  const props$ = sources.LocalStorage.combineLatest(tribes$,
-    ({location}, tribes) => ({
-      location,
-      tribes,
-      // Bad approach: we should not need to pass props to the page
-      reportLength: 3,
-      lookaheadLength: 2,
-    })
+function makePageProps(sources) {
+  const tribes$ = mainHTTPResponse(sources.HTTP);
+  return Rx.Observable.combineLatest(
+    sources.LocalStorage, tribes$,
+    ({location}, tribes) => ({location, tribes})
   );
-  return PowerheadPage({...sources, props$});
 }
 
 function main(sources) {
-  const tribes$ = mainHTTPResponse(sources.HTTP);
-  const peoplePage = makeDataTablePageWrapper(PeoplePage)(sources, tribes$);
-  const projectsPage = makeDataTablePageWrapper(ProjectsPage)(sources, tribes$);
-  const powerheadPage = PowerheadPageWrapper(sources, tribes$);
+  const props$ = makePageProps(sources);
+  const peoplePage = PeoplePage({...sources, props$});
+  const projectsPage = ProjectsPage({...sources, props$});
+  const powerheadPage = PowerheadPage({...sources, props$});
   const request$ = mainHTTPRequest(
     peoplePage.HTTP, projectsPage.HTTP, powerheadPage.HTTP
   );

@@ -13,6 +13,8 @@
  * License for the specific language governing permissions and limitations under
  * the License.
  */
+import {Rx} from '@cycle/core';
+import {replicateStream} from 'power-ui/utils';
 import LocationFilter from 'power-ui/components/widgets/LocationFilter/index';
 import MonthSelector from 'power-ui/components/widgets/MonthSelector/index';
 import PowerheadPageHTTP from './http';
@@ -31,7 +33,8 @@ function MonthSelectorWrapper(DOM, state$) {
 }
 
 function PowerheadPage(sources) {
-  const powerheadPageHTTP = PowerheadPageHTTP(sources);
+  const proxyState$ = new Rx.ReplaySubject(1);
+  const powerheadPageHTTP = PowerheadPageHTTP({HTTP: sources.HTTP, props$: proxyState$});
   const state$ = model(powerheadPageHTTP.response$, sources.props$);
   const locationFilter = LocationFilterWrapper(state$, sources.DOM);
   const monthSelector = MonthSelectorWrapper(sources.DOM, state$);
@@ -40,6 +43,7 @@ function PowerheadPage(sources) {
   );
   const vtree$ = view(filteredState$, monthSelector.DOM, locationFilter.DOM);
   const localStorageSink$ = locationFilter.value$.map(location => ({location}));
+  replicateStream(state$, proxyState$);
 
   const sinks = {
     DOM: vtree$,
