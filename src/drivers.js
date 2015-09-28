@@ -14,6 +14,7 @@
  * the License.
  */
 import {Rx} from '@cycle/core';
+import _ from 'lodash';
 
 function hashRouteDriver() {
   return Rx.Observable.merge(
@@ -22,6 +23,21 @@ function hashRouteDriver() {
     Rx.Observable.fromEvent(window, 'hashchange')
       .map(ev => ev.newURL.match(/\#[^\#]*$/)[0].replace('#', ''))
   );
+}
+
+function popupDriver(windowOptions$) {
+  const h = window.screen.height - 200;
+  const w = window.screen.width - 200;
+
+  const defaultOptions = {
+    name: '_blank',
+    features: `status=0,width=${w},height=${h},top=100,left=100`,
+  };
+
+  windowOptions$.subscribe(windowOptions => {
+    const opts = _.assign({}, defaultOptions, windowOptions);
+    window.open(opts.url, opts.name, opts.features);
+  });
 }
 
 function makeLocalStorageDriver(key) {
@@ -34,4 +50,4 @@ function makeLocalStorageDriver(key) {
   };
 }
 
-export default {hashRouteDriver, makeLocalStorageDriver};
+export default {hashRouteDriver, popupDriver, makeLocalStorageDriver};

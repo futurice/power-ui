@@ -23,7 +23,10 @@ function DataTable(sources, name = cuid()) {
   const state$ = model(sources.props$, actions);
   const vtree$ = view(state$, name);
 
-  return {DOM: vtree$};
+  return {
+    DOM: vtree$,
+    Popup: actions.linkClick$,
+  };
 }
 
 export default DataTable;

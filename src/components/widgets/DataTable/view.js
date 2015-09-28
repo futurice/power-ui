@@ -90,25 +90,42 @@ function tdClassName(column, criteria) {
   }
 }
 
+function preprocessCellValue(state, item) {
+  return function preprocessCellValueWithStateAndItem(column) {
+    const zeroWidthSpace = '\u200B';
+    let maybeValue;
+    try {
+      maybeValue = column.valueFn(item);
+    } catch (err) {
+      maybeValue = null;
+    }
+    let link;
+    try {
+      link = column.linkFn(item);
+    } catch (err) {
+      link = null;
+    }
+    const cellValue = maybeValue === null ? zeroWidthSpace : maybeValue;
+    return {
+      cellValue,
+      link,
+      columnName: column.name,
+      sortCriteria: state.sortCriteria,
+    };
+  };
+}
+
 function tableRows(state) {
-  const zeroWidthSpace = '\u200B';
   return state.items.map(item => {
+    const columnValues = state.columns.map(preprocessCellValue(state, item));
     const timeline = renderTimelineCases(item, state.timeRange);
-    const columnValues = state.columns.map(column => {
-      let maybeValue;
-      try {
-        maybeValue = column.valueFn(item);
-      } catch (err) {
-        maybeValue = null;
-      }
-      const cellValue = maybeValue === null ? zeroWidthSpace : maybeValue;
-      return {cellValue, columnName: column.name, sortCriteria: state.sortCriteria};
-    });
     return (
       <tr>
         <td></td>
-        {columnValues.map(({cellValue, columnName, sortCriteria}) =>
-          <td className={tdClassName(columnName, sortCriteria)}>{cellValue}</td>
+        {columnValues.map(({cellValue, link, columnName, sortCriteria}) =>
+          <td className={tdClassName(columnName, sortCriteria)}>
+            {link ? <a className="link" href={link}>{cellValue}</a> : cellValue}
+          </td>
         )}
         <td className={styles.timelineColumn}>{timeline}</td>
       </tr>

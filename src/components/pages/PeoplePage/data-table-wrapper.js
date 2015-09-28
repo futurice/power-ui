@@ -15,6 +15,7 @@
  */
 import {formatAsPercentage} from 'power-ui/utils';
 import DataTable from 'power-ui/components/widgets/DataTable/index';
+import {HOST} from 'power-ui/conf';
 
 function preprocessAllocationCase(allocation) {
   return {
@@ -49,9 +50,22 @@ function DataTableWrapper(state$, DOM) {
       timeRange: state.timeRange,
       progress: state.progress,
       columns: [
-        {name: 'name', label: 'Name', valueFn: person => person.name},
-        {name: 'tribe', label: 'Tribe', valueFn: person => person.tribe.name},
-        {name: 'skills', label: 'Skills', valueFn: person => person.skills},
+        {
+          name: 'name',
+          label: 'Name',
+          valueFn: person => person.name,
+          linkFn: person => `${HOST}/admin/spreadsheet/person/${person.id}/?_popup=1`,
+        },
+        {
+          name: 'tribe',
+          label: 'Tribe',
+          valueFn: person => person.tribe.name,
+        },
+        {
+          name: 'skills',
+          label: 'Skills',
+          valueFn: person => person.skills,
+        },
         {
           name: 'project',
           label: 'Project',

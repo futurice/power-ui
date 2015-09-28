@@ -15,10 +15,17 @@
  */
 function intent(DOM, name) {
   return {
+    linkClick$: DOM
+      .select(`.${name} .link`)
+      .events('click')
+      .map(ev => {
+        ev.preventDefault();
+        return {url: ev.target.href};
+      }),
     toggleSortCriteria$: DOM
-        .select(`.${name} .sortable-column`)
-        .events('click')
-        .map(ev => ev.currentTarget.dataset['column']),
+      .select(`.${name} .sortable-column`)
+      .events('click')
+      .map(ev => ev.currentTarget.dataset['column']),
   };
 }
 

@@ -69,6 +69,7 @@ function main(sources) {
   const sinks = {
     DOM: vtree$,
     HTTP: request$,
+    Popup: peoplePage.Popup,
     LocalStorage: localStorageSink$,
   };
   return sinks;

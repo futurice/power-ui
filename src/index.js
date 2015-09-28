@@ -16,12 +16,13 @@
 import {run} from '@cycle/core';
 import {makeDOMDriver} from '@cycle/dom';
 import {makeHTTPDriver} from '@cycle/http';
-import {hashRouteDriver, makeLocalStorageDriver} from 'power-ui/drivers';
+import {hashRouteDriver, popupDriver, makeLocalStorageDriver} from 'power-ui/drivers';
 import main from 'power-ui/components/main/index';
 
 run(main, {
   DOM: makeDOMDriver('#power-ui-app-container'),
   HTTP: makeHTTPDriver({autoSubscribe: true}),
+  Popup: popupDriver,
   Route: hashRouteDriver,
   LocalStorage: makeLocalStorageDriver('power-ui-test'),
 });
