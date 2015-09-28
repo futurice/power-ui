@@ -24,5 +24,5 @@ run(main, {
   HTTP: makeHTTPDriver({autoSubscribe: true}),
   Popup: popupDriver,
   Route: hashRouteDriver,
-  LocalStorage: makeLocalStorageDriver('power-ui-test'),
+  LocalStorage: makeLocalStorageDriver('power-ui-filters'),
 });
