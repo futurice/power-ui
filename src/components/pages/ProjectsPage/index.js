@@ -49,13 +49,13 @@ function intent(textFilterSinks) {
 }
 
 function ProjectsPage(sources) {
-  const projectsPageHTTP = ProjectsPageHTTP(sources);
-  const proxyTextFilterSinks = {value$: new Rx.Subject()};
+  const proxyState$ = new Rx.ReplaySubject(1);
+  const projectsPageHTTP = ProjectsPageHTTP({HTTP: sources.HTTP, props$: proxyState$});
+  const proxyTextFilterSinks = {value$: new Rx.ReplaySubject(1)};
   const actions = intent(proxyTextFilterSinks);
   const state$ = model(projectsPageHTTP.response$, sources.props$, actions);
   const locationFilter = LocationFilterWrapper(state$, sources.DOM);
   const textFilter = TextFilterWrapper(state$, sources.DOM);
-  replicateStream(textFilter.value$, proxyTextFilterSinks.value$);
   const filteredState$ = filterState(state$,
     locationFilter.value$, textFilter.value$
   );
@@ -64,6 +64,8 @@ function ProjectsPage(sources) {
     locationFilter.DOM, textFilter.DOM, dataTable.DOM
   );
   const localStorageSink$ = locationFilter.value$.map(location => ({location}));
+  replicateStream(state$, proxyState$);
+  replicateStream(textFilter.value$, proxyTextFilterSinks.value$);
 
   const sinks = {
     DOM: vtree$,
