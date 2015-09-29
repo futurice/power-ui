@@ -7,7 +7,7 @@
   "scripts": {
     "lint": "eslint src/",
     "mocha": "mocha --compilers js:babel/register,scss:power-ui/test-utils/mocha-scss-compiler.js src/**/test.js",
-    "cover": "babel-node ./node_modules/.bin/isparta cover ./node_modules/.bin/_mocha -- --compilers scss:power-ui/test-utils/mocha-scss-compiler.js src/**/test.js",
+    "cover": "isparta cover _mocha -- --compilers scss:power-ui/test-utils/mocha-scss-compiler.js src/**/test.js",
     "test": "npm run lint && npm run mocha",
     "watch:lint": "esw -w src",
     "watch:static": "cpx \"src/static/**/*\" dist --watch",
