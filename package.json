@@ -7,6 +7,7 @@
   "scripts": {
     "lint": "eslint src/",
     "mocha": "mocha --compilers js:babel/register,scss:power-ui/test-utils/mocha-scss-compiler.js src/**/test.js",
+    "cover": "isparta cover _mocha -- --compilers scss:power-ui/test-utils/mocha-scss-compiler.js src/**/test.js",
     "test": "npm run lint && npm run mocha",
     "watch:lint": "esw -w src",
     "watch:static": "cpx \"src/static/**/*\" dist --watch",
@@ -50,6 +51,7 @@
     "eslint": "^1.1.0",
     "eslint-watch": "^1.2.5",
     "extract-text-webpack-plugin": "^0.8.1",
+    "isparta": "3.0.2",
     "mocha": "^2.3.2",
     "node-sass": "^3.3.2",
     "postcss-loader": "^0.4.3",
