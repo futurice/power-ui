@@ -109,7 +109,7 @@ function compactCases(cases) {
   const absences = cases.filter(c => c.type !== 'allocation');
 
   const lanes = allocations.reduce((laneArray, theCase) => {
-    let firstAvailableLane = laneArray.find(_.curry(caseFitsToLane)(theCase));
+    let firstAvailableLane = _.find(laneArray, _.curry(caseFitsToLane)(theCase));
     if (typeof firstAvailableLane === 'undefined') {
       firstAvailableLane = [];
       laneArray.push(firstAvailableLane);
@@ -119,7 +119,7 @@ function compactCases(cases) {
   }, []);
 
   // see if we can fit all absences to any existing single lane.
-  const laneForAbsences = lanes.find(lane => {
+  const laneForAbsences = _.find(lanes, lane => {
     const fitsToLane = _.curryRight(caseFitsToLane)(lane);
     return absences.every(absenceCase => fitsToLane(absenceCase));
   });
