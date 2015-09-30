@@ -20,12 +20,13 @@ import _ from 'lodash';
 import {formatAsFinancialsNumber, EURO_SYMBOL} from 'power-ui/utils';
 import styles from './styles.scss';
 
-function renderPeopleStatsItem(label, value, unit, special = false) {
+function renderPeopleStatsItem(label, value, unit, className, special = false) {
   const peopleStatsItemClassName = special
     ? styles.peopleStatsItemSpecial
     : styles.peopleStatsItem;
+
   return (
-    <li className={peopleStatsItemClassName}>
+    <li className={peopleStatsItemClassName + ` ${className}`}>
       <span className={styles.peopleStatsLabel}>{label}</span>
       <span className={styles.peopleStatsValue}>{value}</span>
       <span className={styles.peopleStatsUnit}>{unit}</span>
@@ -40,20 +41,21 @@ function renderPeopleStatsList(report, monthIndex) {
   const extFteVal = Math.ceil(report.ext_fte[monthIndex]);
   return (
     <ul className={styles.peopleStats}>
-      {renderPeopleStatsItem('Total exts.', extFteVal, 'FTE', true)}
-      {renderPeopleStatsItem('Total ints.', totalIntsVal, 'FTE')}
-      {renderPeopleStatsItem('Booked', bookedVal, 'FTE')}
-      {renderPeopleStatsItem('Bench', benchVal, 'FTE')}
+      {renderPeopleStatsItem('Total exts.', extFteVal, 'FTE', 'exts', true)}
+      {renderPeopleStatsItem('Total ints.', totalIntsVal, 'FTE', 'ints')}
+      {renderPeopleStatsItem('Booked', bookedVal, 'FTE', 'booked')}
+      {renderPeopleStatsItem('Bench', benchVal, 'FTE', 'bench')}
     </ul>
   );
 }
 
-function renderFinancialsStatsItem(label, value, legendBarStyle, special = false) {
+function renderFinancialsStatsItem(
+  label, value, legendBarStyle, className, special = false) {
   const financialsStatsItemClassName = special
     ? styles.financialsStatsItemSpecial
     : styles.financialsStatsItem;
   return (
-    <li className={financialsStatsItemClassName}>
+    <li className={financialsStatsItemClassName + ` ${className}`}>
       <div className={legendBarStyle} />
       <span className={styles.financialsStatsLabel}>{label}</span>
       <span className={styles.financialsStatsValue}>{value}</span>
@@ -69,8 +71,12 @@ function renderFinancialsStatsList(report, monthIndex) {
   const revenueBarStyle = styles.financialsStatsLegendBarRevenue;
   return (
     <ul className={styles.financialsStats}>
-      {renderFinancialsStatsItem('Overruns', overruns, overrunsBarStyle, true)}
-      {renderFinancialsStatsItem('Confirmed revenue', revenue, revenueBarStyle)}
+      {renderFinancialsStatsItem(
+        'Overruns', overruns, overrunsBarStyle, 'overruns', true
+      )}
+      {renderFinancialsStatsItem(
+        'Confirmed revenue', revenue, revenueBarStyle, 'confirmed_revenue'
+      )}
     </ul>
   );
 }
@@ -216,13 +222,14 @@ function renderReports(reports) {
   const completeReports = augmentReportsWithMetadata(sortedReports);
   return (
     <div className={styles.contentWrapper}>
-      {completeReports.map(report =>
-        <div className={styles.tribeReport}>
+      {completeReports.map(report => {
+        const tribeReportClass = [styles.tribeReport, 'tribe_report'].join(' ');
+        return <div className={tribeReportClass}>
           <h2>{report.name}</h2>
           <h3>Staffing &amp; value creation</h3>
           {renderMonthReportsRow(report)}
-        </div>
-      )}
+        </div>;
+      })}
     </div>
   );
 }
@@ -235,24 +242,64 @@ function renderLoadingIndicator() {
   );
 }
 
+// Combines an array of n reports into an array of 1 report.
+function combineReports(reports) {
+  if (reports.length === 0) {
+    return [];
+  }
+
+  const monthCount = reports[0].months.length;
+  const initialReport = {
+    months: reports[0].months,
+    business_days: reports[0].business_days,
+    value_creation: _.fill(Array(monthCount), 0),
+    orderbook: _.fill(Array(monthCount), 0),
+    overrun: _.fill(Array(monthCount), 0),
+    fte: _.fill(Array(monthCount), 0),
+    bench: _.fill(Array(monthCount), 0),
+    ext_fte: _.fill(Array(monthCount), 0),
+    name: 'All',
+    expenses_per_fte_month: 0,
+  };
+
+  const combined = reports.reduce((combinedReport, tribeReport) => {
+    const attributesToCombine = ['value_creation', 'overrun', 'fte', 'bench', 'ext_fte'];
+    attributesToCombine.forEach(attr => {
+      combinedReport[attr] = _.zipWith(combinedReport[attr], tribeReport[attr], _.add);
+    });
+
+    return combinedReport;
+  }, initialReport);
+
+  return [combined];
+}
+
 function view(state$, monthSelectorVTree$, locationFilterVTree$) {
   return Rx.Observable.combineLatest(
     state$, monthSelectorVTree$, locationFilterVTree$,
-    (state, monthSelectorVTree, locationFilterVTree) =>
-    <div>
-      <div className={styles.contentWrapper}>
-        <h1>Powerhead</h1>
-        {monthSelectorVTree}
-        <div className={styles.filtersContainer}>
-          {locationFilterVTree}
-        </div>
-      </div>
-      {state.reports.length === 0
-        ? renderLoadingIndicator()
-        : renderReports(state.reports)
+    (state, monthSelectorVTree, locationFilterVTree) => {
+      let reports;
+
+      if (state && state.filters && state.filters.location === 'all') {
+        reports = combineReports(state.reports);
+      } else {
+        reports = state.reports;
       }
-    </div>
-  );
+
+      return <div>
+        <div className={styles.contentWrapper}>
+          <h1>Powerhead</h1>
+          {monthSelectorVTree}
+          <div className={styles.filtersContainer}>
+            {locationFilterVTree}
+          </div>
+        </div>
+        {reports.length === 0
+          ? renderLoadingIndicator()
+          : renderReports(reports)
+        }
+      </div>;
+    });
 }
 
 export default view;

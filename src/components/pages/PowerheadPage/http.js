@@ -41,7 +41,7 @@ function timeRange$(props$) {
 function PowerheadPageHTTP(sources) {
   const POWERHEAD_URL = `${API_PATH}/powerhead/`;
 
-  const request$ = timeRange$(sources.props$)
+  const request$ = timeRange$(sources.props$.first())
     .map(timeRangeToUrlParams)
     .map(timeRangeParams => POWERHEAD_URL + `?${timeRangeParams}`)
     .map(urlToRequestObjectWithHeaders);

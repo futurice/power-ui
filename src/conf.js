@@ -14,6 +14,11 @@
  * the License.
  */
 
+/* global GLOBAL */
+if (typeof GLOBAL !== 'undefined' && typeof GLOBAL['__DEV__'] === 'undefined') {
+  GLOBAL['__DEV__'] = true;
+}
+
 const LOCAL_HOST = 'http://localhost:8000';
 const PROD_HOST = 'https://power.futurice.com';
 
