@@ -19,6 +19,7 @@ import {Rx} from '@cycle/core';
 import _ from 'lodash';
 import {formatAsFinancialsNumber, EURO_SYMBOL} from 'power-ui/utils';
 import styles from './styles.scss';
+import {combineReports, augmentReportsWithMetadata} from './reportUtils';
 
 function renderPeopleStatsItem(label, value, unit, className, special = false) {
   const peopleStatsItemClassName = special
@@ -82,25 +83,45 @@ function renderFinancialsStatsList(report, monthIndex) {
 }
 
 function renderMonthGraphPeople(report, monthIndex) {
+  const useSmallBoxesThreshold = 52;
+
   const totalIntsVal = Math.ceil(report.fte[monthIndex]);
   const benchVal = Math.ceil(report.bench[monthIndex]);
   const extFteVal = Math.ceil(report.ext_fte[monthIndex]);
   const bookedVal = totalIntsVal - benchVal;
   const totalPeople = totalIntsVal + extFteVal;
+
+  const extBoxStyle = (totalPeople > useSmallBoxesThreshold)
+          ? styles.monthGraphPeopleBoxExternalSmall
+          : styles.monthGraphPeopleBoxExternal;
+  const bookedBoxStyle = (totalPeople > useSmallBoxesThreshold)
+          ? styles.monthGraphPeopleBoxBookedSmall
+          : styles.monthGraphPeopleBoxBooked;
+  const benchBoxStyle = (totalPeople > useSmallBoxesThreshold)
+          ? styles.monthGraphPeopleBoxBenchSmall
+          : styles.monthGraphPeopleBoxBench;
+  const boxListStyle = (totalPeople > useSmallBoxesThreshold)
+          ? styles.monthGraphPeopleBoxListSmall
+          : styles.monthGraphPeopleBoxList;
+  const peopleChunkStyle = (totalPeople > useSmallBoxesThreshold)
+          ? styles.monthGraphPeopleChunkSmall
+          : styles.monthGraphPeopleChunk;
+
   const boxes = _.range(totalPeople).map(i => {
     if (i < extFteVal) {
-      return <li className={styles.monthGraphPeopleBoxExternal}></li>;
+      return <li className={extBoxStyle}></li>;
     } else if (i < extFteVal + bookedVal) {
-      return <li className={styles.monthGraphPeopleBoxBooked}></li>;
+      return <li className={bookedBoxStyle}></li>;
     } else {
-      return <li className={styles.monthGraphPeopleBoxBench}></li>;
+      return <li className={benchBoxStyle}></li>;
     }
   });
-  const chunks = _.chunk(boxes, 20);
+
+  const chunks = _.chunk(boxes, (totalPeople > useSmallBoxesThreshold) ? 40 : 20);
   return (
-    <ul className={styles.monthGraphPeopleBoxList}>
+    <ul className={boxListStyle}>
       {chunks.map(chunk =>
-        <div className={styles.monthGraphPeopleChunk}>
+        <div className={peopleChunkStyle}>
           {chunk}
         </div>
       )}
@@ -194,35 +215,10 @@ function sortReportsByLargestTribe(reports) {
   return _.sortBy(reports, report => -report.fte[0]);
 }
 
-function augmentReportsWithMetadata(reports) {
-  const reportsWithRespectiveTotals = reports.map(report => {
-    // Array with the sum of all financials stats, one entry per month
-    const financialsSum = _.zipWith(
-      report.value_creation, report.overrun,
-      _.add
-    );
-    const costs = _.zipWith(
-      report.fte, report.ext_fte,
-      _.add
-    ).map(totalFte => totalFte * report.expenses_per_fte_month);
-    // Among all months, highest sum of all financials for this tribe report:
-    const maxFinancialsVal = Math.max(...costs, ...financialsSum);
-    return {...report, financialsSum, costs, maxFinancialsVal};
-  });
-  const maxFinancialsValPerReport = reportsWithRespectiveTotals
-    .map(report => report.maxFinancialsVal);
-  const companyWideMaxFinancialsVal = Math.max(...maxFinancialsValPerReport);
-  return reportsWithRespectiveTotals.map(report => {
-    return {...report, companyWideMaxFinancialsVal};
-  });
-}
-
 function renderReports(reports) {
-  const sortedReports = sortReportsByLargestTribe(reports);
-  const completeReports = augmentReportsWithMetadata(sortedReports);
   return (
     <div className={styles.contentWrapper}>
-      {completeReports.map(report => {
+      {reports.map(report => {
         const tribeReportClass = [styles.tribeReport, 'tribe_report'].join(' ');
         return <div className={tribeReportClass}>
           <h2>{report.name}</h2>
@@ -242,48 +238,17 @@ function renderLoadingIndicator() {
   );
 }
 
-// Combines an array of n reports into an array of 1 report.
-function combineReports(reports) {
-  if (reports.length === 0) {
-    return [];
-  }
-
-  const monthCount = reports[0].months.length;
-  const initialReport = {
-    months: reports[0].months,
-    business_days: reports[0].business_days,
-    value_creation: _.fill(Array(monthCount), 0),
-    orderbook: _.fill(Array(monthCount), 0),
-    overrun: _.fill(Array(monthCount), 0),
-    fte: _.fill(Array(monthCount), 0),
-    bench: _.fill(Array(monthCount), 0),
-    ext_fte: _.fill(Array(monthCount), 0),
-    name: 'All',
-    expenses_per_fte_month: 0,
-  };
-
-  const combined = reports.reduce((combinedReport, tribeReport) => {
-    const attributesToCombine = ['value_creation', 'overrun', 'fte', 'bench', 'ext_fte'];
-    attributesToCombine.forEach(attr => {
-      combinedReport[attr] = _.zipWith(combinedReport[attr], tribeReport[attr], _.add);
-    });
-
-    return combinedReport;
-  }, initialReport);
-
-  return [combined];
-}
-
 function view(state$, monthSelectorVTree$, locationFilterVTree$) {
   return Rx.Observable.combineLatest(
     state$, monthSelectorVTree$, locationFilterVTree$,
     (state, monthSelectorVTree, locationFilterVTree) => {
       let reports;
-
       if (state && state.filters && state.filters.location === 'all') {
         reports = combineReports(state.reports);
       } else {
-        reports = state.reports;
+        const sortedReports = sortReportsByLargestTribe(state.reports);
+        const completeReports = augmentReportsWithMetadata(sortedReports);
+        reports = completeReports;
       }
 
       return <div>

@@ -25,9 +25,10 @@ import PowerheadPageHTTP from './http';
 import moment from "moment";
 import {replicateStream} from 'power-ui/utils';
 import select from 'vtree-select';
+import {combineReports, augmentReportsWithMetadata} from './reportUtils';
+import _ from 'lodash';
 
-const mockData = {"count":2,"next":null,"previous":null,"results":[{"id":1,"months":[{"September":"2015-09-01"},{"October":"2015-10-01"},{"November":"2015-11-01"},{"December":"2015-12-01"}],"value_creation":[1000,1000,1000,1000],"orderbook":[10000,10000,10000,10000],"overrun":[5,5,5,5],"business_days":[22,22,21,21],"fte":[10,10,10,10],"bench":[2,2,2,2],"ext_fte":[1.0,1.0,1.0,1.0],"name":"Test-org-1","expenses_per_fte_month":"4000.00","days_per_week":5,"hours_per_day":"7.50","target_hourly_rate":"10.00","country":"FI","holiday_calendar":1,"site":1},{"id":5,"months":[{"September":"2015-09-01"},{"October":"2015-10-01"},{"November":"2015-11-01"},{"December":"2015-12-01"}],"value_creation":[2000,2000,2000,2000],"orderbook":[20000,20000,20000,20000],"overrun":[10,10,10,10],"business_days":[22,22,21,21],"fte":[20,20,20,20],"bench":[3,3,3,3],"ext_fte":[2.0,2.0,2.0,2.0],"name":"Test-org-2","expenses_per_fte_month":"4000.00","days_per_week":5,"hours_per_day":"8.00","target_hourly_rate":"10.00","country":"DE","holiday_calendar":2,"site":3}]};
-
+const mockData = {"count":2,"next":null,"previous":null,"results":[{"id":1,"months":[{"September":"2015-09-01"},{"October":"2015-10-01"},{"November":"2015-11-01"},{"December":"2015-12-01"}],"value_creation":[1000,1000,1000,1000],"orderbook":[10000,10000,10000,10000],"overrun":[5,5,5,5],"business_days":[22,22,21,21],"fte":[10,10,10,10],"bench":[2,2,2,2],"ext_fte":[1.0,1.0,1.0,1.0],"name":"Test-org-1","expenses_per_fte_month":"5000.00","days_per_week":5,"hours_per_day":"7.50","target_hourly_rate":"10.00","country":"FI","holiday_calendar":1,"site":1},{"id":5,"months":[{"September":"2015-09-01"},{"October":"2015-10-01"},{"November":"2015-11-01"},{"December":"2015-12-01"}],"value_creation":[2000,2000,2000,2000],"orderbook":[20000,20000,20000,20000],"overrun":[10,10,10,10],"business_days":[22,22,21,21],"fte":[20,20,20,20],"bench":[3,3,3,3],"ext_fte":[2.0,2.0,2.0,2.0],"name":"Test-org-2","expenses_per_fte_month":"4000.00","days_per_week":5,"hours_per_day":"8.00","target_hourly_rate":"10.00","country":"DE","holiday_calendar":2,"site":3}]};
 
 function createPowerheadPageObject(vtree) {
 
@@ -51,27 +52,70 @@ function createPowerheadPageObject(vtree) {
 	const overruns = select(".overruns")(vtree)
 		.map(el => el.children[2].children[0].text);
 
-
-
-
 	return { reportCount, internals, externals, bench, booked, confirmed_revenue, overruns };
 }
 
+describe('augmentReportsWithMetadata', () => {
 
-function mockHTTPDriver() {
+	it('should be a function', () => {
+		expect(augmentReportsWithMetadata).to.be.a('function');
+	});
 
-	return function handleHTTPRequest(request$) {
-		const POWERHEAD_URL = `${API_PATH}/powerhead/`;
+	it('should add costs to reports', () => {
+		const augmentedReports = augmentReportsWithMetadata(mockData.results);
+		expect(augmentedReports[0].costs).to.eql([55000, 55000, 55000, 55000]);
+		expect(augmentedReports[1].costs).to.eql([88000, 88000, 88000, 88000]);
+	});
 
-		return request$.map(request => {
+	it('should add financialsSum to reports', () => {
+		const augmentedReports = augmentReportsWithMetadata(mockData.results);
+		expect(augmentedReports[0].financialsSum).to.eql([ 1005, 1005, 1005, 1005 ]);
+		expect(augmentedReports[1].financialsSum).to.eql([ 2010, 2010, 2010, 2010, ]);
+	});
+	
+	it('should add maxFinancialsVal to reports', () => {
+		const augmentedReports = augmentReportsWithMetadata(mockData.results);
+		expect(augmentedReports[0].maxFinancialsVal).to.eql(55000);
+		expect(augmentedReports[1].maxFinancialsVal).to.eql(88000);
+	});
 
-			return {
-				request: request$,
-		  		body: []
-		  	};
+	it('should add companyWideMaxFinancialsVal to reports', () => {
+		const augmentedReports = augmentReportsWithMetadata(mockData.results);
+		expect(augmentedReports[0].companyWideMaxFinancialsVal).to.eql(88000);
+		expect(augmentedReports[1].companyWideMaxFinancialsVal).to.eql(88000);
+	});
+});
+
+describe('combineReports', () => {
+
+	it('should be a function', () => {
+		expect(combineReports).to.be.a('function');
+	});
+
+	it('should combine array of n reports to array of 1 report', () => {
+		const reports = mockData.results;
+		const combinedReportArray = combineReports(reports);
+		expect(combinedReportArray).to.have.length.of(1);
+	});
+
+	describe('combined report', () => {
+		const combinedArray = combineReports(mockData.results);
+		const combined = combinedArray[0];
+		
+		it('should have costs calculated correctly', () => {
+			expect(combined.costs).to.eql([143000, 143000, 143000, 143000]);
 		});
-	}
-}
+		it('should have financialsSum calculated correctly', () => {
+			expect(combined.financialsSum).to.eql([3015, 3015, 3015, 3015]);
+		});
+		it('should have maxFinancialsVal calculated correctly', () => {
+			expect(combined.maxFinancialsVal).to.eql(143000);
+		});
+		it('should have companyWideMaxFinancialsVal calculated correctly', () => {
+			expect(combined.companyWideMaxFinancialsVal).to.eql(143000);
+		});
+	})
+});
 
 describe('PowerheadPageHTTP', () => {
 
@@ -86,7 +130,7 @@ describe('PowerheadPageHTTP', () => {
 	
 	request$.subscribe(req => {
 
-		expect(req.url).to.equal('http://localhost:8000/api/v1/powerhead/?range_start=2015-09-01&range_end=2015-09-30');
+		expect( _.startsWith(req.url, `${API_PATH}/powerhead/`) ).to.be.true;
 		done();
 	});
   });
@@ -97,10 +141,8 @@ describe('PowerheadPageHTTP', () => {
 	const {request$, response$} = PowerheadPageHTTP({props$, HTTP: HTTPSource});
 	
 	response$.subscribe(response => {
-	
 		expect(response).to.equal("test");
 		done();
-
 	});
 
 	request$.map(req => {
