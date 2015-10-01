@@ -251,19 +251,21 @@ function view(state$, monthSelectorVTree$, locationFilterVTree$) {
         reports = completeReports;
       }
 
-      return <div>
-        <div className={styles.contentWrapper}>
-          <h1>Powerhead</h1>
-          {monthSelectorVTree}
-          <div className={styles.filtersContainer}>
-            {locationFilterVTree}
+      return (
+        <div>
+          <div className={styles.contentWrapper}>
+            <h1>Powerhead</h1>
+            {monthSelectorVTree}
+            <div className={styles.filtersContainer}>
+              {locationFilterVTree}
+            </div>
           </div>
-        </div>
-        {reports.length === 0
-          ? renderLoadingIndicator()
-          : renderReports(reports)
-        }
-      </div>;
+          {reports.length === 0
+            ? renderLoadingIndicator()
+            : renderReports(reports)
+          }
+       </div>
+      );
     });
 }
 
