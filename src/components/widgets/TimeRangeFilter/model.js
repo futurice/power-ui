@@ -14,7 +14,6 @@
  * the License.
  */
 import {Rx} from '@cycle/core';
-import moment from 'moment';
 import _ from 'lodash';
 
 function inferSliderHandlebarLocations(injectTimeRange = false) {
@@ -49,8 +48,10 @@ function makeUpdateFn$(actions, props$) {
     ).map(selection => function updateTimeRange(oldState) {
       const timeRange = props.availableTimeRange;
       const selectedTimeRange = {
-        start: timeRange.start.clone().startOf('month').add(selection.min, 'months'),
-        end: timeRange.start.clone().startOf('month').add(selection.max, 'months').endOf('month'),
+        start: timeRange.start.clone()
+          .startOf('month').add(selection.min, 'months'),
+        end: timeRange.start.clone()
+          .startOf('month').add(selection.max, 'months').endOf('month'),
       };
       return {...oldState, selectedTimeRange};
     })
