@@ -77,7 +77,6 @@ function renderSingleCase(theCase, laneIndex) {
     'height': `${caseHeight}px`,
     'width': `${theCase.leftEnd - theCase.leftStart}%`,
   };
-
   const bgStyle = {opacity: theCase.opacity};
   return (
     <li title={theCase.label} style={liStyle} className={styles.caseItem}>
