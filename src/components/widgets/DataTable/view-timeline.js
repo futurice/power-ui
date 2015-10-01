@@ -79,7 +79,7 @@ function renderSingleCase(theCase, laneIndex) {
   };
   const bgStyle = {opacity: theCase.opacity};
   return (
-    <li style={liStyle} className={styles.caseItem}>
+    <li title={theCase.label} style={liStyle} className={styles.caseItem}>
       <div style={bgStyle} className={theCase.backgroundClass} />
       <span className={styles.caseItemLabel}>{theCase.label}</span>
     </li>
