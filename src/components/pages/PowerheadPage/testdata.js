@@ -1,3 +1,4 @@
+/* eslint quotes: 0, comma-dangle:0*/
 const mockPowerheadResponse = {
   "count": 2,
   "next": null,
