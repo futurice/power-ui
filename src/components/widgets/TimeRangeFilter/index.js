@@ -24,7 +24,7 @@ function TimeRangeFilter(sources) {
   const sinks = {
     DOM: vtree$,
     value$: state$.debounce(100),
-    // Time range change cause a lot of re-rendering.
+    // Changes to time range cause a lot of re-rendering.
   };
   return sinks;
 }

@@ -83,7 +83,7 @@ function renderFinancialsStatsList(report, monthIndex) {
 }
 
 function renderMonthGraphPeople(report, monthIndex) {
-  const useSmallBoxesThreshold = 52;
+  const useGroupedBoxesThreshold = 60;
 
   const totalIntsVal = Math.ceil(report.fte[monthIndex]);
   const benchVal = Math.ceil(report.bench[monthIndex]);
@@ -91,33 +91,43 @@ function renderMonthGraphPeople(report, monthIndex) {
   const bookedVal = totalIntsVal - benchVal;
   const totalPeople = totalIntsVal + extFteVal;
 
-  const extBoxStyle = (totalPeople > useSmallBoxesThreshold)
-          ? styles.monthGraphPeopleBoxExternalSmall
+  const useGroups = (totalPeople > useGroupedBoxesThreshold);
+
+  const extBoxStyle = useGroups
+          ? styles.monthGraphPeopleBoxExternalGroup
           : styles.monthGraphPeopleBoxExternal;
-  const bookedBoxStyle = (totalPeople > useSmallBoxesThreshold)
-          ? styles.monthGraphPeopleBoxBookedSmall
+  const bookedBoxStyle = useGroups
+          ? styles.monthGraphPeopleBoxBookedGroup
           : styles.monthGraphPeopleBoxBooked;
-  const benchBoxStyle = (totalPeople > useSmallBoxesThreshold)
-          ? styles.monthGraphPeopleBoxBenchSmall
+  const benchBoxStyle = useGroups
+          ? styles.monthGraphPeopleBoxBenchGroup
           : styles.monthGraphPeopleBoxBench;
-  const boxListStyle = (totalPeople > useSmallBoxesThreshold)
-          ? styles.monthGraphPeopleBoxListSmall
+  const boxListStyle = useGroups
+          ? styles.monthGraphPeopleBoxListGroup
           : styles.monthGraphPeopleBoxList;
-  const peopleChunkStyle = (totalPeople > useSmallBoxesThreshold)
-          ? styles.monthGraphPeopleChunkSmall
+  const peopleChunkStyle = useGroups
+          ? styles.monthGraphPeopleChunkGroup
           : styles.monthGraphPeopleChunk;
 
-  const boxes = _.range(totalPeople).map(i => {
+  const groupIndicatorSymbol = '⚏';
+  const groupIndicator = useGroups
+    ? <span className={styles.groupIndicator}>{groupIndicatorSymbol}</span>
+    : '';
+
+  const peopleInBox = useGroups ? 10 : 1;
+
+  const boxes = _.range(0, totalPeople, peopleInBox).map(i => {
     if (i < extFteVal) {
-      return <li className={extBoxStyle}></li>;
+      return <li className={extBoxStyle}>{groupIndicator}</li>;
     } else if (i < extFteVal + bookedVal) {
-      return <li className={bookedBoxStyle}></li>;
+      return <li className={bookedBoxStyle}>{groupIndicator}</li>;
     } else {
-      return <li className={benchBoxStyle}></li>;
+      return <li className={benchBoxStyle}>{groupIndicator}</li>;
     }
   });
 
-  const chunks = _.chunk(boxes, (totalPeople > useSmallBoxesThreshold) ? 40 : 20);
+  const chunks = useGroups ? [boxes] : _.chunk(boxes, 20);
+
   return (
     <ul className={boxListStyle}>
       {chunks.map(chunk =>
