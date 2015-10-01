@@ -109,8 +109,9 @@ function renderMonthGraphPeople(report, monthIndex) {
           ? styles.monthGraphPeopleChunkGroup
           : styles.monthGraphPeopleChunk;
 
+  const groupIndicatorSymbol = '⚏';
   const groupIndicator = useGroups
-    ? <span className={styles.groupIndicator}>&#9871;</span>
+    ? <span className={styles.groupIndicator}>{groupIndicatorSymbol}</span>
     : '';
 
   const peopleInBox = useGroups ? 10 : 1;
