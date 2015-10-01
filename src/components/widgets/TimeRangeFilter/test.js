@@ -19,6 +19,7 @@ import {h, mockDOMResponse} from '@cycle/dom';
 import {Rx} from '@cycle/core';
 import TimeRangeFilter from './index';
 import moment from "moment";
+import _ from 'lodash';
 
 describe('TimeRangeFilter', () => {
   it('should be a function', () => {
@@ -37,6 +38,14 @@ describe('TimeRangeFilter', () => {
       }
     };
 
+    const timeRangeStart = props.availableTimeRange.start;
+
+    const expectedLabels = _.range(5).map(i => timeRangeStart.clone().add(i, 'months').format('MMM'));
+    
+    if (props.availableTimeRange.start.format('YY-MM') === moment().format('YY-MM')) {
+      expectedLabels[0] = 'Now';
+    }
+ 
     const props$ = Rx.Observable.just(props);
     const DOMSource = mockDOMResponse();
     const timeRangeFilter = TimeRangeFilter({DOM: DOMSource, props$});
@@ -48,11 +57,11 @@ describe('TimeRangeFilter', () => {
             h('input', {type: 'range', min: '0', step: '1', max: '4'}),
             h('input', {type: 'range', min: '0', step: '1', max: '4'}),
             h('ul', [
-              h('li', 'Now'),
-              h('li', moment().add(1, 'months').format('MMM')),
-              h('li', moment().add(2, 'months').format('MMM')),
-              h('li', moment().add(3, 'months').format('MMM')),
-              h('li', moment().add(4, 'months').format('MMM'))
+              h('li', expectedLabels[0]),
+              h('li', expectedLabels[1]),
+              h('li', expectedLabels[2]),
+              h('li', expectedLabels[3]),
+              h('li', expectedLabels[4]),
             ])
           ])
         ])
