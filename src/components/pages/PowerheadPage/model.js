@@ -67,7 +67,15 @@ function makeFilterByLocationFn$(selectedLocation$) {
         || location === report.country
         || location === report.site
       );
-      return {...oldState, reports: newReports};
+
+      return {
+        ...oldState,
+        reports: newReports,
+        filters: {
+          ...oldState.filters,
+          location: location,
+        },
+      };
     })
     .startWith(_.identity); // identity means "allow anything"
 }

@@ -19,13 +19,15 @@ import {Rx} from '@cycle/core';
 import _ from 'lodash';
 import {formatAsFinancialsNumber, EURO_SYMBOL} from 'power-ui/utils';
 import styles from './styles.scss';
+import {combineReports, augmentReportsWithMetadata} from './reportUtils';
 
-function renderPeopleStatsItem(label, value, unit, special = false) {
+function renderPeopleStatsItem(label, value, unit, className, special = false) {
   const peopleStatsItemClassName = special
     ? styles.peopleStatsItemSpecial
     : styles.peopleStatsItem;
+
   return (
-    <li className={peopleStatsItemClassName}>
+    <li className={peopleStatsItemClassName + ` ${className}`}>
       <span className={styles.peopleStatsLabel}>{label}</span>
       <span className={styles.peopleStatsValue}>{value}</span>
       <span className={styles.peopleStatsUnit}>{unit}</span>
@@ -40,20 +42,21 @@ function renderPeopleStatsList(report, monthIndex) {
   const extFteVal = Math.ceil(report.ext_fte[monthIndex]);
   return (
     <ul className={styles.peopleStats}>
-      {renderPeopleStatsItem('Total exts.', extFteVal, 'FTE', true)}
-      {renderPeopleStatsItem('Total ints.', totalIntsVal, 'FTE')}
-      {renderPeopleStatsItem('Booked', bookedVal, 'FTE')}
-      {renderPeopleStatsItem('Bench', benchVal, 'FTE')}
+      {renderPeopleStatsItem('Total exts.', extFteVal, 'FTE', 'exts', true)}
+      {renderPeopleStatsItem('Total ints.', totalIntsVal, 'FTE', 'ints')}
+      {renderPeopleStatsItem('Booked', bookedVal, 'FTE', 'booked')}
+      {renderPeopleStatsItem('Bench', benchVal, 'FTE', 'bench')}
     </ul>
   );
 }
 
-function renderFinancialsStatsItem(label, value, legendBarStyle, special = false) {
+function renderFinancialsStatsItem(
+  label, value, legendBarStyle, className, special = false) {
   const financialsStatsItemClassName = special
     ? styles.financialsStatsItemSpecial
     : styles.financialsStatsItem;
   return (
-    <li className={financialsStatsItemClassName}>
+    <li className={financialsStatsItemClassName + ` ${className}`}>
       <div className={legendBarStyle} />
       <span className={styles.financialsStatsLabel}>{label}</span>
       <span className={styles.financialsStatsValue}>{value}</span>
@@ -69,32 +72,56 @@ function renderFinancialsStatsList(report, monthIndex) {
   const revenueBarStyle = styles.financialsStatsLegendBarRevenue;
   return (
     <ul className={styles.financialsStats}>
-      {renderFinancialsStatsItem('Overruns', overruns, overrunsBarStyle, true)}
-      {renderFinancialsStatsItem('Confirmed revenue', revenue, revenueBarStyle)}
+      {renderFinancialsStatsItem(
+        'Overruns', overruns, overrunsBarStyle, 'overruns', true
+      )}
+      {renderFinancialsStatsItem(
+        'Confirmed revenue', revenue, revenueBarStyle, 'confirmed_revenue'
+      )}
     </ul>
   );
 }
 
 function renderMonthGraphPeople(report, monthIndex) {
+  const useSmallBoxesThreshold = 52;
+
   const totalIntsVal = Math.ceil(report.fte[monthIndex]);
   const benchVal = Math.ceil(report.bench[monthIndex]);
   const extFteVal = Math.ceil(report.ext_fte[monthIndex]);
   const bookedVal = totalIntsVal - benchVal;
   const totalPeople = totalIntsVal + extFteVal;
+
+  const extBoxStyle = (totalPeople > useSmallBoxesThreshold)
+          ? styles.monthGraphPeopleBoxExternalSmall
+          : styles.monthGraphPeopleBoxExternal;
+  const bookedBoxStyle = (totalPeople > useSmallBoxesThreshold)
+          ? styles.monthGraphPeopleBoxBookedSmall
+          : styles.monthGraphPeopleBoxBooked;
+  const benchBoxStyle = (totalPeople > useSmallBoxesThreshold)
+          ? styles.monthGraphPeopleBoxBenchSmall
+          : styles.monthGraphPeopleBoxBench;
+  const boxListStyle = (totalPeople > useSmallBoxesThreshold)
+          ? styles.monthGraphPeopleBoxListSmall
+          : styles.monthGraphPeopleBoxList;
+  const peopleChunkStyle = (totalPeople > useSmallBoxesThreshold)
+          ? styles.monthGraphPeopleChunkSmall
+          : styles.monthGraphPeopleChunk;
+
   const boxes = _.range(totalPeople).map(i => {
     if (i < extFteVal) {
-      return <li className={styles.monthGraphPeopleBoxExternal}></li>;
+      return <li className={extBoxStyle}></li>;
     } else if (i < extFteVal + bookedVal) {
-      return <li className={styles.monthGraphPeopleBoxBooked}></li>;
+      return <li className={bookedBoxStyle}></li>;
     } else {
-      return <li className={styles.monthGraphPeopleBoxBench}></li>;
+      return <li className={benchBoxStyle}></li>;
     }
   });
-  const chunks = _.chunk(boxes, 20);
+
+  const chunks = _.chunk(boxes, (totalPeople > useSmallBoxesThreshold) ? 40 : 20);
   return (
-    <ul className={styles.monthGraphPeopleBoxList}>
+    <ul className={boxListStyle}>
       {chunks.map(chunk =>
-        <div className={styles.monthGraphPeopleChunk}>
+        <div className={peopleChunkStyle}>
           {chunk}
         </div>
       )}
@@ -188,41 +215,17 @@ function sortReportsByLargestTribe(reports) {
   return _.sortBy(reports, report => -report.fte[0]);
 }
 
-function augmentReportsWithMetadata(reports) {
-  const reportsWithRespectiveTotals = reports.map(report => {
-    // Array with the sum of all financials stats, one entry per month
-    const financialsSum = _.zipWith(
-      report.value_creation, report.overrun,
-      _.add
-    );
-    const costs = _.zipWith(
-      report.fte, report.ext_fte,
-      _.add
-    ).map(totalFte => totalFte * report.expenses_per_fte_month);
-    // Among all months, highest sum of all financials for this tribe report:
-    const maxFinancialsVal = Math.max(...costs, ...financialsSum);
-    return {...report, financialsSum, costs, maxFinancialsVal};
-  });
-  const maxFinancialsValPerReport = reportsWithRespectiveTotals
-    .map(report => report.maxFinancialsVal);
-  const companyWideMaxFinancialsVal = Math.max(...maxFinancialsValPerReport);
-  return reportsWithRespectiveTotals.map(report => {
-    return {...report, companyWideMaxFinancialsVal};
-  });
-}
-
 function renderReports(reports) {
-  const sortedReports = sortReportsByLargestTribe(reports);
-  const completeReports = augmentReportsWithMetadata(sortedReports);
   return (
     <div className={styles.contentWrapper}>
-      {completeReports.map(report =>
-        <div className={styles.tribeReport}>
+      {reports.map(report => {
+        const tribeReportClass = [styles.tribeReport, 'tribe_report'].join(' ');
+        return <div className={tribeReportClass}>
           <h2>{report.name}</h2>
           <h3>Staffing &amp; value creation</h3>
           {renderMonthReportsRow(report)}
-        </div>
-      )}
+        </div>;
+      })}
     </div>
   );
 }
@@ -238,21 +241,32 @@ function renderLoadingIndicator() {
 function view(state$, monthSelectorVTree$, locationFilterVTree$) {
   return Rx.Observable.combineLatest(
     state$, monthSelectorVTree$, locationFilterVTree$,
-    (state, monthSelectorVTree, locationFilterVTree) =>
-    <div>
-      <div className={styles.contentWrapper}>
-        <h1>Powerhead</h1>
-        {monthSelectorVTree}
-        <div className={styles.filtersContainer}>
-          {locationFilterVTree}
-        </div>
-      </div>
-      {state.reports.length === 0
-        ? renderLoadingIndicator()
-        : renderReports(state.reports)
+    (state, monthSelectorVTree, locationFilterVTree) => {
+      let reports;
+      if (state && state.filters && state.filters.location === 'all') {
+        reports = combineReports(state.reports);
+      } else {
+        const sortedReports = sortReportsByLargestTribe(state.reports);
+        const completeReports = augmentReportsWithMetadata(sortedReports);
+        reports = completeReports;
       }
-    </div>
-  );
+
+      return (
+        <div>
+          <div className={styles.contentWrapper}>
+            <h1>Powerhead</h1>
+            {monthSelectorVTree}
+            <div className={styles.filtersContainer}>
+              {locationFilterVTree}
+            </div>
+          </div>
+          {reports.length === 0
+            ? renderLoadingIndicator()
+            : renderReports(reports)
+          }
+       </div>
+      );
+    });
 }
 
 export default view;

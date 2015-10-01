@@ -236,6 +236,39 @@ $peopleBoxSize: 8px;
   background-color: $colorGrayLight;
 }
 
+
+.monthGraphPeopleBoxListSmall {
+  @extend .monthGraphPeopleBoxList;
+  width: (5 * $peopleBoxSize);
+}
+
+.monthGraphPeopleChunkSmall {
+  @extend .monthGraphPeopleChunk;
+  width: (5 * $peopleBoxSize);
+}
+
+.monthGraphPeopleBoxSmall {
+  @extend .monthGraphPeopleBox;
+  width: $peopleBoxSize / 2;
+  height: $peopleBoxSize / 2;
+}
+
+.monthGraphPeopleBoxExternalSmall {
+  @extend .monthGraphPeopleBoxSmall;
+  background-color: $colorPurple;
+}
+
+.monthGraphPeopleBoxBookedSmall {
+  @extend .monthGraphPeopleBoxSmall;
+  background-color: $colorGreenLight;
+}
+
+.monthGraphPeopleBoxBenchSmall {
+  @extend .monthGraphPeopleBoxSmall;
+  background-color: $colorGrayLight;
+}
+
+
 .monthGraphLabel {
   border-top: 2px solid $colorBlack;
   text-align: center;
