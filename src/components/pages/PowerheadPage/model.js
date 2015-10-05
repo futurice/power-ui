@@ -24,7 +24,6 @@ const initialState = {
   reportLength: 3,
   // How many months beyond the current month can we see a report:
   lookaheadLength: 2,
-  tribeOrder: [1, 5, 6, 2, 4, 3, 9, 7],
   filters: {
     location: 'all',
   },

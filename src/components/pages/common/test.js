@@ -23,15 +23,15 @@ import {Rx} from '@cycle/core';
 import {API_PATH} from 'power-ui/conf';
 import select from 'vtree-select';
 import _ from 'lodash';
-import {LocationFilterWrapper} from './filter-wrappers';
+import {TribeFilter} from './filters';
 
 function vtreeToTribeValueList(vtree) {
   return vtree.children.map(el => el.properties.value);
 }
 
-describe('LocationFilterWrapper', () => {
+describe('TribeFilter', () => {
   it('should be a function', () => {
-    expect(LocationFilterWrapper).to.be.a('function');
+    expect(TribeFilter).to.be.a('function');
   });
 
   it('should rearrange tribes by tribeOrder', () => {
@@ -40,7 +40,7 @@ describe('LocationFilterWrapper', () => {
       tribeOrder: [4,1,2],
       tribes: [{id:1,name:'1'},{id:2,name:'2'},{id:4,name:'4'}],
     });
-    var locationFilter = LocationFilterWrapper(state$, mockDOMResponse());
+    var locationFilter = TribeFilter(state$, mockDOMResponse());
 
     locationFilter.DOM.last().subscribe(vtree => {
       const rearrangedTribes =  _.without(vtreeToTribeValueList(vtree), 'all', 'FI', 'DE');
@@ -54,7 +54,7 @@ describe('LocationFilterWrapper', () => {
       tribeOrder: [2,4,1],
       tribes: [{id:1,name:'1'},{id:2,name:'2'},{id:3,name:'3'},{id:4,name:'4'}],
     });
-    var locationFilter = LocationFilterWrapper(state$, mockDOMResponse());
+    var locationFilter = TribeFilter(state$, mockDOMResponse());
 
     locationFilter.DOM.last().subscribe(vtree => {
       const rearrangedTribes =  _.without(vtreeToTribeValueList(vtree), 'all', 'FI', 'DE');
@@ -68,7 +68,7 @@ describe('LocationFilterWrapper', () => {
       tribeOrder: [15,1,4,2,99,102,44],
       tribes: [{id:1,name:'1'},{id:2,name:'2'},{id:4,name:'4'}],
     });
-    var locationFilter = LocationFilterWrapper(state$, mockDOMResponse());
+    var locationFilter = TribeFilter(state$, mockDOMResponse());
 
     locationFilter.DOM.last().subscribe(vtree => {
       const rearrangedTribes =  _.without(vtreeToTribeValueList(vtree), 'all', 'FI', 'DE');

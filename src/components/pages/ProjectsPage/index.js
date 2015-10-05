@@ -20,7 +20,7 @@ import TextFilter from 'power-ui/components/widgets/TextFilter/index';
 import DataTableWrapper from './data-table-wrapper';
 import {model, filterState} from './model';
 import view from './view';
-import {LocationFilterWrapper} from 'power-ui/components/pages/common/filter-wrappers';
+import {TribeFilter} from 'power-ui/components/pages/common/filters';
 
 function TextFilterWrapper(state$, DOM) {
   const props$ = state$
@@ -48,16 +48,16 @@ function ProjectsPage(sources) {
   const proxyTextFilterSinks = {value$: new Rx.ReplaySubject(1)};
   const actions = intent(proxyTextFilterSinks);
   const state$ = model(projectsPageHTTP.response$, sources.props$, actions);
-  const locationFilter = LocationFilterWrapper(state$, sources.DOM);
+  const tribeFilter = TribeFilter(state$, sources.DOM);
   const textFilter = TextFilterWrapper(state$, sources.DOM);
   const filteredState$ = filterState(state$,
-    locationFilter.value$, textFilter.value$
+    tribeFilter.value$, textFilter.value$
   );
   const dataTable = DataTableWrapper(filteredState$, sources.DOM);
   const vtree$ = view(
-    locationFilter.DOM, textFilter.DOM, dataTable.DOM
+    tribeFilter.DOM, textFilter.DOM, dataTable.DOM
   );
-  const localStorageSink$ = locationFilter.value$.map(location => ({location}));
+  const localStorageSink$ = tribeFilter.value$.map(location => ({location}));
   replicateStream(state$, proxyState$);
   replicateStream(textFilter.value$, proxyTextFilterSinks.value$);
 

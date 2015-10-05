@@ -15,10 +15,14 @@
  */
 import LocationFilter from 'power-ui/components/widgets/LocationFilter/index';
 
-function LocationFilterWrapper(state$, DOM) {
+// The array represents the order and the numbers in it represent tribe id.
+// so tribe id=1 will be first, tribe id=7 will be last.
+const DEFAULT_TRIBE_ORDER = [1, 5, 6, 2, 4, 3, 9, 7];
+
+function TribeFilter(state$, DOM) {
   const props$ = state$
     .map(state => {
-      const tribeOrder = state.tribeOrder || [];
+      const tribeOrder = state.tribeOrder || DEFAULT_TRIBE_ORDER;
       const rearrangedTribes = state.tribes.reduce((list, tribe) => {
         const idx = tribeOrder.indexOf(tribe.id);
         if (idx === -1) {
@@ -37,4 +41,4 @@ function LocationFilterWrapper(state$, DOM) {
   return LocationFilter({DOM, props$});
 }
 
-export default {LocationFilterWrapper};
+export default {TribeFilter};
