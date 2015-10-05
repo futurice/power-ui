@@ -15,17 +15,11 @@
  */
 import {Rx} from '@cycle/core';
 import {replicateStream} from 'power-ui/utils';
-import LocationFilter from 'power-ui/components/widgets/LocationFilter/index';
 import MonthSelector from 'power-ui/components/widgets/MonthSelector/index';
 import PowerheadPageHTTP from './http';
 import {model, filterState} from './model';
 import view from './view';
-
-function LocationFilterWrapper(state$, DOM) {
-  const props$ = state$
-    .map(state => ({location: state.filters.location, tribes: state.tribes}));
-  return LocationFilter({DOM, props$});
-}
+import {LocationFilterWrapper} from 'power-ui/components/pages/common/filter-wrappers';
 
 function MonthSelectorWrapper(DOM, state$) {
   const props$ = state$.map(state => ({length: 1 + state.lookaheadLength}));

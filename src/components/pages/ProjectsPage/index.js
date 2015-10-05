@@ -16,17 +16,11 @@
 import {Rx} from '@cycle/core';
 import {replicateStream} from 'power-ui/utils';
 import makeDataTablePageHTTP from 'power-ui/components/pages/common/data-table-page-http';
-import LocationFilter from 'power-ui/components/widgets/LocationFilter/index';
 import TextFilter from 'power-ui/components/widgets/TextFilter/index';
 import DataTableWrapper from './data-table-wrapper';
 import {model, filterState} from './model';
 import view from './view';
-
-function LocationFilterWrapper(state$, DOM) {
-  const props$ = state$
-    .map(state => ({location: state.filters.location, tribes: state.tribes}));
-  return LocationFilter({DOM, props$});
-}
+import {LocationFilterWrapper} from 'power-ui/components/pages/common/filter-wrappers';
 
 function TextFilterWrapper(state$, DOM) {
   const props$ = state$
