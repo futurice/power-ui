@@ -39,11 +39,11 @@ function makeFilterFn$(value$, criteriaFnFactory) {
     .startWith(_.identity); // identity means "allow anything"
 }
 
-function makeFilterByLocationFn$(selectedLocation$) {
+function makeFilterByLocationFn$(selectedLocation$, locationsToHideFromAll = []) {
   return makeFilterFn$(selectedLocation$, location =>
     function filterStateByLocation(person) {
       return (
-        location === 'all'
+        (location === 'all' && !_.includes(locationsToHideFromAll, person.tribe.name))
         || location === person.tribe.name
         || location === person.tribe.country
         || location === person.tribe.site.name
@@ -86,7 +86,7 @@ function makeTimeRangeFilterFn$(timeRange$) {
 }
 
 function makeCombinedFilterFn$(location$, searchValue$, availability$, timeRange$) {
-  const locationFilterFn$ = makeFilterByLocationFn$(location$);
+  const locationFilterFn$ = makeFilterByLocationFn$(location$, ['Admin']);
   const searchFilterFn$ = makeFilterBySearchFn$(searchValue$);
 
   const availabilityFilterFn$ = makeFilterByAvailabilityFn$(availability$);
