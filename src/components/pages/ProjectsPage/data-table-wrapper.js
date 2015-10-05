@@ -137,7 +137,7 @@ function DataTableWrapper(state$, DOM) {
       ORDERBOOK_COLUMN,
       MAN_DAYS_COLUMN,
     ],
-    defaultSortCriteria: '-overrun',
+    defaultSortCriteria: '-value-creation',
     emptyTitle: 'Nothing',
     emptySubtitle: 'No projects found.',
   }));
