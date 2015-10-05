@@ -15,17 +15,11 @@
  */
 import {Rx} from '@cycle/core';
 import {replicateStream} from 'power-ui/utils';
-import LocationFilter from 'power-ui/components/widgets/LocationFilter/index';
 import MonthSelector from 'power-ui/components/widgets/MonthSelector/index';
 import PowerheadPageHTTP from './http';
 import {model, filterState} from './model';
 import view from './view';
-
-function LocationFilterWrapper(state$, DOM) {
-  const props$ = state$
-    .map(state => ({location: state.filters.location, tribes: state.tribes}));
-  return LocationFilter({DOM, props$});
-}
+import {TribeFilter} from 'power-ui/components/pages/common/filters';
 
 function MonthSelectorWrapper(DOM, state$) {
   const props$ = state$.map(state => ({length: 1 + state.lookaheadLength}));
@@ -36,13 +30,13 @@ function PowerheadPage(sources) {
   const proxyState$ = new Rx.ReplaySubject(1);
   const powerheadPageHTTP = PowerheadPageHTTP({HTTP: sources.HTTP, props$: proxyState$});
   const state$ = model(powerheadPageHTTP.response$, sources.props$);
-  const locationFilter = LocationFilterWrapper(state$, sources.DOM);
+  const tribeFilter = TribeFilter(state$, sources.DOM);
   const monthSelector = MonthSelectorWrapper(sources.DOM, state$);
   const filteredState$ = filterState(state$,
-    monthSelector.value$, locationFilter.value$
+    monthSelector.value$, tribeFilter.value$
   );
-  const vtree$ = view(filteredState$, monthSelector.DOM, locationFilter.DOM);
-  const localStorageSink$ = locationFilter.value$.map(location => ({location}));
+  const vtree$ = view(filteredState$, monthSelector.DOM, tribeFilter.DOM);
+  const localStorageSink$ = tribeFilter.value$.map(location => ({location}));
   replicateStream(state$, proxyState$);
 
   const sinks = {
