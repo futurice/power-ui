@@ -14,18 +14,15 @@
  * the License.
  */
 
-/* global GLOBAL */
-if (typeof GLOBAL !== 'undefined' && typeof GLOBAL['__DEV__'] === 'undefined') {
-  GLOBAL['__DEV__'] = true;
+/* global GLOBAL, API_HOST */
+if (typeof GLOBAL !== 'undefined' && typeof GLOBAL['HOST'] === 'undefined') {
+  GLOBAL['API_HOST'] = 'http://localhost:8000';
 }
 
-const LOCAL_HOST = 'http://localhost:8000';
-const PROD_HOST = 'https://power.futurice.com';
-
-const LOCAL_API_PATH = `${LOCAL_HOST}/api/v1`;
-const PROD_API_PATH = `${PROD_HOST}/api/v1`;
+const ENV_HOST = API_HOST;
+const ENV_API_PATH = `${ENV_HOST}/api/v1`;
 
 export default {
-  API_PATH: __DEV__ ? LOCAL_API_PATH : PROD_API_PATH,
-  HOST: __DEV__ ? LOCAL_HOST : PROD_HOST,
+  API_PATH: ENV_API_PATH,
+  HOST: ENV_HOST,
 };
