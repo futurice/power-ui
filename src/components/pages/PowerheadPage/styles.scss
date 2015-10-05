@@ -236,44 +236,35 @@ $peopleBoxSize: 8px;
   background-color: $colorGrayLight;
 }
 
-.monthGraphPeopleBoxListGroup {
+.monthGraphPeopleBoxListSmall {
   @extend .monthGraphPeopleBoxList;
-  width: (3.5 * $peopleBoxSize);
+  width: (5 * $peopleBoxSize);
 }
 
-.monthGraphPeopleChunkGroup {
+.monthGraphPeopleChunkSmall {
   @extend .monthGraphPeopleChunk;
-  width: (3.5 * $peopleBoxSize);
+  width: (5 * $peopleBoxSize);
 }
 
-.monthGraphPeopleBoxGroup {
+.monthGraphPeopleBoxSmall {
   @extend .monthGraphPeopleBox;
-  width: $peopleBoxSize * 1.5;
-  height: $peopleBoxSize * 1.5;
+  width: $peopleBoxSize / 2;
+  height: $peopleBoxSize / 2;
 }
 
-.monthGraphPeopleBoxExternalGroup {
-  @extend .monthGraphPeopleBoxGroup;
+.monthGraphPeopleBoxExternalSmall {
+  @extend .monthGraphPeopleBoxSmall;
   background-color: $colorPurple;
 }
 
-.monthGraphPeopleBoxBookedGroup {
-  @extend .monthGraphPeopleBoxGroup;
+.monthGraphPeopleBoxBookedSmall {
+  @extend .monthGraphPeopleBoxSmall;
   background-color: $colorGreenLight;
 }
 
-.monthGraphPeopleBoxBenchGroup {
-  @extend .monthGraphPeopleBoxGroup;
+.monthGraphPeopleBoxBenchSmall {
+  @extend .monthGraphPeopleBoxSmall;
   background-color: $colorGrayLight;
-}
-
-.groupIndicator {
-  color: white;
-  position: relative;
-  top: -6px;
-  left: 0px;
-  font-size: 11px;
-  opacity: 0.6;
 }
 
 .monthGraphLabel {
