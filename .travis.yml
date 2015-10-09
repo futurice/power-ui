@@ -1,7 +1,14 @@
 language: node_js
 node_js:
-  - '0.12'
-script: npm run test
+- '0.12'
+script: npm run cover
 branches:
   only:
   - master
+  - codeclimate
+before_install: npm install -g grunt-cli codeclimate-test-reporter
+after_script:
+- codeclimate-test-reporter < coverage/lcov.info
+env:
+  global:
+    secure: ltvUnMqRhXTTqWhoRhcDvc/46Km677sX8ng4WJPevlyaf/zHkmUnP74vAepfvGmo5IAX96J2NEKL02/DoX/WnfoiJfzd2irIQjrKL/FpxzZ/8nGTx7rjMQ7jT6uiYVNRLPIcYDGaH15jvWjWLOLXZUZrPGhLAuWdCrT1Yl7n+VhBu5v65x2ivcJd6mqR7A87889I437p/F1wIeG2muNR1XXXmpir+GU9uSYAzhZc5BQzQHIwCIEvKaSNJT8lUBxvh6SqqBG9el+GII3j+0v0K8YnV/nRkiQRlXdhfe2TkewrdIez9ozl9lQgK5rrFDV+r7AGj1Whdg2YXP0a/hMVWwjdJetrAswoFRWSrYngKZPln4R8DnmwQncR3IwctiumeT/awG+46SKd7IAu5gOGjsQWjnQwshy7SFYvPXqtBbATSFP14LY4XNrkJntJShgDHL8Rti+ywKxng4E28oM69wW8n/JmDATy3iaINvJnS3n/DJSz17jFNAs35JPZ6Iog9GEBRejd2Ta1kvl4Cu8hSAMZR7ukIfiwk3K5P+cMZQY9AYFBakPNk1pL7MtltbwID3jjt0+QZAeaSG6nIbQqQf/i0UplUv9+EGVV0nfD1MZIMESqmWRsNLRb0e5Eb18K5IDzy0g3c46XV2o8re2KEGQSo5ovtVWYcUV1XUusj84=
