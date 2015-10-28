@@ -16,7 +16,6 @@
 import {Rx} from '@cycle/core';
 import _ from 'lodash';
 import dtModel from 'power-ui/components/pages/common/data-table-page-model';
-import {safeProp} from 'power-ui/utils';
 
 function model(...args) {
   return dtModel(...args)
@@ -45,11 +44,11 @@ function makeFilterByLocationFn$(selectedLocation$, locationsToHideFromAll = [])
     function filterStateByLocation(person) {
       return (
         (location === 'all'
-          && !_.includes(locationsToHideFromAll, safeProp(person, 'tribe.name'))
+          && !_.includes(locationsToHideFromAll, _.get(person, 'tribe.name'))
         )
-        || location === safeProp(person, 'tribe.name')
-        || location === safeProp(person, 'tribe.country')
-        || location === safeProp(person, 'tribe.site.name')
+        || location === _.get(person, 'tribe.name')
+        || location === _.get(person, 'tribe.country')
+        || location === _.get(person, 'tribe.site.name')
       );
     }
   );

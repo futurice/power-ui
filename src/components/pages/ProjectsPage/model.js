@@ -16,7 +16,6 @@
 import {Rx} from '@cycle/core';
 import _ from 'lodash';
 import dtModel from 'power-ui/components/pages/common/data-table-page-model';
-import {safeProp} from 'power-ui/utils';
 
 function model(...args) {
   return dtModel(...args)
@@ -45,9 +44,9 @@ function makeFilterByLocationFn$(selectedLocation$) {
     function filterStateByLocation(project) {
       return (
         location === 'all'
-        || location === safeProp(project, 'tribe.name')
-        || location === safeProp(project, 'tribe.country')
-        || location === safeProp(project, 'tribe.site.name')
+        || location === _.get(project, 'tribe.name')
+        || location === _.get(project, 'tribe.country')
+        || location === _.get(project, 'tribe.site.name')
       );
     }
   );

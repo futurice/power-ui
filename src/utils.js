@@ -98,13 +98,4 @@ export default {
     origin$.subscribe(proxy$.asObserver());
   },
 
-  safeProp(obj, selector) {
-    return selector.split('.').reduce((soFar, prop) => {
-      if (soFar === null) {
-        return soFar;
-      }
-      return soFar[prop];
-    }, obj);
-  }
-
 };
