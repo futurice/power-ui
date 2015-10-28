@@ -16,19 +16,11 @@
 import {Rx} from '@cycle/core';
 import _ from 'lodash';
 import dtModel from 'power-ui/components/pages/common/data-table-page-model';
+import {safeProp} from 'power-ui/utils';
 
 function model(...args) {
   return dtModel(...args)
     .map(state => ({...state, projects: state.dataArray}));
-}
-
-function safeProp(obj, selector) {
-  return selector.split('.').reduce((soFar, prop) => {
-    if (soFar === null) {
-      return soFar;
-    }
-    return soFar[prop];
-  }, obj);
 }
 
 /**
