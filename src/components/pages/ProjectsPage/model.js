@@ -22,6 +22,15 @@ function model(...args) {
     .map(state => ({...state, projects: state.dataArray}));
 }
 
+function safeProp(obj, selector) {
+  return selector.split('.').reduce((soFar, prop) => {
+    if (soFar === null) {
+      return soFar;
+    }
+    return soFar[prop];
+  }, obj);
+}
+
 /**
  * Returns an Observable of filter functions, built from the value$ using
  * a criteria function built with criteriaFnFactory.
@@ -44,9 +53,9 @@ function makeFilterByLocationFn$(selectedLocation$) {
     function filterStateByLocation(project) {
       return (
         location === 'all'
-        || location === project.tribe.name
-        || location === project.tribe.country
-        || location === project.tribe.site.name
+        || location === safeProp(project, 'tribe.name')
+        || location === safeProp(project, 'tribe.country')
+        || location === safeProp(project, 'tribe.site.name')
       );
     }
   );

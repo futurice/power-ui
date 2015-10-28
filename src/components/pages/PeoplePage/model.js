@@ -22,6 +22,15 @@ function model(...args) {
     .map(state => ({...state, people: state.dataArray}));
 }
 
+function safeProp(obj, selector) {
+  return selector.split('.').reduce((soFar, prop) => {
+    if (soFar === null) {
+      return soFar;
+    }
+    return soFar[prop];
+  }, obj);
+}
+
 /**
  * Returns an Observable of filter functions, built from the value$ using
  * a criteria function built with criteriaFnFactory.
@@ -43,10 +52,12 @@ function makeFilterByLocationFn$(selectedLocation$, locationsToHideFromAll = [])
   return makeFilterFn$(selectedLocation$, location =>
     function filterStateByLocation(person) {
       return (
-        (location === 'all' && !_.includes(locationsToHideFromAll, person.tribe.name))
-        || location === person.tribe.name
-        || location === person.tribe.country
-        || location === person.tribe.site.name
+        (location === 'all'
+          && !_.includes(locationsToHideFromAll, safeProp(person, 'tribe.name'))
+        )
+        || location === safeProp(person, 'tribe.name')
+        || location === safeProp(person, 'tribe.country')
+        || location === safeProp(person, 'tribe.site.name')
       );
     }
   );
