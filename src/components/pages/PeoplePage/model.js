@@ -43,10 +43,12 @@ function makeFilterByLocationFn$(selectedLocation$, locationsToHideFromAll = [])
   return makeFilterFn$(selectedLocation$, location =>
     function filterStateByLocation(person) {
       return (
-        (location === 'all' && !_.includes(locationsToHideFromAll, person.tribe.name))
-        || location === person.tribe.name
-        || location === person.tribe.country
-        || location === person.tribe.site.name
+        (location === 'all'
+          && !_.includes(locationsToHideFromAll, _.get(person, 'tribe.name'))
+        )
+        || location === _.get(person, 'tribe.name')
+        || location === _.get(person, 'tribe.country')
+        || location === _.get(person, 'tribe.site.name')
       );
     }
   );

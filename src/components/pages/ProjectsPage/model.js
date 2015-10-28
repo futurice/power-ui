@@ -44,9 +44,9 @@ function makeFilterByLocationFn$(selectedLocation$) {
     function filterStateByLocation(project) {
       return (
         location === 'all'
-        || location === project.tribe.name
-        || location === project.tribe.country
-        || location === project.tribe.site.name
+        || location === _.get(project, 'tribe.name')
+        || location === _.get(project, 'tribe.country')
+        || location === _.get(project, 'tribe.site.name')
       );
     }
   );
