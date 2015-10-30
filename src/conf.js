@@ -14,15 +14,16 @@
  * the License.
  */
 
-/* global GLOBAL, API_HOST */
-if (typeof GLOBAL !== 'undefined' && typeof GLOBAL['HOST'] === 'undefined') {
-  GLOBAL['API_HOST'] = 'http://localhost:8000';
+/* global GLOBAL, BACKEND_HOST */
+// Normally BACKEND_HOST comes from webpack plugin, which is not used by test runners.
+if (typeof GLOBAL !== 'undefined' && typeof GLOBAL['BACKEND_HOST'] === 'undefined') {
+  GLOBAL['BACKEND_HOST'] = 'http://localhost:8000';
 }
 
-const ENV_HOST = API_HOST;
-const ENV_API_PATH = `${ENV_HOST}/api/v1`;
+/* global  */
+const API_PATH = `${BACKEND_HOST}/api/v1`;
 
 export default {
-  API_PATH: ENV_API_PATH,
-  HOST: ENV_HOST,
+  API_PATH: API_PATH,
+  HOST: BACKEND_HOST,
 };

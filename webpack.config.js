@@ -3,7 +3,7 @@ var ExtractTextPlugin = require('extract-text-webpack-plugin');
 var path = require('path');
 
 var envFlagPlugin = new webpack.DefinePlugin({
-  API_HOST: JSON.stringify(process.env.API_HOST || 'http://localhost:8000'),  
+  BACKEND_HOST: JSON.stringify(process.env.BACKEND_HOST || 'http://localhost:8000'),  
 });
 
 module.exports = {
