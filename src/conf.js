@@ -14,18 +14,16 @@
  * the License.
  */
 
-/* global GLOBAL */
-if (typeof GLOBAL !== 'undefined' && typeof GLOBAL['__DEV__'] === 'undefined') {
-  GLOBAL['__DEV__'] = true;
+/* global GLOBAL, BACKEND_HOST */
+// Normally BACKEND_HOST comes from webpack plugin, which is not used by test runners.
+if (typeof GLOBAL !== 'undefined' && typeof GLOBAL['BACKEND_HOST'] === 'undefined') {
+  GLOBAL['BACKEND_HOST'] = 'http://localhost:8000';
 }
 
-const LOCAL_HOST = 'http://localhost:8000';
-const PROD_HOST = 'https://power.futurice.com';
-
-const LOCAL_API_PATH = `${LOCAL_HOST}/api/v1`;
-const PROD_API_PATH = `${PROD_HOST}/api/v1`;
+/* global  */
+const API_PATH = `${BACKEND_HOST}/api/v1`;
 
 export default {
-  API_PATH: __DEV__ ? LOCAL_API_PATH : PROD_API_PATH,
-  HOST: __DEV__ ? LOCAL_HOST : PROD_HOST,
+  API_PATH: API_PATH,
+  HOST: BACKEND_HOST,
 };
