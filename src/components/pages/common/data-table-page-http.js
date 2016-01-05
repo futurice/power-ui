@@ -46,8 +46,8 @@ function makeDataTablePageHTTP(pathSegment) {
       const timeRangeParams = timeRangeToUrlParams(availableTimeRange);
       return atomicResponse$
         .filter(response => response.body.next)
-        .map(response => response.body.next.replace('limit=5', 'limit=40'))
-        .startWith(PEOPLE_URL + `?limit=5&${timeRangeParams}`)
+        .map(response => response.body.next)
+        .startWith(PEOPLE_URL + `?${timeRangeParams}`)
         .map(urlToRequestObjectWithHeaders);
     });
 
