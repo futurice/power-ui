@@ -141,5 +141,4 @@ const mockPowerheadResponse = {
   ]
 };
 
-export default {mockPowerheadResponse};
-
+export {mockPowerheadResponse};

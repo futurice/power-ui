@@ -13,9 +13,8 @@
  * License for the specific language governing permissions and limitations under
  * the License.
  */
-/** @jsx hJSX */
-import {Rx} from '@cycle/core';
-import {hJSX} from '@cycle/dom';
+import * as Rx from 'rx';
+import {div, h1, h3} from '@cycle/dom';
 import styles from 'power-ui/components/pages/common/data-table-page-styles.scss';
 
 function view(locationFilterVTree$, textFilterVTree$,
@@ -25,25 +24,25 @@ function view(locationFilterVTree$, textFilterVTree$,
     timeRangeFilterVTree$, dataTableVTree$,
     (locationFilterVTree, textFilterVTree, availabilityFilterVTree,
       timeRangeFilterVTree, dataTableVTree) =>
-      <div>
-        <div className={styles.contentWrapper}>
-          <h1>People</h1>
-          <div className={styles.filtersContainer}>
-            {locationFilterVTree}
-            <div className={styles.borderBottomLine}>
-              <h3 className={styles.borderBottomLine}>Filter tools</h3>
-              <div className={styles.filtersList}>
-                {textFilterVTree}
-                <div className={styles.verticalSeparator}/>
-                {availabilityFilterVTree}
-                <div className={styles.verticalSeparator}/>
-                {timeRangeFilterVTree}
-              </div>
-            </div>
-          </div>
-        </div>
-        {dataTableVTree}
-      </div>
+      div([
+        div(`.${styles.contentWrapper}`, [
+          h1('People'),
+          div(`.${styles.filtersContainer}`, [
+            locationFilterVTree,
+            div(`.${styles.borderBottomLine}`, [
+              h3(`.${styles.borderBottomLine}`, 'Filter tools'),
+              div(`.${styles.filtersList}`, [
+                textFilterVTree,
+                div(`.${styles.verticalSeparator}`),
+                availabilityFilterVTree,
+                div(`.${styles.verticalSeparator}`),
+                timeRangeFilterVTree,
+              ]),
+            ]),
+          ]),
+        ]),
+        dataTableVTree,
+      ])
     );
 }
 

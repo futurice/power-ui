@@ -13,11 +13,9 @@
  * License for the specific language governing permissions and limitations under
  * the License.
  */
-/** @jsx hJSX */
-import {hJSX} from '@cycle/dom';
 import moment from 'moment';
 import _ from 'lodash';
-import {ControlledInputHook} from 'power-ui/hooks';
+import {ul, li, div, p, section, input} from '@cycle/dom';
 import {safeCoerceToString} from 'power-ui/utils';
 import styles from './styles.scss';
 const timeRangeFilterStyle = safeCoerceToString(styles.timeRangeFilter);
@@ -29,13 +27,9 @@ function renderLabels(state) {
   if (state.availableTimeRange.start.format('YY-MM') === moment().format('YY-MM')) {
     labels[0] = 'Now';
   }
-  return (
-    <ul>
-      {labels.map(label =>
-        <li>{label}</li>
-      )}
-    </ul>
-  );
+  return ul(labels.map(label =>
+    li(label)
+  ));
 }
 
 function calculateSliderStyle(state) {
@@ -67,28 +61,36 @@ function augmentStateWithMetadata(oldState) {
 function view(state$) {
   return state$
     .map(augmentStateWithMetadata)
-    .map(state =>
-      <div className={`TimeRangeFilter ${timeRangeFilterStyle}`.trim()}>
-        <p>Within this time frame</p>
-        <section>
-          <input
-            data-hook={new ControlledInputHook(state.injectedTimeRange.min)}
-            min="0"
-            max={state.selectableMonthCount - 1}
-            step="1"
-            type="range"
-            />
-          <input style={calculateSliderStyle(state)}
-            data-hook={new ControlledInputHook(state.injectedTimeRange.max)}
-            min="0"
-            max={state.selectableMonthCount - 1}
-            step="1"
-            type="range"
-            />
-         {renderLabels(state)}
-        </section>
-      </div>
-    );
+    .map(state => {
+      const max = state.selectableMonthCount - 1;
+      return div(`.TimeRangeFilter.${timeRangeFilterStyle}`, [
+        p('Within this time frame'),
+        section([
+          input({
+            attrs: {type: 'range', min: '0', max, step: '1'},
+            hook: {
+              update: (old, {elm}) => {
+                if (state.injectedTimeRange.min !== null) {
+                  elm.value = state.injectedTimeRange.min;
+                }
+              },
+            },
+          }),
+          input({
+            style: calculateSliderStyle(state),
+            attrs: {type: 'range', min: '0', max, step: '1'},
+            hook: {
+              update: (old, {elm}) => {
+                if (state.injectedTimeRange.max !== null) {
+                  elm.value = state.injectedTimeRange.max;
+                }
+              },
+            },
+          }),
+          renderLabels(state),
+        ]),
+      ]);
+    });
 }
 
 export default view;

@@ -14,7 +14,7 @@
  * the License.
  */
 import _ from 'lodash';
-import {Rx} from '@cycle/core';
+import * as Rx from 'rx';
 import moment from 'moment';
 
 const defaultProps$ = Rx.Observable.just({

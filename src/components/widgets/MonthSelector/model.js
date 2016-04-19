@@ -13,7 +13,7 @@
  * License for the specific language governing permissions and limitations under
  * the License.
  */
-import {Rx} from '@cycle/core';
+import * as Rx from 'rx';
 import {smartStateFold} from 'power-ui/utils';
 
 const initialState = {

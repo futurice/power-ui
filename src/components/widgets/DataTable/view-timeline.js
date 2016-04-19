@@ -13,12 +13,11 @@
  * License for the specific language governing permissions and limitations under
  * the License.
  */
-/** @jsx hJSX */
-import {hJSX} from '@cycle/dom';
 import _ from 'lodash';
 import moment from 'moment';
 import styles from './styles.scss';
 import {timeRangeIndexArray} from 'power-ui/utils';
+import {div, span, th, ul, li} from '@cycle/dom';
 
 const caseHeight = 25;
 const laneHeightAndMargin = caseHeight + 3;
@@ -26,7 +25,7 @@ const laneHeightAndMargin = caseHeight + 3;
 function renderMonthSeparators(indexArray) {
   return indexArray.map(i => {
     const style = {left: `${(i / indexArray.length) * 100}%`};
-    return <div style={style} className={styles.monthSeparator}></div>;
+    return div(`.${styles.monthSeparator}`, {style});
   });
 }
 
@@ -38,12 +37,10 @@ function renderNowMarker(timeRange) {
   }
   const nowLeftPercentage = (nowTime / totalTime) * 100;
   const style = {left: `${nowLeftPercentage}%`};
-  return (
-    <div>
-      <span className={styles.nowLabel} style={style}>Now</span>
-      <div className={styles.nowSeparator} style={style}></div>
-    </div>
-  );
+  return div([
+    span(`.${styles.nowLabel}`, {style}, 'Now'),
+    div(`.${styles.nowSeparator}`, {style}, ''),
+  ]);
 }
 
 function renderMonthLabels(timeRange, indexArray) {
@@ -55,19 +52,17 @@ function renderMonthLabels(timeRange, indexArray) {
       'width': monthLabelWidth,
       'left': `${(i / indexArray.length) * 100}%`,
     };
-    return <span className={className} style={style}>{monthName}</span>;
+    return span(`.${className}`, {style}, monthName);
   });
 }
 
 function renderTimelineHeader(timeRange) {
   const indexArray = timeRangeIndexArray(timeRange);
-  return (
-    <th className={styles.timelineColumnHeader}>
-      {renderMonthLabels(timeRange, indexArray)}
-      {renderMonthSeparators(indexArray)}
-      {renderNowMarker(timeRange)}
-    </th>
-  );
+  return th(`.${styles.timelineColumnHeader}`, [
+    ...renderMonthLabels(timeRange, indexArray),
+    ...renderMonthSeparators(indexArray),
+    renderNowMarker(timeRange),
+  ]);
 }
 
 function renderSingleCase(theCase, laneIndex) {
@@ -78,11 +73,12 @@ function renderSingleCase(theCase, laneIndex) {
     'width': `${theCase.leftEnd - theCase.leftStart}%`,
   };
   const bgStyle = {opacity: theCase.opacity};
-  return (
-    <li title={theCase.label} style={liStyle} className={styles.caseItem}>
-      <div style={bgStyle} className={theCase.backgroundClass} />
-      <span className={styles.caseItemLabel}>{theCase.label}</span>
-    </li>
+  return li(`.${styles.caseItem}`,
+    {style: liStyle, attrs: {title: theCase.label}},
+    [
+      div(`.${theCase.backgroundClass}`, {style: bgStyle}),
+      span(`.${styles.caseItemLabel}`, theCase.label),
+    ]
   );
 }
 
@@ -162,11 +158,7 @@ function renderTimelineCases(item, timeRange) {
   const lanes = compactCases(measuredCases).map(renderSingleLane);
 
   const style = {height: `${lanes.length * (laneHeightAndMargin)}px`};
-  return (
-    <ul style={style} className={styles.casesList}>
-      {lanes}
-    </ul>
-  );
+  return ul(`.${styles.casesList}`, {style}, [...lanes]);
 }
 
-export default {renderTimelineHeader, renderTimelineCases};
+export {renderTimelineHeader, renderTimelineCases};

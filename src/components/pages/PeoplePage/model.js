@@ -13,7 +13,7 @@
  * License for the specific language governing permissions and limitations under
  * the License.
  */
-import {Rx} from '@cycle/core';
+import * as Rx from 'rx';
 import _ from 'lodash';
 import dtModel from 'power-ui/components/pages/common/data-table-page-model';
 
@@ -119,4 +119,4 @@ function filterState(state$, location$, search$, availability$, timeRange$) {
   return filteredState$;
 }
 
-export default {model, filterState};
+export {model, filterState};

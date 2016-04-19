@@ -13,7 +13,7 @@
  * License for the specific language governing permissions and limitations under
  * the License.
  */
-import {Rx} from '@cycle/core';
+import * as Rx from 'rx';
 import {replicateStream} from 'power-ui/utils';
 import makeDataTablePageHTTP from 'power-ui/components/pages/common/data-table-page-http';
 import TextFilter from 'power-ui/components/widgets/TextFilter/index';

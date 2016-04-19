@@ -34,10 +34,11 @@ function timeRangeToUrlParams(timeRange) {
  */
 function makeDataTablePageHTTP(pathSegment) {
   return function DataTablePageHTTP(sources) {
-    const PEOPLE_URL = `${API_PATH}${pathSegment}`;
+    const URL = `${API_PATH}${pathSegment}`;
 
     const atomicResponse$ = sources.HTTP
-      .filter(response$ => _.startsWith(response$.request.url, PEOPLE_URL))
+      .filter(response$ => _.startsWith(response$.request.url, URL))
+      .response$$
       .mergeAll()
       .filter(response => isTruthy(response.body))
       .shareReplay(1);
@@ -47,7 +48,7 @@ function makeDataTablePageHTTP(pathSegment) {
       return atomicResponse$
         .filter(response => response.body.next)
         .map(response => response.body.next)
-        .startWith(PEOPLE_URL + `?${timeRangeParams}`)
+        .startWith(URL + `?${timeRangeParams}`)
         .map(urlToRequestObjectWithHeaders);
     });
 

@@ -22,8 +22,9 @@ if (typeof GLOBAL !== 'undefined' && typeof GLOBAL['BACKEND_HOST'] === 'undefine
 
 /* global  */
 const API_PATH = `${BACKEND_HOST}/api/v1`;
+const HOST = BACKEND_HOST;
 
-export default {
-  API_PATH: API_PATH,
-  HOST: BACKEND_HOST,
+export {
+  API_PATH,
+  HOST,
 };

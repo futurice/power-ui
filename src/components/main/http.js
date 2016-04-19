@@ -13,13 +13,14 @@
  * License for the specific language governing permissions and limitations under
  * the License.
  */
-import {Rx} from '@cycle/core';
+import * as Rx from 'rx';
 import {API_PATH} from 'power-ui/conf';
 import {urlToRequestObjectWithHeaders, isTruthy} from 'power-ui/utils';
 
 function mainHTTPResponse(HTTPSource) {
   const tribesState$ = HTTPSource
     .filter(response$ => response$.request.url === `${API_PATH}/tribes/`)
+    .response$$
     .mergeAll()
     .filter(response => isTruthy(response.body))
     .map(response => response.body.results)
@@ -34,4 +35,4 @@ function mainHTTPRequest(...otherRequest$) {
   return request$;
 }
 
-export default {mainHTTPRequest, mainHTTPResponse};
+export {mainHTTPRequest, mainHTTPResponse};

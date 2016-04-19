@@ -13,7 +13,7 @@
  * License for the specific language governing permissions and limitations under
  * the License.
  */
-import {Rx} from '@cycle/core';
+import * as Rx from 'rx';
 import PeoplePage from 'power-ui/components/pages/PeoplePage/index';
 import ProjectsPage from 'power-ui/components/pages/ProjectsPage/index';
 import PowerheadPage from 'power-ui/components/pages/PowerheadPage/index';

@@ -13,7 +13,7 @@
  * License for the specific language governing permissions and limitations under
  * the License.
  */
-import {Rx} from '@cycle/core';
+import * as Rx from 'rx';
 import {replicateStream} from 'power-ui/utils';
 import MonthSelector from 'power-ui/components/widgets/MonthSelector/index';
 import PowerheadPageHTTP from './http';

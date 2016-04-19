@@ -13,8 +13,7 @@
  * License for the specific language governing permissions and limitations under
  * the License.
  */
-/** @jsx hJSX */
-import {hJSX} from '@cycle/dom';
+import {div, button} from '@cycle/dom';
 import _ from 'lodash';
 import cuid from 'cuid';
 import buttonStyles from './locationFilterButton.scss';
@@ -51,9 +50,7 @@ function renderFilterButton(selectedLocation, label, value = label) {
   const className = selectedLocation === value
     ? buttonStyles.active
     : buttonStyles.normal;
-  return (
-    <button value={value} className={className}>{label}</button>
-  );
+  return button(`.${className}`, {attrs: {value}}, label);
 }
 
 function renderFilterButtonsForTribes(selectedLocation, tribes) {
@@ -63,16 +60,14 @@ function renderFilterButtonsForTribes(selectedLocation, tribes) {
 }
 
 function view(state$, name) {
-  return state$.map(state => {
-    return (
-      <div className={`${name} LocationFilter`}>
-        {renderFilterButton(state.location, 'Show all', 'all')}
-        {renderFilterButton(state.location, 'Finland', 'FI')}
-        {renderFilterButton(state.location, 'Germany', 'DE')}
-        {renderFilterButtonsForTribes(state.location, state.tribes)}
-      </div>
-    );
-  });
+  return state$.map(state =>
+    div(`.LocationFilter.${name}`, [
+      renderFilterButton(state.location, 'Show all', 'all'),
+      renderFilterButton(state.location, 'Finland', 'FI'),
+      renderFilterButton(state.location, 'Germany', 'DE'),
+      ...renderFilterButtonsForTribes(state.location, state.tribes),
+    ])
+  );
 }
 
 function LocationFilter(sources, name = cuid()) {

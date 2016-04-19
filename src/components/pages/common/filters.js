@@ -41,4 +41,4 @@ function TribeFilter(state$, DOM) {
   return LocationFilter({DOM, props$});
 }
 
-export default {TribeFilter};
+export {TribeFilter};

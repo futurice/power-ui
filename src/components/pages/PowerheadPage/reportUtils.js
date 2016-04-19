@@ -85,4 +85,4 @@ function combineReports(reports) {
   return [combined];
 }
 
-export default {augmentReportsWithMetadata, combineReports};
+export {augmentReportsWithMetadata, combineReports};

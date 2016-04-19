@@ -13,12 +13,24 @@
  * License for the specific language governing permissions and limitations under
  * the License.
  */
-/** @jsx hJSX */
-import {hJSX} from '@cycle/dom';
 import _ from 'lodash';
 import styles from './styles.scss';
 import {renderTimelineHeader, renderTimelineCases} from './view-timeline';
 import {safeCoerceToString} from 'power-ui/utils';
+import {
+  div,
+  img,
+  th,
+  span,
+  tr,
+  td,
+  a,
+  thead,
+  table,
+  section,
+  h1,
+  h4,
+} from '@cycle/dom';
 
 function columnFromCriteria(criteria) {
   return criteria.replace(/^(\-|\+)/, '');
@@ -46,40 +58,34 @@ function renderHeaderArrowOrNot(column, criteria) {
     default: return styles.arrowIconAscending;
     }
   };
-  return (
-    <img className={getArrowIconStyle(criteria)} src="img/arrow_icon.svg" />
-  );
+  return img(`.${getArrowIconStyle(criteria)}`, {
+    attrs: {src: 'img/arrow_icon.svg'},
+  });
 }
 
 function renderTableHeaderColumn(column, label, criteria) {
-  return (
-    <th
-      className={thClassName(column, criteria)}
-      attributes={{'data-column': column}}>
-      <span>{label}</span>
-      {renderHeaderArrowOrNot(column, criteria)}
-    </th>
-  );
+  return th(`.${thClassName(column, criteria)}`, {attrs: {'data-column': column}}, [
+    span(label),
+    renderHeaderArrowOrNot(column, criteria),
+  ]);
 }
 
 function renderProgressBar(progress) {
   if (progress < 1) {
-    return <div className={styles.progressBar} />;
+    return div(`.${styles.progressBar}`);
   } else {
     return null;
   }
 }
 
 function tableHeaders(state) {
-  return (
-    <tr>
-      <th style={{position: 'relative'}}>{renderProgressBar(state.progress)}</th>
-      {state.columns.map(column =>
-        renderTableHeaderColumn(column.name, column.label, state.sortCriteria)
-      )}
-      {renderTimelineHeader(state.timeRange)}
-    </tr>
-  );
+  return tr([
+    th({style: {position: 'relative'}}, [renderProgressBar(state.progress)]),
+    ...state.columns.map(column =>
+      renderTableHeaderColumn(column.name, column.label, state.sortCriteria)
+    ),
+    renderTimelineHeader(state.timeRange),
+  ]);
 }
 
 function tdClassName(column, criteria) {
@@ -119,46 +125,40 @@ function tableRows(state) {
   return state.items.map(item => {
     const columnValues = state.columns.map(preprocessCellValue(state, item));
     const timeline = renderTimelineCases(item, state.timeRange);
-    return (
-      <tr>
-        <td></td>
-        {columnValues.map(({cellValue, link, columnName, sortCriteria}) =>
-          <td className={tdClassName(columnName, sortCriteria)}>
-            {link ? <a className="link" href={link}>{cellValue}</a> : cellValue}
-          </td>
-        )}
-        <td className={styles.timelineColumn}>{timeline}</td>
-      </tr>
-    );
+    return tr([
+      td(),
+      ...columnValues.map(({cellValue, link, columnName, sortCriteria}) =>
+        td(`.${tdClassName(columnName, sortCriteria)}`, [
+          link ? a('.link', {attrs: {href: link}}, [cellValue]) : cellValue,
+        ])
+      ),
+      td(`.${styles.timelineColumn}`, timeline),
+    ]);
   });
 }
 
 function renderDataTable(state, name) {
   const dataTableStyle = safeCoerceToString(styles.dataTable);
-  return (
-    <div className={`${name} ${dataTableStyle}`.trim()}>
-      <table>
-        <thead>
-          {tableHeaders(state)}
-        </thead>
-        {tableRows(state)}
-      </table>
-    </div>
-  );
+  return div(`.${name}.${dataTableStyle}`, [
+    table([
+      thead([
+        tableHeaders(state),
+      ]),
+      ...tableRows(state),
+    ]),
+  ]);
 }
 
 const placeholderData = _.fill(Array(10), {name: '', cases: []});
 
 function renderEmpty(state, name) {
-  return (
-    <section className={styles.emptyOverlay}>
-      {renderDataTable({...state, items: placeholderData}, name)}
-      <div className={styles.emptyOverlayContent}>
-        <h1>{state.emptyTitle}</h1>
-        <h4>{state.emptySubtitle}</h4>
-      </div>
-    </section>
-  );
+  return section(`.${styles.emptyOverlay}`, [
+    renderDataTable({...state, items: placeholderData}, name),
+    div(`.${styles.emptyOverlayContent}`, [
+      h1(state.emptyTitle),
+      h4(state.emptySubtitle),
+    ]),
+  ]);
 }
 
 function view(state$, name) {

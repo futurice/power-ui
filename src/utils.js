@@ -13,89 +13,87 @@
  * License for the specific language governing permissions and limitations under
  * the License.
  */
-export default {
-  /**
-   * smartStateFold is supposed to be given as the argument a
-   * `scan` operation over a stream of state|updateFn. State is
-   * expected to be an object, and updateFn is a function that
-   * takes old state and produces new state.
-   * Example:
-   * --s0---fn1----fn2----s10------>
-   *      scan(smartStateFold)
-   * --s0---s1-----s2-----s10------>
-   *
-   * where s1 = fn1(s0)
-   * where s2 = fn2(s1)
-   */
-  smartStateFold(prev, curr) {
-    if (typeof curr === 'function') {
-      return curr(prev);
-    } else {
-      return curr;
-    }
-  },
 
-  urlToRequestObjectWithHeaders(url) {
-    return {
-      url: url,
-      method: 'GET',
-      accept: 'json',
-      headers: {
-        'Content-Type': 'application/json',
-      },
-    };
-  },
+/**
+ * smartStateFold is supposed to be given as the argument a
+ * `scan` operation over a stream of state|updateFn. State is
+ * expected to be an object, and updateFn is a function that
+ * takes old state and produces new state.
+ * Example:
+ * --s0---fn1----fn2----s10------>
+ *      scan(smartStateFold)
+ * --s0---s1-----s2-----s10------>
+ *
+ * where s1 = fn1(s0)
+ * where s2 = fn2(s1)
+ */
+export function smartStateFold(prev, curr) {
+  if (typeof curr === 'function') {
+    return curr(prev);
+  } else {
+    return curr;
+  }
+}
 
-  formatAsPercentage(input) {
-    const num = parseFloat(input);
-    if (!isNaN(num)) {
-      return (num.toFixed(2) * 100).toFixed(0) + '%';
-    }
-    return null;
-  },
+export function urlToRequestObjectWithHeaders(url) {
+  return {
+    url: url,
+    method: 'GET',
+    accept: 'json',
+    headers: {
+      'Content-Type': 'application/json',
+    },
+  };
+}
 
-  formatAsFinancialsNumber(num) {
-    // Suppose num is 1035024.29
-    return String(Math.ceil(num))
-      // '1035024'
-      .split('')
-      // ['1', '0', '3', '5', '0', '2', '4']
-      .reverse()
-      // ['4', '2', '0', '5', '3', '0', '1']
-      .map((digit, i) => i % 3 === 2 ? ` ${digit}` : digit)
-      // ['4', '2', ' 0', '5', '3', ' 0', '1']
-      .reverse()
-      // ['1', ' 0', '3', '5', ' 0', '2', '4']
-      .join('');
-      // '1 035 024'
-  },
+export function formatAsPercentage(input) {
+  const num = parseFloat(input);
+  if (!isNaN(num)) {
+    return (num.toFixed(2) * 100).toFixed(0) + '%';
+  }
+  return null;
+}
 
-  EURO_SYMBOL: '\u20AC',
+export function formatAsFinancialsNumber(num) {
+  // Suppose num is 1035024.29
+  return String(Math.ceil(num))
+    // '1035024'
+    .split('')
+    // ['1', '0', '3', '5', '0', '2', '4']
+    .reverse()
+    // ['4', '2', '0', '5', '3', '0', '1']
+    .map((digit, i) => i % 3 === 2 ? ` ${digit}` : digit)
+    // ['4', '2', ' 0', '5', '3', ' 0', '1']
+    .reverse()
+    // ['1', ' 0', '3', '5', ' 0', '2', '4']
+    .join('');
+    // '1 035 024'
+}
 
-  timeRangeIndexArray(timeRange) {
-    const months = timeRange.end.diff(timeRange.start, 'months') + 1;
-    const array = [];
-    for (let i = 0; i < months; i++) {
-      array.push(i);
-    }
-    return array;
-  },
+export const EURO_SYMBOL = '\u20AC';
 
-  isTruthy(x) {
-    return !!x;
-  },
+export function timeRangeIndexArray(timeRange) {
+  const months = timeRange.end.diff(timeRange.start, 'months') + 1;
+  const array = [];
+  for (let i = 0; i < months; i++) {
+    array.push(i);
+  }
+  return array;
+}
 
-  // Coerces the val to String, but replaces the annoying 'undefined' with ''.
-  safeCoerceToString(val) {
-    if (typeof val === 'undefined') {
-      return '';
-    } else {
-      return String(val);
-    }
-  },
+export function isTruthy(x) {
+  return !!x;
+}
 
-  replicateStream(origin$, proxy$) {
-    origin$.subscribe(proxy$.asObserver());
-  },
+// Coerces the val to String, but replaces the annoying 'undefined' with ''.
+export function safeCoerceToString(val) {
+  if (typeof val === 'undefined') {
+    return '';
+  } else {
+    return String(val);
+  }
+}
 
-};
+export function replicateStream(origin$, proxy$) {
+  origin$.subscribe(proxy$.asObserver());
+}

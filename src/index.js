@@ -13,7 +13,7 @@
  * License for the specific language governing permissions and limitations under
  * the License.
  */
-import {run} from '@cycle/core';
+import {run} from '@cycle/rx-run';
 import {makeDOMDriver} from '@cycle/dom';
 import {makeHTTPDriver} from '@cycle/http';
 import {hashRouteDriver, popupDriver, makeLocalStorageDriver} from 'power-ui/drivers';
@@ -21,7 +21,7 @@ import main from 'power-ui/components/main/index';
 
 run(main, {
   DOM: makeDOMDriver('#power-ui-app-container'),
-  HTTP: makeHTTPDriver({autoSubscribe: true}),
+  HTTP: makeHTTPDriver(),
   Popup: popupDriver,
   Route: hashRouteDriver,
   LocalStorage: makeLocalStorageDriver('power-ui-filters'),

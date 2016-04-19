@@ -13,35 +13,30 @@
  * License for the specific language governing permissions and limitations under
  * the License.
  */
-/** @jsx hJSX */
-import {hJSX} from '@cycle/dom';
+import {nav, a, img, span, ul, li} from '@cycle/dom';
 import styles from './styles.scss';
 
 function renderHeaderLink(selectedRoute, label, route = `/${label.toLowerCase()}`) {
   const className = route === selectedRoute
     ? styles.linkSelected
     : styles.linkNormal;
-  return (
-    <a className={className} href={`#${route}`}><span>{label}</span></a>
-  );
+  return a(`.${className}`, {attrs: {href: `#${route}`}}, [
+    span(label),
+  ]);
 }
 
 function renderNavBar(route) {
-  return (
-    <nav className={styles.navBar}>
-      <a className={styles.brandLogo} href="/">
-        <img alt="Power logo" src="img/power_logo.svg" />
-      </a>
-
-      <span className={styles.versionTag}>Alpha</span>
-
-      <ul className={styles.linkList}>
-        <li>{renderHeaderLink(route, 'People')}</li>
-        <li>{renderHeaderLink(route, 'Projects')}</li>
-        <li>{renderHeaderLink(route, 'Powerhead')}</li>
-      </ul>
-    </nav>
-  );
+  return nav(`.${styles.navBar}`, [
+    a(`.${styles.brandLogo}`, {attrs: {href: '/'}}, [
+      img({attrs: {alt: 'Power logo', src: 'img/power_logo.svg'}}),
+    ]),
+    span(`.${styles.versionTag}`, 'Alpha'),
+    ul(`.${styles.linkList}`, [
+      li([renderHeaderLink(route, 'People')]),
+      li([renderHeaderLink(route, 'Projects')]),
+      li([renderHeaderLink(route, 'Powerhead')]),
+    ]),
+  ]);
 }
 
 export default renderNavBar;

@@ -48,6 +48,7 @@ function PowerheadPageHTTP(sources) {
 
   const response$ = sources.HTTP
     .filter(res$ => _.startsWith(res$.request.url, POWERHEAD_URL))
+    .response$$
     .mergeAll()
     .filter(response => isTruthy(response.body))
     .map(response => response.body.results)

@@ -13,9 +13,8 @@
  * License for the specific language governing permissions and limitations under
  * the License.
  */
-/** @jsx hJSX */
-import {hJSX} from '@cycle/dom';
 import moment from 'moment';
+import {div, img, span} from '@cycle/dom';
 import {safeCoerceToString} from 'power-ui/utils';
 import styles from './styles.scss';
 
@@ -32,17 +31,11 @@ function view(state$) {
       ? styles.arrowRight
       : styles.arrowRightDisabled
     );
-    return (
-      <div className={`MonthSelector ${monthSelectorClassName}`.trim()}>
-        <img
-          className={`left ${arrowLeftClassName}`.trim()}
-          src="img/arrow_icon.svg" />
-        <span>{momentLabel}</span>
-        <img
-          className={`right ${arrowRightClassName}`.trim()}
-          src="img/arrow_icon.svg" />
-      </div>
-    );
+    return div(`.MonthSelector.${monthSelectorClassName}`, [
+      img(`.left.${arrowLeftClassName}`, {attrs: {src: 'img/arrow_icon.svg'}}),
+      span(momentLabel),
+      img(`.right.${arrowRightClassName}`, {attrs: {src: 'img/arrow_icon.svg'}}),
+    ]);
   });
 }
 

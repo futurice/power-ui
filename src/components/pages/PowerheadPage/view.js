@@ -13,10 +13,9 @@
  * License for the specific language governing permissions and limitations under
  * the License.
  */
-/** @jsx hJSX */
-import {hJSX} from '@cycle/dom';
-import {Rx} from '@cycle/core';
+import * as Rx from 'rx';
 import _ from 'lodash';
+import {div, span, ul, li, h1, h2, h3} from '@cycle/dom';
 import {formatAsFinancialsNumber, EURO_SYMBOL} from 'power-ui/utils';
 import styles from './styles.scss';
 import {combineReports, augmentReportsWithMetadata} from './reportUtils';
@@ -26,13 +25,11 @@ function renderPeopleStatsItem(label, value, unit, className, special = false) {
     ? styles.peopleStatsItemSpecial
     : styles.peopleStatsItem;
 
-  return (
-    <li className={peopleStatsItemClassName + ` ${className}`}>
-      <span className={styles.peopleStatsLabel}>{label}</span>
-      <span className={styles.peopleStatsValue}>{value}</span>
-      <span className={styles.peopleStatsUnit}>{unit}</span>
-    </li>
-  );
+  return li(`.${peopleStatsItemClassName}.${className}`, [
+    span(`.${styles.peopleStatsLabel}`, label),
+    span(`.${styles.peopleStatsValue}`, value),
+    span(`.${styles.peopleStatsUnit}`, unit),
+  ]);
 }
 
 function renderPeopleStatsList(report, monthIndex) {
@@ -40,14 +37,12 @@ function renderPeopleStatsList(report, monthIndex) {
   const totalIntsVal = Math.ceil(report.fte[monthIndex]);
   const bookedVal = totalIntsVal - benchVal;
   const extFteVal = Math.ceil(report.ext_fte[monthIndex]);
-  return (
-    <ul className={styles.peopleStats}>
-      {renderPeopleStatsItem('Total exts.', extFteVal, 'FTE', 'exts', true)}
-      {renderPeopleStatsItem('Total ints.', totalIntsVal, 'FTE', 'ints')}
-      {renderPeopleStatsItem('Booked', bookedVal, 'FTE', 'booked')}
-      {renderPeopleStatsItem('Bench', benchVal, 'FTE', 'bench')}
-    </ul>
-  );
+  return ul(`.${styles.peopleStats}`, [
+    renderPeopleStatsItem('Total exts.', extFteVal, 'FTE', 'exts', true),
+    renderPeopleStatsItem('Total ints.', totalIntsVal, 'FTE', 'ints'),
+    renderPeopleStatsItem('Booked', bookedVal, 'FTE', 'booked'),
+    renderPeopleStatsItem('Bench', benchVal, 'FTE', 'bench'),
+  ]);
 }
 
 function renderFinancialsStatsItem(
@@ -55,14 +50,12 @@ function renderFinancialsStatsItem(
   const financialsStatsItemClassName = special
     ? styles.financialsStatsItemSpecial
     : styles.financialsStatsItem;
-  return (
-    <li className={financialsStatsItemClassName + ` ${className}`}>
-      <div className={legendBarStyle} />
-      <span className={styles.financialsStatsLabel}>{label}</span>
-      <span className={styles.financialsStatsValue}>{value}</span>
-      <span className={styles.financialsStatsUnit}>{EURO_SYMBOL}</span>
-    </li>
-  );
+  return li(`.${financialsStatsItemClassName}.${className}`, [
+    div(`.${legendBarStyle}`),
+    span(`.${styles.financialsStatsLabel}`, label),
+    span(`.${styles.financialsStatsValue}`, value),
+    span(`.${styles.financialsStatsUnit}`, EURO_SYMBOL),
+  ]);
 }
 
 function renderFinancialsStatsList(report, monthIndex) {
@@ -70,16 +63,14 @@ function renderFinancialsStatsList(report, monthIndex) {
   const overruns = formatAsFinancialsNumber(report.overrun[monthIndex]);
   const overrunsBarStyle = styles.financialsStatsLegendBarOverruns;
   const revenueBarStyle = styles.financialsStatsLegendBarRevenue;
-  return (
-    <ul className={styles.financialsStats}>
-      {renderFinancialsStatsItem(
-        'Overruns', overruns, overrunsBarStyle, 'overruns', true
-      )}
-      {renderFinancialsStatsItem(
-        'Confirmed revenue', revenue, revenueBarStyle, 'confirmed_revenue'
-      )}
-    </ul>
-  );
+  return ul(`.${styles.financialsStats}`, [
+    renderFinancialsStatsItem(
+      'Overruns', overruns, overrunsBarStyle, 'overruns', true
+    ),
+    renderFinancialsStatsItem(
+      'Confirmed revenue', revenue, revenueBarStyle, 'confirmed_revenue'
+    ),
+  ]);
 }
 
 function renderMonthGraphPeople(report, monthIndex) {
@@ -111,11 +102,11 @@ function renderMonthGraphPeople(report, monthIndex) {
 
   const boxes = _.range(totalPeople).map(i => {
     if (i < extFteVal) {
-      return <li className={extBoxStyle}></li>;
+      return li(`.${extBoxStyle}`);
     } else if (i < extFteVal + bookedVal) {
-      return <li className={bookedBoxStyle}></li>;
+      return li(`.${bookedBoxStyle}`);
     } else {
-      return <li className={benchBoxStyle}></li>;
+      return li(`.${benchBoxStyle}`);
     }
   });
 
@@ -123,15 +114,9 @@ function renderMonthGraphPeople(report, monthIndex) {
 
   const chunks = _.chunk(boxes, numberOfPeopleInChunk);
 
-  return (
-    <ul className={boxListStyle}>
-      {chunks.map(chunk =>
-        <div className={peopleChunkStyle}>
-          {chunk}
-        </div>
-      )}
-    </ul>
-  );
+  return ul(`.${boxListStyle}`, chunks.map(chunk =>
+    div(`.${peopleChunkStyle}`, chunk)
+  ));
 }
 
 const financialsGraphMaxHeight = 250; // px
@@ -167,52 +152,43 @@ function renderMonthGraphFinancials(report, monthIndex) {
     bottom: `${Math.ceil(breakEven * pxPerEur)}px`,
     display: confirmedRevenueThisMonth === 0 ? 'none' : 'inherit',
   };
-  return (
-    <ul className={styles.monthGraphFinancials} style={graphStyle}>
-      <li className={styles.monthGraphFinancialsOverrun} style={overrunStyle} />
-      <li className={styles.monthGraphFinancialsConfirmed} style={confirmedStyle} />
-      <li className={styles.monthGraphFinancialsBreakEven} style={breakEvenStyle}>
-        <span>break even</span>
-      </li>
-    </ul>
-  );
+  return ul(`.${styles.monthGraphFinancials}`, {style: graphStyle}, [
+    li(`.${styles.monthGraphFinancialsOverrun}`, {style: overrunStyle}),
+    li(`.${styles.monthGraphFinancialsConfirmed}`, {style: confirmedStyle}),
+    li(`.${styles.monthGraphFinancialsBreakEven}`, {style: breakEvenStyle}, [
+      span('break even'),
+    ]),
+  ]);
 }
 
 function renderMonthGraph(report, monthIndex) {
   const monthTitle = _.keys(report.months[monthIndex])[0];
   const businessDays = `(${report.business_days[monthIndex]} days)`;
-  return (
-    <div className={styles.monthGraph}>
-      <div className={styles.monthGraphShapes}>
-        {renderMonthGraphPeople(report, monthIndex)}
-        {renderMonthGraphFinancials(report, monthIndex)}
-      </div>
-      <div className={styles.monthGraphLabel}>
-        <span className={styles.monthGraphLabelTitle}>{monthTitle}</span>
-        <span className={styles.monthGraphLabelSubtitle}>{businessDays}</span>
-      </div>
-    </div>
-  );
+  return div(`.${styles.monthGraph}`, [
+    div(`.${styles.monthGraphShapes}`, [
+      renderMonthGraphPeople(report, monthIndex),
+      renderMonthGraphFinancials(report, monthIndex),
+    ]),
+    div(`.${styles.monthGraphLabel}`, [
+      span(`.${styles.monthGraphLabelTitle}`, monthTitle),
+      span(`.${styles.monthGraphLabelSubtitle}`, businessDays),
+    ]),
+  ]);
 }
 
 function renderMonthReport(report, monthIndex) {
-  return (
-    <div className={styles.monthReport}>
-      {renderPeopleStatsList(report, monthIndex)}
-      {renderMonthGraph(report, monthIndex)}
-      {renderFinancialsStatsList(report, monthIndex)}
-    </div>
-  );
+  return div(`.${styles.monthReport}`, [
+    renderPeopleStatsList(report, monthIndex),
+    renderMonthGraph(report, monthIndex),
+    renderFinancialsStatsList(report, monthIndex),
+  ]);
 }
 
 function renderMonthReportsRow(report) {
-  const monthReports = report.months.map((irrelevant, i) =>
-    renderMonthReport(report, i)
-  );
-  return (
-    <div className={styles.tribeMonthReportsRow}>
-      {monthReports}
-    </div>
+  return div(`.${styles.tribeMonthReportsRow}`,
+    report.months.map((irrelevant, i) =>
+      renderMonthReport(report, i)
+    )
   );
 }
 
@@ -221,26 +197,20 @@ function sortReportsByLargestTribe(reports) {
 }
 
 function renderReports(reports) {
-  return (
-    <div className={styles.contentWrapper}>
-      {reports.map(report => {
-        const tribeReportClass = [styles.tribeReport, 'tribe_report'].join(' ');
-        return <div className={tribeReportClass}>
-          <h2>{report.name}</h2>
-          <h3>Staffing &amp; value creation</h3>
-          {renderMonthReportsRow(report)}
-        </div>;
-      })}
-    </div>
-  );
+  return div(`.${styles.contentWrapper}`, reports.map(report => {
+    const tribeReportClass = [styles.tribeReport, 'tribe_report'].join(' ');
+    return div(`.${tribeReportClass}`, [
+      h2(report.name),
+      h3('Staffing & value creation'),
+      renderMonthReportsRow(report),
+    ]);
+  }));
 }
 
 function renderLoadingIndicator() {
-  return (
-    <div className={styles.contentWrapper}>
-      <h3>Loading...</h3>
-    </div>
-  );
+  return div(`.${styles.contentWrapper}`, [
+    h3('Loading...'),
+  ]);
 }
 
 function view(state$, monthSelectorVTree$, locationFilterVTree$) {
@@ -256,21 +226,18 @@ function view(state$, monthSelectorVTree$, locationFilterVTree$) {
         reports = completeReports;
       }
 
-      return (
-        <div>
-          <div className={styles.contentWrapper}>
-            <h1>Powerhead</h1>
-            {monthSelectorVTree}
-            <div className={styles.filtersContainer}>
-              {locationFilterVTree}
-            </div>
-          </div>
-          {reports.length === 0
-            ? renderLoadingIndicator()
-            : renderReports(reports)
-          }
-       </div>
-      );
+      return div([
+        div(`.${styles.contentWrapper}`, [
+          h1('Powerhead'),
+          monthSelectorVTree,
+          div(`.${styles.filtersContainer}`, [
+            locationFilterVTree,
+          ]),
+        ]),
+        reports.length === 0
+          ? renderLoadingIndicator()
+          : renderReports(reports),
+      ]);
     });
 }
 

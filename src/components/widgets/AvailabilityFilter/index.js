@@ -13,10 +13,8 @@
  * License for the specific language governing permissions and limitations under
  * the License.
  */
-/** @jsx hJSX */
-import {hJSX} from '@cycle/dom';
-import {ControlledInputHook} from 'power-ui/hooks';
-import {safeCoerceToString} from 'power-ui/utils';
+import {safeCoerceToString} from '../../../utils';
+import {div, span, p, input} from '@cycle/dom';
 import styles from './styles.scss';
 const availabilityFilterStyle = safeCoerceToString(styles.availabilityFilter);
 
@@ -45,13 +43,20 @@ function AvailabilityFilter(sources) {
     .map(val => String(parseInt(val) || '0'));
 
   const vtree$ = state$.map(value =>
-    <div className={`AvailabilityFilter ${availabilityFilterStyle}`.trim()}>
-      <p>Available for</p>
-      <input type="num" maxLength="2"
-        data-hook={new ControlledInputHook(value)}
-        />
-      <span>MD</span>
-    </div>
+    div(`.AvailabilityFilter.${availabilityFilterStyle}`, [
+      p('Available for'),
+      input({
+        attrs: {type: 'num', maxLength: '2'},
+        hook: {
+          update: (old, {elm}) => {
+            if (value !== null) {
+              elm.value = value;
+            }
+          },
+        },
+      }),
+      span('MD'),
+    ])
   );
 
   const sinks = {

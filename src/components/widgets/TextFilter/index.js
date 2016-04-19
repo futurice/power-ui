@@ -13,10 +13,8 @@
  * License for the specific language governing permissions and limitations under
  * the License.
  */
-/** @jsx hJSX */
-import {hJSX} from '@cycle/dom';
 import cuid from 'cuid';
-import {ControlledInputHook} from 'power-ui/hooks';
+import {div, p, input} from '@cycle/dom';
 import styles from './styles.scss';
 
 function TextFilter(sources, name = cuid()) {
@@ -30,12 +28,19 @@ function TextFilter(sources, name = cuid()) {
     .map(ev => ev.target.value);
 
   const vtree$ = props$.map(props =>
-    <div key={name} className={`${name} TextFilter ${styles.textFilter}`}>
-      <p>{props.label}</p>
-      <input type="text" placeholder="Add filter"
-        data-hook={new ControlledInputHook(props.value)}
-        />
-    </div>
+    div(`.TextFilter.${name}.${styles.textFilter}`, {key: name}, [
+      p(props.label),
+      input({
+        attrs: {type: 'text', placeholder: 'Add filter'},
+        hook: {
+          update: (old, {elm}) => {
+            if (props.value !== null) {
+              elm.value = props.value;
+            }
+          },
+        },
+      }),
+    ])
   );
 
   const sinks = {

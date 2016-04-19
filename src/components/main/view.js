@@ -13,9 +13,8 @@
  * License for the specific language governing permissions and limitations under
  * the License.
  */
-/** @jsx hJSX */
-import {hJSX} from '@cycle/dom';
-import {Rx} from '@cycle/core';
+import * as Rx from 'rx';
+import {div} from '@cycle/dom';
 import renderNavBar from 'power-ui/components/widgets/NavBar/index';
 import 'power-ui/styles/global.scss';
 
@@ -32,10 +31,10 @@ function view(route$, peopleVTree$, projectsVTree$, powerheadVTree$) {
   return Rx.Observable.combineLatest(
     route$, peopleVTree$, projectsVTree$, powerheadVTree$,
     (route, peopleVTree, projectsVTree, powerheadVTree) =>
-      <div>
-        {renderNavBar(route)}
-        {selectPage(route, peopleVTree, projectsVTree, powerheadVTree)}
-      </div>
+      div([
+        renderNavBar(route),
+        selectPage(route, peopleVTree, projectsVTree, powerheadVTree),
+      ])
   );
 }
 
